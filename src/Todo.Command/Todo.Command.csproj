@@ -4,6 +4,7 @@
 	<TargetFramework>net6.0</TargetFramework>
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
+	<UserSecretsId>94d1906f-21f5-4383-93d8-acaababd17ed</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +12,10 @@
   </ItemGroup>
 
 	<ItemGroup>
+	<PackageReference Include="Calzolari.Grpc.AspNetCore.Validation" Version="6.1.1" />
 	<PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
+	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+	<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.27.0" />
 	<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
   </ItemGroup>
 

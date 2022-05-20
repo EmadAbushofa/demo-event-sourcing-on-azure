@@ -7,9 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D32443D7-B35
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{633A85C2-26D4-4BF3-BA4F-55E6F635B66B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.Command", "src\Todo.Command\Todo.Command.csproj", "{23689D02-6539-4E0C-B429-98CC74DAF5E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.Command", "src\Todo.Command\Todo.Command.csproj", "{23689D02-6539-4E0C-B429-98CC74DAF5E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.Command.Test", "test\Todo.Command.Test\Todo.Command.Test.csproj", "{FAB6F2B6-BC11-4766-92D4-1B416CAC7E08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.Command.Test", "test\Todo.Command.Test\Todo.Command.Test.csproj", "{FAB6F2B6-BC11-4766-92D4-1B416CAC7E08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.Command.Test.Live", "test\Todo.Command.Test.Live\Todo.Command.Test.Live.csproj", "{59C4E567-A2E1-4B71-9432-601A70286C07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,10 @@ Global
 		{FAB6F2B6-BC11-4766-92D4-1B416CAC7E08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAB6F2B6-BC11-4766-92D4-1B416CAC7E08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAB6F2B6-BC11-4766-92D4-1B416CAC7E08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59C4E567-A2E1-4B71-9432-601A70286C07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59C4E567-A2E1-4B71-9432-601A70286C07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59C4E567-A2E1-4B71-9432-601A70286C07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59C4E567-A2E1-4B71-9432-601A70286C07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{23689D02-6539-4E0C-B429-98CC74DAF5E6} = {D32443D7-B350-44B4-A119-0A2EE38D6CEE}
 		{FAB6F2B6-BC11-4766-92D4-1B416CAC7E08} = {633A85C2-26D4-4BF3-BA4F-55E6F635B66B}
+		{59C4E567-A2E1-4B71-9432-601A70286C07} = {633A85C2-26D4-4BF3-BA4F-55E6F635B66B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C88369E1-DBC8-482F-B9E7-F0D49E22BA46}

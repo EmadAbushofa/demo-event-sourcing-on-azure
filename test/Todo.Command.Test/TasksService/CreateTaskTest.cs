@@ -1,5 +1,7 @@
-using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Todo.Command.Abstraction;
+using Todo.Command.Test.Helpers;
 using Todo.Command.TodoProto;
 using Xunit.Abstractions;
 
@@ -11,13 +13,19 @@ namespace Todo.Command.Test.TasksService
 
         public CreateTaskTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
-            _factory = factory.WithDefaultConfigurations(helper);
+            _factory = factory.WithDefaultConfigurations(helper, services =>
+            {
+                services.ReplaceWithInMemoryEventStore();
+            });
         }
 
 
         [Theory]
-        [InlineData("Workout", "2022-03-27 14:22:09", "Take your proteins.")]
+        [InlineData("1", "Workout", "2022-03-27 14:22:09", "Take your proteins.")]
+        [InlineData("emad-bushofa", "Read a book", "2022-04-12 20:00:00", " ")]
+        [InlineData("f52878b5-2908-4182-b933-c74ada709c7d", "Signup for a course", "2022-04-12 18:00:00", null)]
         public async void Create_SendValidRequest_TaskCreatedEventSaved(
+            string userId,
             string title,
             string dueDateString,
             string note
@@ -25,15 +33,22 @@ namespace Todo.Command.Test.TasksService
         {
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
-            var response = await client.CreateAsync(new CreateRequest()
+            var request = new CreateRequest()
             {
-                UserId = Guid.NewGuid().ToString(),
+                UserId = userId,
                 Title = title,
-                DueDate = DateTime.Parse(dueDateString).ToUniversalTime().ToTimestamp(),
+                DueDate = TestHelper.ToUtcTimestamp(dueDateString),
                 Note = note,
-            });
+            };
 
-            Assert.NotNull(response.Id);
+            var response = await client.CreateAsync(request);
+
+            var stream = _factory.Services.GetRequiredService<IEventStore>();
+
+            var @events = await stream.GetStreamAsync(response.Id);
+
+            Assert.Single(events);
+            AssertEquality.OfCreatedEvent(events[0], request, response);
         }
     }
 }
