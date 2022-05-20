@@ -1,3 +1,4 @@
+using MediatR;
 using Serilog;
 using Todo.Command.GrpcServices;
 using Todo.Command.Services;
@@ -10,8 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
 // Add services to the container.
-builder.Services.AddGrpc();
+builder.Services.AddGrpcWithValidators();
 builder.Services.AddCosmosDbEventStream(builder.Configuration);
+builder.Services.AddMediatR(typeof(Program));
 
 builder.Host.UseSerilog();
 

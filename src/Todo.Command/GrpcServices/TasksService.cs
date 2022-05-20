@@ -1,37 +1,26 @@
 using Grpc.Core;
-using Todo.Command.Abstraction;
-using Todo.Command.Events;
-using Todo.Command.Events.DataTypes;
+using MediatR;
+using Todo.Command.Extensions;
 using Todo.Command.TodoProto;
 
 namespace Todo.Command.GrpcServices
 {
     public class TasksService : Tasks.TasksBase
     {
-        private readonly IEventStore _eventStore;
-        private readonly ILogger<TasksService> _logger;
-        public TasksService(IEventStore eventStore, ILogger<TasksService> logger)
-        {
-            _eventStore = eventStore;
-            _logger = logger;
-        }
+        private readonly IMediator _mediator;
 
+        public TasksService(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
 
         public override async Task<Response> Create(CreateRequest request, ServerCallContext context)
         {
-            var @event = new TaskCreatedEvent(
-                aggregateId: Guid.NewGuid(),
-                sequence: 1,
-                userId: request.UserId,
-                data: new TaskCreatedData()
-            );
+            var command = request.ToCommand();
 
-            await _eventStore.AppendToStreamAsync(@event);
+            var id = await _mediator.Send(command);
 
-            return new Response()
-            {
-                Id = @event.AggregateId.ToString()
-            };
+            return new Response() { Id = id.ToString() };
         }
     }
 }
