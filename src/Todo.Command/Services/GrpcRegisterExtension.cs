@@ -1,4 +1,5 @@
 ﻿using Calzolari.Grpc.AspNetCore.Validation;
+using Todo.Command.GrpcServices.Interceptors;
 using Todo.Command.Validators;
 
 namespace Todo.Command.Services
@@ -7,7 +8,11 @@ namespace Todo.Command.Services
     {
         public static void AddGrpcWithValidators(this IServiceCollection services)
         {
-            services.AddGrpc(o => o.EnableMessageValidation());
+            services.AddGrpc(options =>
+            {
+                options.EnableMessageValidation();
+                options.Interceptors.Add<ApplicationExceptionInterceptor>();
+            });
 
             AddValidators(services);
         }

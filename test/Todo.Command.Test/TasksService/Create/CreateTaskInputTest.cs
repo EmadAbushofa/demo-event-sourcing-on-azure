@@ -7,17 +7,18 @@ using Todo.Command.Test.Helpers;
 using Todo.Command.TodoProto;
 using Xunit.Abstractions;
 
-namespace Todo.Command.Test.TasksService
+namespace Todo.Command.Test.TasksService.Create
 {
-    public class CreateTaskTest : IClassFixture<WebApplicationFactory<Program>>
+    public class CreateTaskInputTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
 
-        public CreateTaskTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
+        public CreateTaskInputTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
             _factory = factory.WithDefaultConfigurations(helper, services =>
             {
                 services.ReplaceWithInMemoryEventStore();
+                services.DisableQueryDuplicateDetection();
             });
         }
 
@@ -39,7 +40,7 @@ namespace Todo.Command.Test.TasksService
             {
                 UserId = userId,
                 Title = title,
-                DueDate = TestHelper.ToUtcTimestamp(dueDateString),
+                DueDate = ProtoConverters.ToUtcTimestamp(dueDateString),
                 Note = note,
             };
 
@@ -74,7 +75,7 @@ namespace Todo.Command.Test.TasksService
             {
                 UserId = userId,
                 Title = title,
-                DueDate = TestHelper.ToUtcTimestamp(dueDateString),
+                DueDate = ProtoConverters.ToUtcTimestamp(dueDateString),
             };
 
             var exception = await Assert.ThrowsAsync<RpcException>(async () => await client.CreateAsync(request));

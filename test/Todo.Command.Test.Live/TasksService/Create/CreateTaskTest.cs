@@ -5,7 +5,7 @@ using Todo.Command.Test.Helpers;
 using Todo.Command.TodoProto;
 using Xunit.Abstractions;
 
-namespace Todo.Command.Test.Live.TasksService
+namespace Todo.Command.Test.Live.TasksService.Create
 {
     public class CreateTaskTest : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -13,7 +13,10 @@ namespace Todo.Command.Test.Live.TasksService
 
         public CreateTaskTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
-            _factory = factory.WithDefaultConfigurations(helper);
+            _factory = factory.WithDefaultConfigurations(helper, services =>
+            {
+                services.DisableQueryDuplicateDetection();
+            });
         }
 
 
@@ -26,7 +29,7 @@ namespace Todo.Command.Test.Live.TasksService
             {
                 UserId = Guid.NewGuid().ToString(),
                 Title = "Read a book",
-                DueDate = TestHelper.ToUtcTimestamp("2022-04-12"),
+                DueDate = ProtoConverters.ToUtcTimestamp("2022-04-12"),
                 Note = "Domain Driven Design",
             };
 
