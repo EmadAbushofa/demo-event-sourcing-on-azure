@@ -14,7 +14,7 @@ namespace Todo.Command.Test.Helpers
 {
     public static class TestHelper
     {
-        public static WebApplicationFactory<Program> WithDefaultConfigurations(this WebApplicationFactory<Program> factory, ITestOutputHelper helper, Action<IServiceCollection> servicesConfiguration) => factory
+        public static WebApplicationFactory<Program> WithDefaultConfigurations(this WebApplicationFactory<Program> factory, ITestOutputHelper helper, Action<IServiceCollection>? servicesConfiguration = null) => factory
                .WithWebHostBuilder(builder =>
                {
                    builder.ConfigureLogging(loggingBuilder =>
@@ -25,7 +25,8 @@ namespace Todo.Command.Test.Helpers
                            .CreateLogger();
                    });
 
-                   builder.ConfigureTestServices(servicesConfiguration);
+                   if (servicesConfiguration != null)
+                       builder.ConfigureTestServices(servicesConfiguration);
                });
 
         public static void ReplaceWithInMemoryEventStore(this IServiceCollection services)

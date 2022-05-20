@@ -8,6 +8,8 @@ namespace Todo.Command.Extensions
     {
         public static TaskCreatedEvent ToEvent(this CreateTaskCommand command)
             => new(
+                aggregateId: Guid.NewGuid(),
+                sequence: 1,
                 userId: command.UserId,
                 data: new TaskCreatedData(
                     Title: command.Title,
