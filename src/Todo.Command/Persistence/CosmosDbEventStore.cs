@@ -13,10 +13,23 @@ namespace Todo.Command.Persistence
             _container = container;
         }
 
-        public async Task AppendToStreamAsync(Event @event)
+        public async Task AppendToStreamAsync(IEnumerable<Event> events, Guid aggregateId)
         {
-            var document = new Document(@event);
-            await _container.CreateItemAsync(document, new PartitionKey(document.AggregateId));
+            var partitionKey = aggregateId.ToString();
+
+            var batch = _container.CreateTransactionalBatch(new PartitionKey(partitionKey));
+
+            foreach (var @event in events)
+            {
+                var document = new Document(@event);
+
+                if (document.AggregateId != partitionKey)
+                    throw new ArgumentException("Not all events have the same aggregateId.", nameof(events));
+
+                batch.CreateItem(document);
+            }
+
+            await batch.ExecuteAsync();
         }
 
         public Task<List<Event>> GetStreamAsync(string aggregateId)

@@ -1,32 +1,28 @@
 ﻿using MediatR;
 using Todo.Command.Abstraction;
-using Todo.Command.Events;
-using Todo.Command.Events.DataTypes;
+using Todo.Command.Models;
 
 namespace Todo.Command.Features.Create
 {
     public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Guid>
     {
         private readonly IEventStore _eventStore;
-        private readonly ILogger<CreateTaskCommandHandler> _logger;
-        public CreateTaskCommandHandler(IEventStore eventStore, ILogger<CreateTaskCommandHandler> logger)
+
+        public CreateTaskCommandHandler(IEventStore eventStore)
         {
             _eventStore = eventStore;
-            _logger = logger;
         }
 
         public async Task<Guid> Handle(CreateTaskCommand command, CancellationToken cancellationToken)
         {
-            var @event = new TaskCreatedEvent(
-                aggregateId: Guid.NewGuid(),
-                sequence: 1,
-                userId: command.UserId,
-                data: new TaskCreatedData()
+            var todoTask = TodoTask.Create(command);
+
+            await _eventStore.AppendToStreamAsync(
+                events: todoTask.GetUncommittedEvents(),
+                aggregateId: todoTask.Id
             );
 
-            await _eventStore.AppendToStreamAsync(@event);
-
-            return @event.AggregateId;
+            return todoTask.Id;
         }
     }
 }

@@ -15,6 +15,9 @@ namespace Todo.Command.Test.Helpers
             Assert.Equal(DateTime.UtcNow, createdEvent.DateTime, TimeSpan.FromMinutes(1));
             Assert.Equal(1, createdEvent.Sequence);
             Assert.Equal(1, createdEvent.Version);
+            Assert.Equal(request.Title, createdEvent.Data.Title);
+            Assert.Equal(request.DueDate.ToDateTime().Date, createdEvent.Data.DueDate);
+            Assert.Equal(request.Note, createdEvent.Data.Note);
         }
     }
 }

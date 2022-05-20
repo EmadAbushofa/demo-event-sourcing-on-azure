@@ -7,14 +7,22 @@ namespace Todo.Command.Test.FakeServices
     {
         private readonly List<Event> _events = new();
 
-        public Task AppendToStreamAsync(Event @event)
+        public Task AppendToStreamAsync(IEnumerable<Event> events, Guid aggregateId)
         {
-            _events.Add(@event);
+            var partitionKey = aggregateId.ToString();
 
-            var sequenceCount = _events.Count(e => e.AggregateId == @event.AggregateId && e.Sequence == @event.Sequence);
+            foreach (var @event in events)
+            {
+                if (@event.AggregateId.ToString() != partitionKey)
+                    throw new ArgumentException("Not all events have the same aggregateId.", nameof(events));
 
-            if (sequenceCount != 1)
-                throw new InvalidOperationException("Duplicate sequence found in stream.");
+                _events.Add(@event);
+
+                var sequenceCount = _events.Count(e => e.AggregateId == @event.AggregateId && e.Sequence == @event.Sequence);
+
+                if (sequenceCount != 1)
+                    throw new InvalidOperationException("Duplicate sequence found in stream.");
+            }
 
             return Task.CompletedTask;
         }
