@@ -1,5 +1,5 @@
 ﻿using Todo.Command.Features.Create;
-using Todo.Command.TodoProto;
+using Todo.Command.Server.TodoProto;
 
 namespace Todo.Command.Extensions
 {

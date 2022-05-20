@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 
-option csharp_namespace = "Todo.Command.TodoProto";
+option csharp_namespace = "Todo.Command.Server.TodoProto";
 
 package todo.command;
 

@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Todo.Command.Abstraction;
 using Todo.Command.Exceptions;
-using Todo.Command.Infrastructure.Query;
 using Todo.Command.Models;
 
 namespace Todo.Command.Features.Create

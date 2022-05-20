@@ -1,5 +1,5 @@
 ﻿using Todo.Command.Events;
-using Todo.Command.TodoProto;
+using Todo.Command.Test.Client.TodoProto;
 
 namespace Todo.Command.Test.Helpers
 {

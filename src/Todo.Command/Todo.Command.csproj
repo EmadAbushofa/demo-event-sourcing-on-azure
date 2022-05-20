@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
@@ -8,10 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<Protobuf Include="Protos\tasks.proto" GrpcServices="Both" />
+	<Protobuf Include="Protos\Client\tasks_query.proto" GrpcServices="Client" />
+	<Protobuf Include="Protos\Server\tasks_command.proto" GrpcServices="Server" />
   </ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
 	<PackageReference Include="Calzolari.Grpc.AspNetCore.Validation" Version="6.1.1" />
 	<PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
 	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />

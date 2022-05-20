@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Todo.Command.Client.TodoQueryProto";
+
+package todo.query;
+
+service Tasks {
+  rpc Filter (FilterRequest) returns (FilterResponse);
+  rpc Find (FindRequest) returns (FindResponse);
+  rpc SimilarTitleExists (SimilarTitleExistsRequest) returns (SimilarTitleExistsResponse);
+}
+
+message FilterRequest {
+  google.protobuf.Int32Value page = 1;
+  google.protobuf.Int32Value size = 2;
+  google.protobuf.StringValue user_id = 3;
+  google.protobuf.Timestamp due_date = 4;
+}
+
+message FilterResponse {
+  int32 page = 1;
+  int32 size = 2;
+  int32 total = 3;
+  repeated TaskFilterOutput tasks = 4;
+}
+
+message TaskFilterOutput {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  google.protobuf.Timestamp due_date = 4;
+}
+
+message FindRequest {
+  string id = 1;
+}
+
+message FindResponse {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  google.protobuf.Timestamp due_date = 4;
+  google.protobuf.StringValue note = 5;
+}
+
+message SimilarTitleExistsRequest {
+  string title = 1;
+}
+
+message SimilarTitleExistsResponse {
+  google.protobuf.StringValue id = 1;
+  bool exists = 2;
+}

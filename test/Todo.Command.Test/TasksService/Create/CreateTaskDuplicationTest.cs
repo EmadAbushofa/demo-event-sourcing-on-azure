@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Helpers;
-using Todo.Command.TodoProto;
 using Xunit.Abstractions;
 
 namespace Todo.Command.Test.TasksService.Create

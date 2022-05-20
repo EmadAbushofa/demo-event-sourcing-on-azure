@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Todo.Command.Abstraction;
+using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Helpers;
-using Todo.Command.TodoProto;
 using Xunit.Abstractions;
 
 namespace Todo.Command.Test.Live.TasksService.Create
