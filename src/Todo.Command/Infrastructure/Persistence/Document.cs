@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Todo.Command.Events;
 
-namespace Todo.Command.Persistence
+namespace Todo.Command.Infrastructure.Persistence
 {
     public class Document
     {
