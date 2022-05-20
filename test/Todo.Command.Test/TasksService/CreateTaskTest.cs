@@ -21,9 +21,9 @@ namespace Todo.Command.Test.TasksService
 
 
         [Theory]
-        [InlineData("1", "Workout", "2022-03-27 14:22:09", "Take your proteins.")]
-        [InlineData("emad-bushofa", "Read a book", "2022-04-12 20:00:00", " ")]
-        [InlineData("f52878b5-2908-4182-b933-c74ada709c7d", "Signup for a course", "2022-04-12 18:00:00", null)]
+        [InlineData("1", "Workout", "2022-03-27", "Take your proteins.")]
+        [InlineData("emad-bushofa", "Read a book", "2022-04-12", " ")]
+        [InlineData("f52878b5-2908-4182-b933-c74ada709c7d", "Signup for a course", "2022-04-12", null)]
         public async void Create_SendValidRequest_TaskCreatedEventSaved(
             string userId,
             string title,
