@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddGrpcWithValidators();
 builder.Services.AddMediatR(typeof(Program));
+builder.Services.AddEntityFramework(builder.Configuration);
 
 builder.Host.UseSerilog();
 
