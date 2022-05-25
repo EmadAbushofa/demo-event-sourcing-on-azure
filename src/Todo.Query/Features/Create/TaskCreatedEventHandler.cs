@@ -14,6 +14,9 @@ namespace Todo.Query.Features.Create
 
         public async Task<bool> Handle(TaskCreatedEvent @event, CancellationToken cancellationToken)
         {
+            if (await _unitOfWork.Tasks.ExistsAsync(@event.AggregateId))
+                return true;
+
             var task = TodoTask.FromCreatedEvent(@event);
 
             await _unitOfWork.Tasks.AddAsync(task);

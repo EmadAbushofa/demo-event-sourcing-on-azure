@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Todo.Query.Abstractions;
 using Todo.Query.Features.Create;
 using Todo.Query.Infrastructure.Data;
 using Todo.Query.Test.Fakers;
@@ -23,7 +25,7 @@ namespace Todo.Query.Test.Handlers
 
 
         [Fact]
-        public async void TaskCreated_HandleArrivedEvent_TaskSavedInDb()
+        public async void TaskCreated_NewEventArrived_TaskSaved()
         {
             bool isHandled;
             TaskCreatedEvent @event;
@@ -46,6 +48,40 @@ namespace Todo.Query.Test.Handlers
                 Assert.True(isHandled);
                 AssertEquality.OfEventAndTask(@event, todoTask);
             }
+        }
+
+
+        [Fact]
+        public async void TaskCreated_DuplicateEventArrived_TaskNotSaved()
+        {
+            bool isHandled;
+
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var @event = new TaskCreatedEventFaker().Generate();
+                await CreateTaskFromEventAsync(@event, scope);
+
+                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+                isHandled = await mediator.Send(@event);
+            }
+
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
+
+                var tasks = await context.Tasks.ToListAsync();
+
+                Assert.True(isHandled);
+                Assert.Single(tasks);
+            }
+        }
+
+        private static async Task CreateTaskFromEventAsync(TaskCreatedEvent @event, IServiceScope scope)
+        {
+            var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
+            await context.Tasks.AddAsync(TodoTask.FromCreatedEvent(@event));
+            await context.SaveChangesAsync();
         }
     }
 }

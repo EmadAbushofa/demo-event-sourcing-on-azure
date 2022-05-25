@@ -1,4 +1,5 @@
-﻿using Todo.Query.Abstractions;
+﻿using Microsoft.EntityFrameworkCore;
+using Todo.Query.Abstractions;
 
 namespace Todo.Query.Infrastructure.Data
 {
@@ -11,9 +12,8 @@ namespace Todo.Query.Infrastructure.Data
             _context = context;
         }
 
-        public Task AddAsync(TodoTask task)
-        {
-            return _context.Tasks.AddAsync(task).AsTask();
-        }
+        public Task<bool> ExistsAsync(Guid id) => _context.Tasks.AnyAsync(t => t.Id == id);
+
+        public Task AddAsync(TodoTask task) => _context.Tasks.AddAsync(task).AsTask();
     }
 }
