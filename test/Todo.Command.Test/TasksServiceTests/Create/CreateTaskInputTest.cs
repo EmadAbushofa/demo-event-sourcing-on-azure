@@ -7,7 +7,7 @@ using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Helpers;
 using Xunit.Abstractions;
 
-namespace Todo.Command.Test.TasksService.Create
+namespace Todo.Command.Test.TasksServiceTests.Create
 {
     public class CreateTaskInputTest : IClassFixture<WebApplicationFactory<Program>>
     {

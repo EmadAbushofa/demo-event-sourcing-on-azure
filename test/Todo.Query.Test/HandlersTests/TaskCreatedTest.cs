@@ -5,11 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Todo.Query.Abstractions;
 using Todo.Query.Features.Create;
 using Todo.Query.Infrastructure.Data;
-using Todo.Query.Test.Fakers;
+using Todo.Query.Test.Fakers.TaskCreated;
 using Todo.Query.Test.Helpers;
 using Xunit.Abstractions;
 
-namespace Todo.Query.Test.Handlers
+namespace Todo.Query.Test.HandlersTests
 {
     public class TaskCreatedTest : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -59,6 +59,7 @@ namespace Todo.Query.Test.Handlers
             using (var scope = _factory.Services.CreateScope())
             {
                 var @event = new TaskCreatedEventFaker().Generate();
+
                 await CreateTaskFromEventAsync(@event, scope);
 
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
