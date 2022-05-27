@@ -1,7 +1,7 @@
 ﻿using Calzolari.Grpc.AspNetCore.Validation;
 using Todo.Query.GrpcServices.Interceptors;
 
-namespace Todo.Query.Services
+namespace Todo.Query.ServicesExtensions
 {
     public static class GrpcRegisterExtension
     {

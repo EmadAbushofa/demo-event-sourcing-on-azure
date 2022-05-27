@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "Todo.Command.Server.DemoEventsProto";
+
+package todo.command;
+
+service DemoEvents {
+  rpc Create (CreateRequest) returns (google.protobuf.Empty);
+  rpc UpdateInfo (UpdateInfoRequest) returns (google.protobuf.Empty);
+  rpc ChangeDueDate (ChangeDueDateRequest) returns (google.protobuf.Empty);
+  rpc Complete (CompleteRequest) returns (google.protobuf.Empty);
+  rpc Delete (DeleteRequest) returns (google.protobuf.Empty);
+}
+
+message CreateRequest {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  google.protobuf.Timestamp due_date = 4;
+  google.protobuf.StringValue note = 5;
+}
+
+message UpdateInfoRequest {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  google.protobuf.StringValue note = 4;
+}
+
+message ChangeDueDateRequest {
+  string id = 1;
+  string user_id = 2;
+  google.protobuf.Timestamp due_date = 3;
+}
+
+message CompleteRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message DeleteRequest {
+  string id = 1;
+  string user_id = 2;
+}

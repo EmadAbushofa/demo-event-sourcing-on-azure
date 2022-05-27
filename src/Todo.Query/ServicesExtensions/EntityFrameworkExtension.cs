@@ -2,9 +2,9 @@
 using Todo.Query.Abstractions;
 using Todo.Query.Infrastructure.Data;
 
-namespace Todo.Query.Services
+namespace Todo.Query.ServicesExtensions
 {
-    public static class DatabaseExtension
+    public static class EntityFrameworkExtension
     {
         public static void AddEntityFramework(this IServiceCollection services, IConfiguration configuration)
         {

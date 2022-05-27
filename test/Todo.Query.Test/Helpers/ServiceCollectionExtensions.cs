@@ -12,6 +12,10 @@ namespace Todo.Query.Test.Helpers
 
             services.Remove(descriptor);
 
+            descriptor = services.Single(d => d.ImplementationType == typeof(DatabaseRunner));
+
+            services.Remove(descriptor);
+
             var dbName = Guid.NewGuid().ToString();
 
             services.AddDbContext<TodoTasksDbContext>(options => options.UseInMemoryDatabase(dbName));

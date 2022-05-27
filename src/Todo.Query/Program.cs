@@ -2,6 +2,7 @@ using MediatR;
 using Serilog;
 using Todo.Query.GrpcServices;
 using Todo.Query.Services;
+using Todo.Query.ServicesExtensions;
 
 Log.Logger = LoggerServiceBuilder.Build();
 
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpcWithValidators();
 builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddEntityFramework(builder.Configuration);
+builder.Services.AddHostedServices();
 
 builder.Host.UseSerilog();
 
