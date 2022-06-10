@@ -64,6 +64,8 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
 
             var response = await client.CreateAsync(request);
 
+            listener.Events.Clear();
+
             await Task.Delay(3000);
 
             await listener.CloseAsync();

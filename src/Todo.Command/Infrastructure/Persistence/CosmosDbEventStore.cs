@@ -47,7 +47,7 @@ namespace Todo.Command.Infrastructure.Persistence
         {
             var list = new List<Event>();
 
-            var feedIterator = _container.GetItemQueryIterator<Document>($"SELECT * FROM {_container.Id} WHERE aggregateId = '{aggregateId}'");
+            var feedIterator = _container.GetItemQueryIterator<Document>($"SELECT * FROM c WHERE c.aggregateId = '{aggregateId}'");
 
             while (feedIterator.HasMoreResults)
             {
