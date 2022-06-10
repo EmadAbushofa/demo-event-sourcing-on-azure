@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos;
-using Todo.Command.Abstraction;
+using Todo.Command.Abstractions;
 using Todo.Command.Events;
+using Todo.Command.Models;
 
 namespace Todo.Command.Infrastructure.Persistence
 {
@@ -13,9 +14,19 @@ namespace Todo.Command.Infrastructure.Persistence
             _container = container;
         }
 
-        public async Task AppendToStreamAsync(IEnumerable<Event> events, Guid aggregateId)
+        public async Task AppendToStreamAsync(IAggregate aggregate)
         {
-            var partitionKey = aggregateId.ToString();
+            await CreateAsync(aggregate.GetUncommittedEvents());
+
+            aggregate.MarkChangesAsCommitted();
+        }
+
+        public Task AppendToStreamAsync(Event @event)
+            => CreateAsync(new Event[] { @event });
+
+        private Task CreateAsync(IReadOnlyList<Event> events)
+        {
+            var partitionKey = events[0].AggregateId.ToString();
 
             var batch = _container.CreateTransactionalBatch(new PartitionKey(partitionKey));
 
@@ -23,13 +34,10 @@ namespace Todo.Command.Infrastructure.Persistence
             {
                 var document = new Document(@event);
 
-                if (document.AggregateId != partitionKey)
-                    throw new ArgumentException("Not all events have the same aggregateId.", nameof(events));
-
                 batch.CreateItem(document);
             }
 
-            await batch.ExecuteAsync();
+            return batch.ExecuteAsync();
         }
 
         public Task<List<Event>> GetStreamAsync(string aggregateId)

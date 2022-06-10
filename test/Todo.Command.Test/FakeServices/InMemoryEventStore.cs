@@ -1,5 +1,6 @@
-﻿using Todo.Command.Abstraction;
+﻿using Todo.Command.Abstractions;
 using Todo.Command.Events;
+using Todo.Command.Models;
 
 namespace Todo.Command.Test.FakeServices
 {
@@ -7,23 +8,19 @@ namespace Todo.Command.Test.FakeServices
     {
         private readonly List<Event> _events = new();
 
-        public Task AppendToStreamAsync(IEnumerable<Event> events, Guid aggregateId)
+        public Task AppendToStreamAsync(IAggregate aggregate)
         {
-            var partitionKey = aggregateId.ToString();
-
-            foreach (var @event in events)
+            foreach (var @event in aggregate.GetUncommittedEvents())
             {
-                if (@event.AggregateId.ToString() != partitionKey)
-                    throw new ArgumentException("Not all events have the same aggregateId.", nameof(events));
-
                 _events.Add(@event);
-
-                var sequenceCount = _events.Count(e => e.AggregateId == @event.AggregateId && e.Sequence == @event.Sequence);
-
-                if (sequenceCount != 1)
-                    throw new InvalidOperationException("Duplicate sequence found in stream.");
             }
 
+            return Task.CompletedTask;
+        }
+
+        public Task AppendToStreamAsync(Event @event)
+        {
+            _events.Add(@event);
             return Task.CompletedTask;
         }
 

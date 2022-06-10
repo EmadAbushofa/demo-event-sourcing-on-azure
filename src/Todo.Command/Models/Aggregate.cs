@@ -2,7 +2,7 @@
 
 namespace Todo.Command.Models
 {
-    public abstract class Aggregate<T> where T : Aggregate<T>
+    public abstract class Aggregate<T> where T : Aggregate<T>, IAggregate
     {
         private readonly List<Event> _uncommittedEvents = new();
 

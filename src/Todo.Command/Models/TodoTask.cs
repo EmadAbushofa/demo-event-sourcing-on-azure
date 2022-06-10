@@ -4,7 +4,7 @@ using Todo.Command.Features.Create;
 
 namespace Todo.Command.Models
 {
-    public class TodoTask : Aggregate<TodoTask>
+    public class TodoTask : Aggregate<TodoTask>, IAggregate
     {
         public static TodoTask Create(CreateTaskCommand command)
         {

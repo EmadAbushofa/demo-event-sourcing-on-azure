@@ -1,4 +1,4 @@
-﻿namespace Todo.Command.Abstraction
+﻿namespace Todo.Command.Abstractions
 {
     public interface ITodoQuery
     {

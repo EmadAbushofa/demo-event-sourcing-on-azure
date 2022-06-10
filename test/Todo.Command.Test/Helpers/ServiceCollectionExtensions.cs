@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Todo.Command.Abstraction;
+using Todo.Command.Abstractions;
 using Todo.Command.Test.FakeServices;
 
 namespace Todo.Command.Test.Helpers

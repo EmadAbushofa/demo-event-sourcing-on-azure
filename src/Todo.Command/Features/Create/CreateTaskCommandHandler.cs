@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Todo.Command.Abstraction;
+using Todo.Command.Abstractions;
 using Todo.Command.Exceptions;
 using Todo.Command.Models;
 
@@ -23,10 +23,7 @@ namespace Todo.Command.Features.Create
 
             var todoTask = TodoTask.Create(command);
 
-            await _eventStore.AppendToStreamAsync(
-                events: todoTask.GetUncommittedEvents(),
-                aggregateId: todoTask.Id
-            );
+            await _eventStore.AppendToStreamAsync(todoTask);
 
             return todoTask.Id;
         }

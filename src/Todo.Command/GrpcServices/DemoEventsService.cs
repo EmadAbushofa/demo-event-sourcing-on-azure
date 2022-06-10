@@ -1,6 +1,6 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using Todo.Command.Abstraction;
+using Todo.Command.Abstractions;
 using Todo.Command.Events;
 using Todo.Command.Server.DemoEventsProto;
 
@@ -32,7 +32,7 @@ namespace Todo.Command.GrpcServices
                 )
             );
 
-            await _eventStore.AppendToStreamAsync(new Event[] { @event }, @event.AggregateId);
+            await _eventStore.AppendToStreamAsync(@event);
 
             return new Empty();
         }

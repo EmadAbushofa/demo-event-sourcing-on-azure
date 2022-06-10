@@ -1,4 +1,4 @@
-﻿using Todo.Command.Abstraction;
+﻿using Todo.Command.Abstractions;
 
 namespace Todo.Command.Infrastructure.Query
 {
