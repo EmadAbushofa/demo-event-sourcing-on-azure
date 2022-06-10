@@ -2,7 +2,7 @@
 using Grpc.Core.Interceptors;
 using Todo.Command.Exceptions;
 
-namespace Todo.Command.GrpcServices.Interceptors
+namespace Todo.Command.Interceptors
 {
     public class ApplicationExceptionInterceptor : Interceptor
     {

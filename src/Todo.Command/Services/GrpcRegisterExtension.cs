@@ -1,5 +1,5 @@
 ﻿using Calzolari.Grpc.AspNetCore.Validation;
-using Todo.Command.GrpcServices.Interceptors;
+using Todo.Command.Interceptors;
 using Todo.Command.Validators;
 
 namespace Todo.Command.Services
