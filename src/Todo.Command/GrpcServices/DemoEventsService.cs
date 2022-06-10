@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.Azure.Cosmos;
 using Todo.Command.Abstractions;
 using Todo.Command.Events;
 using Todo.Command.Server.DemoEventsProto;
@@ -9,13 +10,19 @@ namespace Todo.Command.GrpcServices
     public class DemoEventsService : DemoEvents.DemoEventsBase
     {
         private readonly IEventStore _eventStore;
+        private readonly Container _container;
 
-        public DemoEventsService(IEventStore eventStore, IWebHostEnvironment environment)
+        public DemoEventsService(
+            IEventStore eventStore,
+            IWebHostEnvironment environment,
+            Container container
+        )
         {
             if (environment.IsDevelopment() == false)
                 throw new InvalidOperationException("Cannot send demo requests in non development environment.");
 
             _eventStore = eventStore;
+            _container = container;
         }
 
 
@@ -33,6 +40,13 @@ namespace Todo.Command.GrpcServices
             );
 
             await _eventStore.AppendToStreamAsync(@event);
+
+            await Task.Delay(3000);
+
+            _container.DeleteItemStreamAsync(
+                id: @event.Sequence.ToString(),
+                partitionKey: new PartitionKey(@event.AggregateId.ToString())
+            ).GetAwaiter();
 
             return new Empty();
         }

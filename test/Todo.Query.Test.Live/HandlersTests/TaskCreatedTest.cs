@@ -37,6 +37,8 @@ namespace Todo.Query.Test.HandlersTests
 
             using var scope = _factory.Services.CreateScope();
 
+            await Task.Delay(3000);
+
             var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
 
             var todoTask = await context.Tasks.FindAsync(@event.AggregateId);

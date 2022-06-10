@@ -8,7 +8,7 @@ namespace Todo.Query.ServicesExtensions
     {
         public static void AddEntityFramework(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("Database");
 
             services.AddDbContext<TodoTasksDbContext>(
                 options => options.UseSqlServer(connectionString)

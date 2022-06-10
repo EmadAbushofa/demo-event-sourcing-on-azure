@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpcWithValidators();
 builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddEntityFramework(builder.Configuration);
+builder.Services.AddServiceBus();
 builder.Services.AddHostedServices();
 
 builder.Host.UseSerilog();
