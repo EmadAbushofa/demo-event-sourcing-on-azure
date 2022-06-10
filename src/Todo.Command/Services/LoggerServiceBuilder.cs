@@ -16,7 +16,7 @@ namespace Todo.Command.Services
             var appName = serilogConfiguration["AppName"];
 
             var logger = new LoggerConfiguration()
-                .Enrich.WithProperty("name", appName)
+                .Enrich.WithProperty("Name", appName)
                 .ReadFrom.Configuration(configuration);
 
             return logger.CreateLogger();

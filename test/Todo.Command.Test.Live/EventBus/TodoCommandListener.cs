@@ -41,7 +41,7 @@ namespace Todo.Command.Test.Live.EventBus
 
             Events.Add(@event);
 
-            return Task.CompletedTask;
+            return arg.CompleteMessageAsync(arg.Message);
         }
 
         private Task Processor_ProcessErrorAsync(ProcessErrorEventArgs arg) => throw arg.Exception;
