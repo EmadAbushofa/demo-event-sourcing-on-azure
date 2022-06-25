@@ -17,7 +17,7 @@
 	<PackageReference Include="Calzolari.Grpc.AspNetCore.Validation" Version="6.1.1" />
 	<PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
 	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-	<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.27.0" />
+	<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.28.0" />
 	<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
   </ItemGroup>
 
