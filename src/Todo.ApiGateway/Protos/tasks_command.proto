@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Todo.ApiGateway.TodoProto.Command";
+
+package todo.command;
+
+service Tasks {
+  rpc Create (CreateRequest) returns (Response);
+  rpc UpdateInfo (UpdateInfoRequest) returns (Response);
+  rpc ChangeDueDate (ChangeDueDateRequest) returns (Response);
+  rpc Complete (CompleteRequest) returns (Response);
+  rpc Delete (DeleteRequest) returns (Response);
+}
+
+message CreateRequest {
+  string user_id = 1;
+  string title = 2;
+  google.protobuf.Timestamp due_date = 3;
+  google.protobuf.StringValue note = 4;
+}
+
+message UpdateInfoRequest {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  google.protobuf.StringValue note = 4;
+}
+
+message ChangeDueDateRequest {
+  string id = 1;
+  string user_id = 2;
+  google.protobuf.Timestamp due_date = 3;
+}
+
+message CompleteRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message DeleteRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message Response {
+  string id = 1;
+}

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
+using Todo.ApiGateway.Models.TodoTasks;
 using Todo.ApiGateway.Test.Helpers;
+using Todo.ApiGateway.Test.Live.Helpers;
 using Xunit.Abstractions;
 
 namespace Todo.ApiGateway.Test.TasksServiceTests.Create
@@ -18,13 +20,20 @@ namespace Todo.ApiGateway.Test.TasksServiceTests.Create
 
 
         [Fact]
-        public async void Create_SendValidRequest_TaskCreatedEventSaved()
+        public async void Create_SendValidRequest_ReturnOk()
         {
             var client = _factory.CreateClient();
 
-            var response = await client.GetAsync("WeatherForecast");
+            var input = new CreateTaskInput()
+            {
+                DueDate = DateTime.UtcNow,
+                Note = "Some note",
+                Title = $"My title {DateTime.UtcNow.Ticks}"
+            };
 
-            response.EnsureSuccessStatusCode();
+            var response = await client.PostJsonAsync<InputResponse>("api/todo-tasks", input);
+
+            Assert.NotEmpty(response.Id);
         }
     }
 }

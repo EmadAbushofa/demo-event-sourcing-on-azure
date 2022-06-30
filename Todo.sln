@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{5868
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{7D62C3B6-6F4B-40DA-BDD0-BB22D99AF143}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.ApiGateway.Test.Live", "test\Todo.ApiGateway.Test.Live\Todo.ApiGateway.Test.Live.csproj", "{D9C0A4A6-5068-4934-B332-3206D63F7008}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.ApiGateway.Test.Live", "test\Todo.ApiGateway.Test.Live\Todo.ApiGateway.Test.Live.csproj", "{D9C0A4A6-5068-4934-B332-3206D63F7008}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
