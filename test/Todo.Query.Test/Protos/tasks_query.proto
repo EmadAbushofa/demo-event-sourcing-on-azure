@@ -32,6 +32,7 @@ message TaskFilterOutput {
   string user_id = 2;
   string title = 3;
   google.protobuf.Timestamp due_date = 4;
+  bool is_completed = 5;
 }
 
 message FindRequest {
@@ -44,6 +45,7 @@ message FindResponse {
   string title = 3;
   google.protobuf.Timestamp due_date = 4;
   google.protobuf.StringValue note = 5;
+  bool is_completed = 6;
 }
 
 message SimilarTitleExistsRequest {

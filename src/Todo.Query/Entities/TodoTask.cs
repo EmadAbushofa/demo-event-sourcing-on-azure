@@ -1,6 +1,6 @@
 ﻿using Todo.Query.EventHandlers.Created;
 
-namespace Todo.Query.Abstractions
+namespace Todo.Query.Entities
 {
     public class TodoTask
     {

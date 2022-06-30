@@ -1,5 +1,6 @@
-﻿using Todo.Query.Abstractions;
+﻿using Todo.Query.Entities;
 using Todo.Query.EventHandlers.Created;
+using Todo.Query.Test.Client.TodoProto;
 
 namespace Todo.Query.Test.Helpers
 {
@@ -19,6 +20,18 @@ namespace Todo.Query.Test.Helpers
             Assert.Equal(@event.Data.Title, todoTask.Title);
             Assert.Equal(@event.Data.DueDate, todoTask.DueDate);
             Assert.Equal(@event.Data.Note, todoTask.Note);
+        }
+
+        public static void OfTaskAndResponse(TodoTask todoTask, FindResponse response)
+        {
+            Assert.NotNull(response);
+
+            Assert.Equal(todoTask.Id.ToString(), response.Id);
+            Assert.Equal(todoTask.UserId, response.UserId);
+            Assert.Equal(todoTask.IsCompleted, response.IsCompleted);
+            Assert.Equal(todoTask.Title, response.Title);
+            Assert.Equal(todoTask.DueDate, response.DueDate.ToDateTime());
+            Assert.Equal(todoTask.Note, response.Note);
         }
     }
 }

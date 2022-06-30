@@ -1,5 +1,6 @@
 ﻿using Calzolari.Grpc.AspNetCore.Validation;
 using Todo.Query.GrpcServices.Interceptors;
+using Todo.Query.Validators;
 
 namespace Todo.Query.ServicesExtensions
 {
@@ -20,6 +21,7 @@ namespace Todo.Query.ServicesExtensions
         private static void AddValidators(IServiceCollection services)
         {
             services.AddGrpcValidation();
+            services.AddValidator<FindRequestValidator>();
         }
     }
 }

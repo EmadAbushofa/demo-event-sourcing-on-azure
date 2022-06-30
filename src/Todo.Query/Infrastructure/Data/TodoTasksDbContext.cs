@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Todo.Query.Abstractions;
+using Todo.Query.Entities;
 using Todo.Query.Infrastructure.Data.Configurations;
 
 namespace Todo.Query.Infrastructure.Data

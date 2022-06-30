@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Todo.Query.Abstractions;
+using Todo.Query.Entities;
 
 namespace Todo.Query.Infrastructure.Data.Configurations
 {

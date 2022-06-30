@@ -8,6 +8,10 @@
 	<IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Protos\tasks_query.proto" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="34.0.2" />
 		<PackageReference Include="Calzolari.Grpc.Net.Client.Validation" Version="6.1.1" />
@@ -33,5 +37,9 @@
 	<ItemGroup>
 	<ProjectReference Include="..\..\src\Todo.Query\Todo.Query.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+	  <Protobuf Include="Protos\tasks_query.proto" GrpcServices="Client" />
+	</ItemGroup>
 
 </Project>
