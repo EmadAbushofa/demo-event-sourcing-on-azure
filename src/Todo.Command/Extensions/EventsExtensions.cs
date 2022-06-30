@@ -1,6 +1,6 @@
-﻿using Todo.Command.Events;
+﻿using Todo.Command.CommandHandlers.Create;
+using Todo.Command.Events;
 using Todo.Command.Events.DataTypes;
-using Todo.Command.Features.Create;
 
 namespace Todo.Command.Extensions
 {

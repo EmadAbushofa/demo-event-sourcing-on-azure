@@ -3,7 +3,7 @@ using Todo.Command.Abstractions;
 using Todo.Command.Exceptions;
 using Todo.Command.Models;
 
-namespace Todo.Command.Features.Create
+namespace Todo.Command.CommandHandlers.Create
 {
     public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Guid>
     {

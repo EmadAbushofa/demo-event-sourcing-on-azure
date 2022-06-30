@@ -1,6 +1,6 @@
-﻿using Todo.Command.Events;
+﻿using Todo.Command.CommandHandlers.Create;
+using Todo.Command.Events;
 using Todo.Command.Extensions;
-using Todo.Command.Features.Create;
 
 namespace Todo.Command.Models
 {
