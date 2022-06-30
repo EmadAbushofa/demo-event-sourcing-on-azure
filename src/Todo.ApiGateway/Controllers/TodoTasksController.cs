@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using Todo.ApiGateway.Extensions;
 using Todo.ApiGateway.Models.TodoTasks;
-using Todo.ApiGateway.TodoProto.Command;
+using Todo.ApiGateway.TodoProto.Query;
+using CommandClient = Todo.ApiGateway.TodoProto.Command.Tasks.TasksClient;
+using QueryClient = Todo.ApiGateway.TodoProto.Query.Tasks.TasksClient;
 
 namespace Todo.ApiGateway.Controllers
 {
@@ -13,13 +15,28 @@ namespace Todo.ApiGateway.Controllers
     [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class TodoTasksController : ControllerBase
     {
-        private readonly Tasks.TasksClient _commandClient;
+        private readonly CommandClient _commandClient;
+        private readonly QueryClient _queryClient;
 
-        public TodoTasksController(Tasks.TasksClient commandClient)
+        public TodoTasksController(
+            CommandClient commandClient,
+            QueryClient queryClient
+        )
         {
             _commandClient = commandClient;
+            _queryClient = queryClient;
         }
 
+
+        [HttpGet("{id}")]
+        public async Task<TodoTaskOutput> FindAsync(string id)
+        {
+            var request = new FindRequest() { Id = id };
+
+            var response = await _queryClient.FindAsync(request);
+
+            return response.ToOutput();
+        }
 
         [HttpPost]
         public async Task<InputResponse> CreateAsync([FromBody] CreateTaskInput input)

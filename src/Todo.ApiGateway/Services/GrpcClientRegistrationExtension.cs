@@ -1,4 +1,6 @@
-﻿using Todo.ApiGateway.TodoProto.Command;
+﻿using CommandClient = Todo.ApiGateway.TodoProto.Command.Tasks.TasksClient;
+using QueryClient = Todo.ApiGateway.TodoProto.Query.Tasks.TasksClient;
+
 
 namespace Todo.ApiGateway.Services
 {
@@ -8,9 +10,14 @@ namespace Todo.ApiGateway.Services
         {
             configuration = configuration.GetSection("ServicesUrls");
 
-            services.AddGrpcClient<Tasks.TasksClient>(o =>
+            services.AddGrpcClient<CommandClient>(nameof(CommandClient), o =>
             {
                 o.Address = new Uri(configuration["TodoCommandUrl"]);
+            });
+
+            services.AddGrpcClient<QueryClient>(nameof(QueryClient), o =>
+            {
+                o.Address = new Uri(configuration["TodoQueryUrl"]);
             });
         }
     }

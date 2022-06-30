@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="Protos\tasks_command.proto" />
+    <None Remove="Protos\tasks_query.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
     <Protobuf Include="Protos\tasks_command.proto">
       <GrpcServices>Client</GrpcServices>
     </Protobuf>
+    <Protobuf Include="Protos\tasks_query.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

@@ -33,7 +33,11 @@ namespace Todo.ApiGateway.Test.TasksServiceTests.Create
 
             var response = await client.PostJsonAsync<InputResponse>("api/todo-tasks", input);
 
-            Assert.NotEmpty(response.Id);
+            await Task.Delay(4000);
+
+            var output = await client.GetAsync<TodoTaskOutput>($"api/todo-tasks/{response.Id}");
+
+            Assert.NotNull(output);
         }
     }
 }

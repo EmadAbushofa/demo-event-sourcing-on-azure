@@ -13,6 +13,22 @@ namespace Todo.ApiGateway.Test.Live.Helpers
         }
 
 
+        public static async Task<TResult> GetAsync<TResult>(this HttpClient client, string url)
+        {
+            var response = await client.GetAsync(url);
+
+            response.EnsureSuccessStatusCode();
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var result = DeserializeJson<TResult>(body);
+
+            Assert.NotNull(result);
+
+            return result!;
+        }
+
+
         public static async Task<TResult> PostJsonAsync<TResult>(this HttpClient client, string url, object value)
         {
             var input = value.ToHttpContent();
@@ -23,11 +39,19 @@ namespace Todo.ApiGateway.Test.Live.Helpers
 
             var body = await response.Content.ReadAsStringAsync();
 
-            var result = JsonSerializer.Deserialize<TResult>(body);
+            var result = DeserializeJson<TResult>(body);
 
             Assert.NotNull(result);
 
             return result!;
         }
+
+        private static TValue? DeserializeJson<TValue>(string value)
+            => JsonSerializer.Deserialize<TValue>(value, new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = false,
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
     }
 }
