@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
 using Todo.ApiGateway.Models.TodoTasks;
 using Todo.ApiGateway.Test.Helpers;
 using Todo.ApiGateway.Test.Live.Helpers;
@@ -18,9 +19,8 @@ namespace Todo.ApiGateway.Test.TasksServiceTests.Create
             });
         }
 
-
         [Fact]
-        public async void Create_SendValidRequest_ReturnOk()
+        public async void Create_SendValidCommand_QueryResultSucceed()
         {
             var client = _factory.CreateClient();
 
@@ -38,6 +38,22 @@ namespace Todo.ApiGateway.Test.TasksServiceTests.Create
             var output = await client.GetAsync<TodoTaskOutput>($"api/todo-tasks/{response.Id}");
 
             Assert.NotNull(output);
+        }
+
+        [Fact]
+        public async void Create_SendInvalidCommand_ReturnBadRequest()
+        {
+            var client = _factory.CreateClient();
+
+            var input = new CreateTaskInput().ToHttpContent();
+
+            var response = await client.PostAsync("api/todo-tasks", input);
+
+            var result = await response.GetErrorResult();
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.NotEmpty(result.Detail);
+            Assert.NotEmpty(result.Errors);
         }
     }
 }

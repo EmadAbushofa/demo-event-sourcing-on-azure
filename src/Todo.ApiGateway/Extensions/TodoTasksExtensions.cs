@@ -23,9 +23,9 @@ namespace Todo.ApiGateway.Extensions
             => new()
             {
                 UserId = claims.GetUserId(),
-                DueDate = input.DueDate.ToTimestamp(),
+                DueDate = input.DueDate.ToUniversalTime().ToTimestamp(),
                 Note = input.Note,
-                Title = input.Title,
+                Title = input.Title ?? "",
             };
     }
 }

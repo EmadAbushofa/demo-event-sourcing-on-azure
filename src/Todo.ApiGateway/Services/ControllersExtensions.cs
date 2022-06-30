@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System.Text.RegularExpressions;
+using Todo.ApiGateway.ActionFilters;
 
 namespace Todo.ApiGateway.Services
 {
@@ -11,6 +12,8 @@ namespace Todo.ApiGateway.Services
             {
                 options.Conventions
                     .Add(new SlugifyControllerNamesConvention());
+
+                options.Filters.Add<HttpResponseExceptionFilter>();
             });
         }
 

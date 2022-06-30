@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using System.Text.Json;
 
 namespace Todo.ApiGateway.Test.Live.Helpers
@@ -12,6 +13,16 @@ namespace Todo.ApiGateway.Test.Live.Helpers
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
 
+        public static async Task<ValidationProblemDetails> GetErrorResult(this HttpResponseMessage message)
+        {
+            var body = await message.Content.ReadAsStringAsync();
+
+            var result = DeserializeJson<ValidationProblemDetails>(body);
+
+            Assert.NotNull(result);
+
+            return result!;
+        }
 
         public static async Task<TResult> GetAsync<TResult>(this HttpClient client, string url)
         {
