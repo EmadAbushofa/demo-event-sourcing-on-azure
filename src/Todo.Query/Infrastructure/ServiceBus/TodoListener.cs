@@ -3,7 +3,7 @@ using MediatR;
 using Newtonsoft.Json;
 using System.Text;
 using Todo.Query.Enums;
-using Todo.Query.Features.Create;
+using Todo.Query.EventHandlers.Created;
 
 namespace Todo.Query.Infrastructure.ServiceBus
 {

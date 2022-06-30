@@ -1,4 +1,4 @@
-﻿using Todo.Query.Features;
+﻿using Todo.Query.EventHandlers;
 
 namespace Todo.Query.Test.Fakers
 {

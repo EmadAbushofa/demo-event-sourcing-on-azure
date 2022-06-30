@@ -1,6 +1,6 @@
 ﻿using Todo.Query.Enums;
 
-namespace Todo.Query.Features
+namespace Todo.Query.EventHandlers
 {
     public record Event<T>(
         Guid AggregateId,

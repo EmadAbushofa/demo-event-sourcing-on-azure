@@ -1,4 +1,4 @@
-﻿using Todo.Query.Features.Create;
+﻿using Todo.Query.EventHandlers.Created;
 
 namespace Todo.Query.Test.Fakers.TaskCreated
 {

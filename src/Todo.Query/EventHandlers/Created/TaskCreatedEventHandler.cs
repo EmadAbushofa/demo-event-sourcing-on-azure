@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Todo.Query.Abstractions;
 
-namespace Todo.Query.Features.Create
+namespace Todo.Query.EventHandlers.Created
 {
     public class TaskCreatedEventHandler : IRequestHandler<TaskCreatedEvent, bool>
     {

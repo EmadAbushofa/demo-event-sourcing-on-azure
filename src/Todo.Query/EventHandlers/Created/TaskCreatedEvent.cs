@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Todo.Query.Enums;
 
-namespace Todo.Query.Features.Create
+namespace Todo.Query.EventHandlers.Created
 {
     public record TaskCreatedEvent(
         Guid AggregateId,

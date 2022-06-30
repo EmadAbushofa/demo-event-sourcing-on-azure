@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Todo.Query.Abstractions;
-using Todo.Query.Features.Create;
+using Todo.Query.EventHandlers.Created;
 using Todo.Query.Infrastructure.Data;
 using Todo.Query.Test.Fakers.TaskCreated;
 using Todo.Query.Test.Helpers;

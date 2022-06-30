@@ -1,4 +1,4 @@
-﻿namespace Todo.Query.Features.Create
+﻿namespace Todo.Query.EventHandlers.Created
 {
     public record TaskCreatedData(
         string Title,
