@@ -22,6 +22,7 @@ namespace Todo.Query.ServicesExtensions
         {
             services.AddGrpcValidation();
             services.AddValidator<FindRequestValidator>();
+            services.AddValidator<SimilarTitleExistsRequestValidator>();
         }
     }
 }

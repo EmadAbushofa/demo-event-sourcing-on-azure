@@ -6,6 +6,7 @@ namespace Todo.Query.Abstractions
     {
         Task<TodoTask?> FindAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
+        Task<TodoTask?> GetSimilarTodoTaskAsync(string userId, string title);
         Task AddAsync(TodoTask task);
     }
 }

@@ -2,6 +2,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
 using Todo.Query.QueryHandlers.Find;
+using Todo.Query.QueryHandlers.SimilarTitleCheck;
 using Todo.Query.Server.TodoProto;
 
 namespace Todo.Query.GrpcServices
@@ -29,6 +30,19 @@ namespace Todo.Query.GrpcServices
                 DueDate = result.DueDate.ToUniversalTime().Date.ToTimestamp(),
                 Note = result.Note,
                 IsCompleted = result.IsCompleted
+            };
+        }
+
+        public override async Task<SimilarTitleExistsResponse> SimilarTitleExists(SimilarTitleExistsRequest request, ServerCallContext context)
+        {
+            var query = new SimilarTitleQuery(UserId: request.UserId, Title: request.Title);
+
+            var result = await _mediator.Send(query);
+
+            return new SimilarTitleExistsResponse()
+            {
+                Id = result?.Id.ToString(),
+                Exists = result != null
             };
         }
     }

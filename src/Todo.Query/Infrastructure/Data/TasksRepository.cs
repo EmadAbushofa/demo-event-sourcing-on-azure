@@ -18,6 +18,18 @@ namespace Todo.Query.Infrastructure.Data
 
         public Task<bool> ExistsAsync(Guid id) => _context.Tasks.AnyAsync(t => t.Id == id);
 
+        public Task<TodoTask?> GetSimilarTodoTaskAsync(string userId, string title)
+        {
+            title = title.Trim().ToLower();
+
+            return _context.Tasks.FirstOrDefaultAsync(
+                            t =>
+                                t.UserId == userId &&
+                                t.Title.ToLower() == title &&
+                                t.IsCompleted == false
+                        );
+        }
+
         public Task AddAsync(TodoTask task) => _context.Tasks.AddAsync(task).AsTask();
     }
 }
