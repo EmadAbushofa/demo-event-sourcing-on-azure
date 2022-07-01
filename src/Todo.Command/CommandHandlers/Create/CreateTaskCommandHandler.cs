@@ -18,7 +18,10 @@ namespace Todo.Command.CommandHandlers.Create
 
         public async Task<Guid> Handle(CreateTaskCommand command, CancellationToken cancellationToken)
         {
-            if (await _query.SimilarTitleExistsAsync(command.Title))
+            if (await _query.SimilarTitleExistsAsync(
+                userId: command.UserId,
+                title: command.Title
+            ))
                 throw new AlreadyExistsException("Similar task with the same title exists.");
 
             var todoTask = TodoTask.Create(command);

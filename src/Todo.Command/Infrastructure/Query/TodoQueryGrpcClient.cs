@@ -14,12 +14,13 @@ namespace Todo.Command.Infrastructure.Query
             _logger = logger;
         }
 
-        public async Task<bool> SimilarTitleExistsAsync(string title)
+        public async Task<bool> SimilarTitleExistsAsync(string userId, string title)
         {
             try
             {
                 var response = await _queryClient.SimilarTitleExistsAsync(new SimilarTitleExistsRequest()
                 {
+                    UserId = userId,
                     Title = title,
                 });
 

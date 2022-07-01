@@ -2,6 +2,6 @@
 {
     public interface ITodoQuery
     {
-        Task<bool> SimilarTitleExistsAsync(string title);
+        Task<bool> SimilarTitleExistsAsync(string userId, string title);
     }
 }

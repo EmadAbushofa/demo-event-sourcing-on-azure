@@ -19,7 +19,7 @@ namespace Todo.Command.Test.Helpers
         {
             var mock = new Mock<ITodoQuery>();
 
-            mock.Setup(s => s.SimilarTitleExistsAsync(It.IsAny<string>()))
+            mock.Setup(s => s.SimilarTitleExistsAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(false);
 
             services.AddTransient(s => mock.Object);
@@ -29,10 +29,10 @@ namespace Todo.Command.Test.Helpers
         {
             var mock = new Mock<ITodoQuery>();
 
-            mock.Setup(s => s.SimilarTitleExistsAsync(It.Is<string>(title => title == duplicateTitle)))
+            mock.Setup(s => s.SimilarTitleExistsAsync(It.IsAny<string>(), It.Is<string>(title => title == duplicateTitle)))
                 .ReturnsAsync(true);
 
-            mock.Setup(s => s.SimilarTitleExistsAsync(It.Is<string>(title => title != duplicateTitle)))
+            mock.Setup(s => s.SimilarTitleExistsAsync(It.IsAny<string>(), It.Is<string>(title => title != duplicateTitle)))
                 .ReturnsAsync(false);
 
             services.AddTransient(s => mock.Object);

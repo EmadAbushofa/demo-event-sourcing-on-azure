@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpcWithValidators();
 builder.Services.AddCosmosDbEventStream(builder.Configuration);
 builder.Services.AddMediatR(typeof(Program));
-builder.Services.AddTasksQuery();
+builder.Services.AddTasksQuery(builder.Configuration);
 
 builder.Host.UseSerilog();
 

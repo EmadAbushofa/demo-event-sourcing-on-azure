@@ -22,7 +22,6 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
             });
         }
 
-
         [Fact]
         public async void Create_SendValidRequest_TaskCreatedEventSaved()
         {
@@ -46,7 +45,6 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
             AssertEquality.OfCreatedEvent(events[0], request, response);
         }
 
-
         [Fact]
         public async void Create_SendValidRequest_TaskCreatedEventPublished()
         {
@@ -66,7 +64,7 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
 
             listener.Events.Clear();
 
-            await Task.Delay(3000);
+            await Task.Delay(5000);
 
             await listener.CloseAsync();
 
