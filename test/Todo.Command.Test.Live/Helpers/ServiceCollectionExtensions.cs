@@ -20,7 +20,7 @@ namespace Todo.Command.Test.Live.Helpers
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
 
-                var connectionString = configuration["ServiceBus:ConnectionString"];
+                var connectionString = configuration.GetConnectionString("ServiceBus");
 
                 return new ServiceBusClient(connectionString);
             });

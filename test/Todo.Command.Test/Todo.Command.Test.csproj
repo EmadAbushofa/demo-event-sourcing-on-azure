@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Bogus" Version="34.0.2" />
 	<PackageReference Include="Calzolari.Grpc.Net.Client.Validation" Version="6.1.1" />
 	<PackageReference Include="Grpc.Tools" Version="2.47.0">
 	  <PrivateAssets>all</PrivateAssets>
