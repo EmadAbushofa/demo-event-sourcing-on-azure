@@ -27,7 +27,7 @@ namespace Todo.Command.Test.TasksServiceTests.Create
         [InlineData("1", "Workout", "2022-03-27", "Take your proteins.")]
         [InlineData("emad-bushofa", "Read a book", "2022-04-12", " ")]
         [InlineData("f52878b5-2908-4182-b933-c74ada709c7d", "Signup for a course", "2022-04-12", null)]
-        public async void Create_SendValidRequest_TaskCreatedEventSaved(
+        public async Task Create_SendValidRequest_TaskCreatedEventSaved(
             string userId,
             string title,
             string dueDateString,
@@ -60,7 +60,7 @@ namespace Todo.Command.Test.TasksServiceTests.Create
         [InlineData(true, " ", "2022-03-27", nameof(CreateRequest.Title))]
         [InlineData(true, "Read a book", "1800-03-27", nameof(CreateRequest.DueDate))]
         [InlineData(true, "Read a book", "2200-03-27", nameof(CreateRequest.DueDate))]
-        public async void Create_SendInvalidRequest_ThrowsInvalidArgumentRpcException(
+        public async Task Create_SendInvalidRequest_ThrowsInvalidArgumentRpcException(
             bool validUserId,
             string title,
             string dueDateString,

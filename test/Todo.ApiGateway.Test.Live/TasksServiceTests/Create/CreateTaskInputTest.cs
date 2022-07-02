@@ -20,7 +20,7 @@ namespace Todo.ApiGateway.Test.TasksServiceTests.Create
         }
 
         [Fact]
-        public async void Create_SendValidCommand_QueryResultSucceed()
+        public async Task Create_SendValidCommand_QueryResultSucceed()
         {
             var client = _factory.CreateClient();
 
@@ -41,7 +41,7 @@ namespace Todo.ApiGateway.Test.TasksServiceTests.Create
         }
 
         [Fact]
-        public async void Create_SendInvalidCommand_ReturnBadRequest()
+        public async Task Create_SendInvalidCommand_ReturnBadRequest()
         {
             var client = _factory.CreateClient();
 

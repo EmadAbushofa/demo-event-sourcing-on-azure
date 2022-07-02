@@ -25,7 +25,7 @@ namespace Todo.Query.Test.HandlersTests
 
 
         [Fact]
-        public async void When_NewTaskCreatedEventHandled_TaskSaved()
+        public async Task When_NewTaskCreatedEventHandled_TaskSaved()
         {
             bool isHandled;
             TaskCreatedEvent @event;
@@ -52,7 +52,7 @@ namespace Todo.Query.Test.HandlersTests
 
 
         [Fact]
-        public async void When_DuplicateTaskCreatedEventHandled_TaskSaved()
+        public async Task When_DuplicateTaskCreatedEventHandled_TaskSaved()
         {
             bool isHandled;
 

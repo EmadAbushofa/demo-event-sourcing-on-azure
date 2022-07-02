@@ -21,7 +21,7 @@ namespace Todo.Command.Test.TasksServiceTests.Create
 
 
         [Fact]
-        public async void Create_SendWithDuplicateTaskTitle_ThrowsAlreadyExistsException()
+        public async Task Create_SendWithDuplicateTaskTitle_ThrowsAlreadyExistsException()
         {
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -39,7 +39,7 @@ namespace Todo.Command.Test.TasksServiceTests.Create
 
 
         [Fact]
-        public async void Create_SendUniqueTaskTitle_TaskCreatedEventSaved()
+        public async Task Create_SendUniqueTaskTitle_TaskCreatedEventSaved()
         {
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 

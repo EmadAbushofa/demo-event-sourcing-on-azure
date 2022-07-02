@@ -22,7 +22,7 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
         }
 
         [Fact]
-        public async void Create_SameUserCreateTaskWithDuplicateTitle_ReturnAlreadyExists()
+        public async Task Create_SameUserCreateTaskWithDuplicateTitle_ReturnAlreadyExists()
         {
             var savedEvent = await GenerateAndAppendToStreamAsync();
 
@@ -44,7 +44,7 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
         }
 
         [Fact]
-        public async void Create_SameUserCreateTaskWithDuplicateTitleOfACompletedTask_TaskCreatedEventSaved()
+        public async Task Create_SameUserCreateTaskWithDuplicateTitleOfACompletedTask_TaskCreatedEventSaved()
         {
             var savedEvent = await GenerateAndAppendToStreamAsync();
 
@@ -64,7 +64,7 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
         [Theory]
         [InlineData(true, false)]
         [InlineData(false, true)]
-        public async void Create_SendNewTitleWithSameUserOrDuplicateTitleFromOtherUser_TaskCreatedEventSaved(
+        public async Task Create_SendNewTitleWithSameUserOrDuplicateTitleFromOtherUser_TaskCreatedEventSaved(
             bool sameUserId,
             bool sameTitle
         )

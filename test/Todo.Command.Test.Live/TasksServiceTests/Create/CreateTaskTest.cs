@@ -23,7 +23,7 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
         }
 
         [Fact]
-        public async void Create_SendValidRequest_TaskCreatedEventSaved()
+        public async Task Create_SendValidRequest_TaskCreatedEventSaved()
         {
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -46,7 +46,7 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
         }
 
         [Fact]
-        public async void Create_SendValidRequest_TaskCreatedEventPublished()
+        public async Task Create_SendValidRequest_TaskCreatedEventPublished()
         {
             var listener = _factory.Services.GetRequiredService<TodoCommandListener>();
 

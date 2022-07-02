@@ -20,7 +20,7 @@ namespace Todo.Query.Test.HandlersTests
 
 
         [Fact]
-        public async void When_NewTaskCreatedEventArrived_TaskSaved()
+        public async Task When_NewTaskCreatedEventArrived_TaskSaved()
         {
             var @event = new TaskCreatedEventFaker().Generate();
 
