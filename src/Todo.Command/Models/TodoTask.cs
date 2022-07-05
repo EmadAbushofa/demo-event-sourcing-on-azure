@@ -1,4 +1,5 @@
 ﻿using Todo.Command.CommandHandlers.Create;
+using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
 using Todo.Command.Extensions;
 
@@ -17,6 +18,19 @@ namespace Todo.Command.Models
             return todoTask;
         }
 
+        private void Mutate(TaskCreatedEvent @event)
+        {
+
+        }
+
+        public void UpdateInfo(UpdateTaskInfoCommand command)
+        {
+            var @event = command.ToEvent(NextSequence);
+
+            ApplyNewChange(@event);
+        }
+
+
         protected override void Mutate(Event @event)
         {
             switch (@event)
@@ -28,11 +42,6 @@ namespace Todo.Command.Models
                 default:
                     break;
             }
-        }
-
-        private void Mutate(TaskCreatedEvent @event)
-        {
-
         }
     }
 }

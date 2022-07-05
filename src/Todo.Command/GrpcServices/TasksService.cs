@@ -22,5 +22,14 @@ namespace Todo.Command.GrpcServices
 
             return new Response() { Id = id.ToString() };
         }
+
+        public override async Task<Response> UpdateInfo(UpdateInfoRequest request, ServerCallContext context)
+        {
+            var command = request.ToCommand();
+
+            var id = await _mediator.Send(command);
+
+            return new Response() { Id = id.ToString() };
+        }
     }
 }

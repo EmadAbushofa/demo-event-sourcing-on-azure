@@ -8,6 +8,7 @@ namespace Todo.Command.Models
 
         public Guid Id { get; private set; }
         public int Sequence { get; private set; }
+        public int NextSequence => Sequence + 1;
 
         public IReadOnlyList<Event> GetUncommittedEvents() => _uncommittedEvents;
         public void MarkChangesAsCommitted() => _uncommittedEvents.Clear();

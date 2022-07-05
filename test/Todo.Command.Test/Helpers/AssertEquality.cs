@@ -19,5 +19,19 @@ namespace Todo.Command.Test.Helpers
             Assert.Equal(request.DueDate.ToDateTime().Date, createdEvent.Data.DueDate);
             Assert.Equal(request.Note, createdEvent.Data.Note);
         }
+
+        public static void OfInfoUpdatedEvent(Event @event, UpdateInfoRequest request, Response response, int expectedSequence)
+        {
+            var infoUpdatedEvent = (TaskInfoUpdatedEvent)@event;
+
+            Assert.Equal(response.Id, infoUpdatedEvent.AggregateId.ToString());
+            Assert.Equal(request.UserId, infoUpdatedEvent.UserId);
+            Assert.Equal(EventType.TaskInfoUpdated, infoUpdatedEvent.Type);
+            Assert.Equal(DateTime.UtcNow, infoUpdatedEvent.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(expectedSequence, infoUpdatedEvent.Sequence);
+            Assert.Equal(1, infoUpdatedEvent.Version);
+            Assert.Equal(request.Title, infoUpdatedEvent.Data.Title);
+            Assert.Equal(request.Note, infoUpdatedEvent.Data.Note);
+        }
     }
 }

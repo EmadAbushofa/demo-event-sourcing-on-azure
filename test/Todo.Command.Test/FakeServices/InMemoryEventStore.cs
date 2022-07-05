@@ -26,7 +26,10 @@ namespace Todo.Command.Test.FakeServices
 
         public Task<List<Event>> GetStreamAsync(Guid aggregateId)
         {
-            var stream = _events.Where(e => e.AggregateId == aggregateId).ToList();
+            var stream = _events
+                .Where(e => e.AggregateId == aggregateId)
+                .OrderBy(e => e.Sequence)
+                .ToList();
 
             return Task.FromResult(stream);
         }

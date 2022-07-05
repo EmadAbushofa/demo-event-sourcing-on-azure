@@ -3,5 +3,6 @@
     public enum EventType
     {
         TaskCreated,
+        TaskInfoUpdated,
     }
 }
