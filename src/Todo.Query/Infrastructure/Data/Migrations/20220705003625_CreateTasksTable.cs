@@ -15,12 +15,15 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(148)", maxLength: 148, nullable: false),
+                    NormalizedTitle = table.Column<string>(type: "nvarchar(148)", maxLength: 148, nullable: false),
+                    ActualTitle = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    IsUniqueTitle = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "Date", nullable: false),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     ClusterId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1")
                 },
@@ -42,19 +45,11 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                 column: "DueDate");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_IsCompleted",
+                name: "IX_Tasks_UserId_NormalizedTitle_IsCompleted",
                 table: "Tasks",
-                column: "IsCompleted");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tasks_UserId",
-                table: "Tasks",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tasks_UserId_Title_IsCompleted",
-                table: "Tasks",
-                columns: new[] { "UserId", "Title", "IsCompleted" });
+                columns: new[] { "UserId", "NormalizedTitle", "IsCompleted" },
+                unique: true,
+                filter: "[IsCompleted] = 0");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

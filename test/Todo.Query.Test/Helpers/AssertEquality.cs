@@ -18,8 +18,11 @@ namespace Todo.Query.Test.Helpers
             Assert.Equal(@event.DateTime, todoTask.LastUpdate, TimeSpan.FromMinutes(1));
             Assert.False(todoTask.IsCompleted);
             Assert.Equal(@event.Data.Title, todoTask.Title);
+            Assert.Equal(@event.Data.Title, todoTask.ActualTitle);
+            Assert.Equal(@event.Data.Title.ToUpper(), todoTask.NormalizedTitle);
             Assert.Equal(@event.Data.DueDate, todoTask.DueDate);
             Assert.Equal(@event.Data.Note, todoTask.Note);
+            Assert.True(todoTask.IsUniqueTitle);
         }
 
         public static void OfTaskAndResponse(TodoTask todoTask, FindResponse response)

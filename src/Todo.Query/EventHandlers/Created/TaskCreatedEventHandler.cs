@@ -18,7 +18,14 @@ namespace Todo.Query.EventHandlers.Created
             if (await _unitOfWork.Tasks.ExistsAsync(@event.AggregateId))
                 return true;
 
-            var task = TodoTask.FromCreatedEvent(@event);
+            var similarTitleExists = await _unitOfWork.Tasks.HasSimilarTodoTaskAsync(
+                userId: @event.UserId,
+                title: @event.Data.Title
+            );
+
+            var task = similarTitleExists
+                ? TodoTask.FromCreatedEvent(@event, isUniqueTitle: false)
+                : TodoTask.FromCreatedEvent(@event, isUniqueTitle: true);
 
             await _unitOfWork.Tasks.AddAsync(task);
 

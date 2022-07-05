@@ -39,16 +39,21 @@ namespace Todo.Command.GrpcServices
                 )
             );
 
-            await _eventStore.AppendToStreamAsync(@event);
-
-            await Task.Delay(3000);
-
-            _container.DeleteItemStreamAsync(
-                id: @event.Sequence.ToString(),
-                partitionKey: new PartitionKey(@event.AggregateId.ToString())
-            ).GetAwaiter();
+            await AppendToStreamThenDeleteAsync(@event);
 
             return new Empty();
+        }
+
+        private async Task AppendToStreamThenDeleteAsync(TaskCreatedEvent @event)
+        {
+            await _eventStore.AppendToStreamAsync(@event);
+
+            await Task.Delay(5000);
+
+            await _container.DeleteItemStreamAsync(
+                id: @event.Sequence.ToString(),
+                partitionKey: new PartitionKey(@event.AggregateId.ToString())
+            );
         }
     }
 }

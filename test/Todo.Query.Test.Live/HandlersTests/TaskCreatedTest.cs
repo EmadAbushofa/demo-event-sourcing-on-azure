@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Todo.Query.Infrastructure.Data;
 using Todo.Query.Test.Fakers.TaskCreated;
@@ -37,13 +38,62 @@ namespace Todo.Query.Test.HandlersTests
 
             using var scope = _factory.Services.CreateScope();
 
-            await Task.Delay(3000);
+            await Task.Delay(5000);
 
             var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
 
             var todoTask = await context.Tasks.FindAsync(@event.AggregateId);
 
             AssertEquality.OfEventAndTask(@event, todoTask);
+        }
+
+
+        [Fact]
+        public async Task When_NewTaskWithDuplicateTitleArrived_TaskSavedWithDifferentTitle()
+        {
+            var title = "My title " + Guid.NewGuid();
+
+            var ids = await Generate2EventsWithSameTitle(title);
+
+            using var scope = _factory.Services.CreateScope();
+
+            await Task.Delay(5000);
+
+            var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
+
+            var todoTasks = await context.Tasks
+                .Where(t => ids.Contains(t.Id))
+                .ToListAsync();
+
+            Assert.Contains(todoTasks, t => t.Title == title);
+            Assert.Contains(todoTasks, t => t.Title.StartsWith(title + "_Copy"));
+        }
+
+        private static async Task<List<Guid>> Generate2EventsWithSameTitle(string title)
+        {
+            var client = CommandServiceHelper.CreateDemoEventsClient();
+
+            var userId = Guid.NewGuid().ToString();
+
+            var ids = new List<Guid>();
+
+            Task CreateAsync()
+            {
+                var id = Guid.NewGuid();
+                ids.Add(id);
+
+                return client.CreateAsync(new CreateRequest()
+                {
+                    Id = id.ToString(),
+                    DueDate = DateTime.UtcNow.ToUtcTimestamp(),
+                    Title = title,
+                    UserId = userId,
+                }).ResponseAsync;
+            }
+
+            await Task.WhenAll(CreateAsync(), CreateAsync());
+
+            return ids;
         }
     }
 }

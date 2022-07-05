@@ -78,11 +78,61 @@ namespace Todo.Query.Test.HandlersTests
             }
         }
 
+        [Fact]
+        public async Task When_NewTaskWithDuplicateTitleArrived_TaskSavedWithDifferentTitle()
+        {
+            var title = "My title " + Guid.NewGuid();
+
+            var ids = await Generate2EventsWithSameTitle(_factory.Services, title);
+
+            using var scope = _factory.Services.CreateScope();
+
+            var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
+
+            var todoTasks = await context.Tasks
+                .Where(t => ids.Contains(t.Id))
+                .ToListAsync();
+
+            Assert.Contains(todoTasks, t => t.Title == title);
+            Assert.Contains(todoTasks, t => t.Title.StartsWith(title + "_Copy"));
+        }
+
         private static async Task CreateTaskFromEventAsync(TaskCreatedEvent @event, IServiceScope scope)
         {
             var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
             await context.Tasks.AddAsync(TodoTask.FromCreatedEvent(@event));
             await context.SaveChangesAsync();
+        }
+
+        private static async Task<List<Guid>> Generate2EventsWithSameTitle(IServiceProvider provider, string title)
+        {
+            var userId = Guid.NewGuid().ToString();
+
+            var ids = new List<Guid>();
+
+            Task SendAsync()
+            {
+                var id = Guid.NewGuid();
+                ids.Add(id);
+
+                var scope = provider.CreateScope();
+                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+                var dataFaker = new TaskCreatedDataFaker()
+                    .RuleFor(e => e.Title, title);
+
+                var @event = new TaskCreatedEventFaker()
+                    .RuleFor(e => e.AggregateId, id)
+                    .RuleFor(e => e.UserId, userId)
+                    .RuleFor(e => e.Data, dataFaker)
+                    .Generate();
+
+                return mediator.Send(@event);
+            }
+
+            await Task.WhenAll(SendAsync(), SendAsync());
+
+            return ids;
         }
     }
 }

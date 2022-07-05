@@ -17,16 +17,21 @@ namespace Todo.Query.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Todo.Query.Abstractions.TodoTask", b =>
+            modelBuilder.Entity("Todo.Query.Entities.TodoTask", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActualTitle")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("ClusterId")
                         .ValueGeneratedOnAdd()
@@ -43,18 +48,25 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsUniqueTitle")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Note")
+                    b.Property<string>("NormalizedTitle")
                         .IsRequired()
+                        .HasMaxLength(148)
+                        .HasColumnType("nvarchar(148)");
+
+                    b.Property<string>("Note")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(148)
+                        .HasColumnType("nvarchar(148)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -71,11 +83,9 @@ namespace Todo.Query.Infrastructure.Data.Migrations
 
                     b.HasIndex("DueDate");
 
-                    b.HasIndex("IsCompleted");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId", "Title", "IsCompleted");
+                    b.HasIndex("UserId", "NormalizedTitle", "IsCompleted")
+                        .IsUnique()
+                        .HasFilter("[IsCompleted] = 0");
 
                     b.ToTable("Tasks");
                 });

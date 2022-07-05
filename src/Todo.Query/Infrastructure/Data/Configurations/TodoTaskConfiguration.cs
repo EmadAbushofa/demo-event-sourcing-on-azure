@@ -13,15 +13,18 @@ namespace Todo.Query.Infrastructure.Data.Configurations
             builder.Property<int>("ClusterId").ValueGeneratedOnAdd();
             builder.HasIndex("ClusterId").IsClustered();
 
-            builder.Property(e => e.Title).HasMaxLength(128);
+            builder.Property(e => e.Title).HasMaxLength(148);
+            builder.Property(e => e.NormalizedTitle).HasMaxLength(148);
+            builder.Property(e => e.ActualTitle).HasMaxLength(128);
             builder.Property(e => e.UserId).HasMaxLength(128);
             builder.Property(e => e.DueDate).HasColumnType("Date");
             builder.Property(e => e.Note).HasMaxLength(1000);
 
-            builder.HasIndex(e => e.UserId);
             builder.HasIndex(e => e.DueDate);
-            builder.HasIndex(e => e.IsCompleted);
-            builder.HasIndex(e => new { e.UserId, e.Title, e.IsCompleted });
+
+            builder.HasIndex(e => new { e.UserId, e.NormalizedTitle, e.IsCompleted })
+                .HasFilter("[IsCompleted] = 0")
+                .IsUnique();
         }
     }
 }
