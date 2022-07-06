@@ -1,6 +1,6 @@
 ﻿using Todo.Query.EventHandlers.Created;
 
-namespace Todo.Query.Test.Fakers.TaskCreated
+namespace Todo.Query.Test.Fakers.Created
 {
     public class TaskCreatedDataFaker : RecordFaker<TaskCreatedData>
     {

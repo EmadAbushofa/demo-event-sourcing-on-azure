@@ -31,7 +31,7 @@ namespace Todo.Query.Entities
             Note = note;
         }
 
-        public static TodoTask FromCreatedEvent(TaskCreatedEvent @event, bool isUniqueTitle = true)
+        public static TodoTask FromCreatedEvent(TaskCreated @event, bool isUniqueTitle = true)
         {
             var title = isUniqueTitle ? @event.Data.Title : ToUniqueTitle(@event.Data.Title);
 

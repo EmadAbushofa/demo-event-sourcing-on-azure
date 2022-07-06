@@ -6,7 +6,7 @@ namespace Todo.Query.Test.Helpers
 {
     public static class AssertEquality
     {
-        public static void OfEventAndTask(TaskCreatedEvent @event, TodoTask? todoTask)
+        public static void OfEventAndTask(TaskCreated @event, TodoTask? todoTask)
         {
             Assert.NotNull(todoTask);
 

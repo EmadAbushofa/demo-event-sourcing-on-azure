@@ -2,7 +2,6 @@
 using MediatR;
 using Newtonsoft.Json;
 using System.Text;
-using Todo.Query.Enums;
 using Todo.Query.EventHandlers.Created;
 
 namespace Todo.Query.Infrastructure.ServiceBus
@@ -65,7 +64,7 @@ namespace Todo.Query.Infrastructure.ServiceBus
 
             return message.Subject switch
             {
-                nameof(EventType.TaskCreated) => await mediator.Send(Deserialize<TaskCreatedEvent>(json)),
+                nameof(TaskCreated) => await mediator.Send(Deserialize<TaskCreated>(json)),
                 _ => true,
             };
         }

@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Todo.Query.Entities;
 using Todo.Query.EventHandlers.Created;
 using Todo.Query.Infrastructure.Data;
-using Todo.Query.Test.Fakers.TaskCreated;
+using Todo.Query.Test.Fakers.Created;
 using Todo.Query.Test.Helpers;
 using Xunit.Abstractions;
 
@@ -23,18 +23,17 @@ namespace Todo.Query.Test.HandlersTests
             });
         }
 
-
         [Fact]
         public async Task When_NewTaskCreatedEventHandled_TaskSaved()
         {
             bool isHandled;
-            TaskCreatedEvent @event;
+            TaskCreated @event;
 
             using (var scope = _factory.Services.CreateScope())
             {
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                @event = new TaskCreatedEventFaker().Generate();
+                @event = new TaskCreatedFaker().Generate();
 
                 isHandled = await mediator.Send(@event);
             }
@@ -50,7 +49,6 @@ namespace Todo.Query.Test.HandlersTests
             }
         }
 
-
         [Fact]
         public async Task When_DuplicateTaskCreatedEventHandled_TaskSaved()
         {
@@ -58,7 +56,7 @@ namespace Todo.Query.Test.HandlersTests
 
             using (var scope = _factory.Services.CreateScope())
             {
-                var @event = new TaskCreatedEventFaker().Generate();
+                var @event = new TaskCreatedFaker().Generate();
 
                 await CreateTaskFromEventAsync(@event, scope);
 
@@ -97,7 +95,7 @@ namespace Todo.Query.Test.HandlersTests
             Assert.Contains(todoTasks, t => t.Title.StartsWith(title + "_Copy"));
         }
 
-        private static async Task CreateTaskFromEventAsync(TaskCreatedEvent @event, IServiceScope scope)
+        private static async Task CreateTaskFromEventAsync(TaskCreated @event, IServiceScope scope)
         {
             var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
             await context.Tasks.AddAsync(TodoTask.FromCreatedEvent(@event));
@@ -121,7 +119,7 @@ namespace Todo.Query.Test.HandlersTests
                 var dataFaker = new TaskCreatedDataFaker()
                     .RuleFor(e => e.Title, title);
 
-                var @event = new TaskCreatedEventFaker()
+                var @event = new TaskCreatedFaker()
                     .RuleFor(e => e.AggregateId, id)
                     .RuleFor(e => e.UserId, userId)
                     .RuleFor(e => e.Data, dataFaker)

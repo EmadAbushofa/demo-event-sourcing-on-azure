@@ -4,16 +4,16 @@ using Todo.Query.Entities;
 
 namespace Todo.Query.EventHandlers.Created
 {
-    public class TaskCreatedEventHandler : IRequestHandler<TaskCreatedEvent, bool>
+    public class TaskCreatedHandler : IRequestHandler<TaskCreated, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public TaskCreatedEventHandler(IUnitOfWork unitOfWork)
+        public TaskCreatedHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(TaskCreatedEvent @event, CancellationToken cancellationToken)
+        public async Task<bool> Handle(TaskCreated @event, CancellationToken cancellationToken)
         {
             if (await _unitOfWork.Tasks.ExistsAsync(@event.AggregateId))
                 return true;

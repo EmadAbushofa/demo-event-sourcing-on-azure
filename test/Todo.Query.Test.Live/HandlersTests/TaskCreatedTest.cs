@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Todo.Query.Infrastructure.Data;
-using Todo.Query.Test.Fakers.TaskCreated;
+using Todo.Query.Test.Fakers.Created;
 using Todo.Query.Test.Helpers;
 using Todo.Query.Test.Live.Client.DemoEventsProto;
 using Todo.Query.Test.Live.Helpers;
@@ -23,7 +23,7 @@ namespace Todo.Query.Test.HandlersTests
         [Fact]
         public async Task When_NewTaskCreatedEventArrived_TaskSaved()
         {
-            var @event = new TaskCreatedEventFaker().Generate();
+            var @event = new TaskCreatedFaker().Generate();
 
             var client = CommandServiceHelper.CreateDemoEventsClient();
 
