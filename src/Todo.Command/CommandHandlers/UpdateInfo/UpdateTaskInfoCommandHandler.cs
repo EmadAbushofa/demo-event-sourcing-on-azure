@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Todo.Command.Abstractions;
+using Todo.Command.Exceptions;
 using Todo.Command.Models;
 
 namespace Todo.Command.CommandHandlers.UpdateInfo
@@ -18,6 +19,9 @@ namespace Todo.Command.CommandHandlers.UpdateInfo
         public async Task<Guid> Handle(UpdateTaskInfoCommand command, CancellationToken cancellationToken)
         {
             var events = await _eventStore.GetStreamAsync(command.Id);
+
+            if (events.Count == 0)
+                throw new NotFoundException();
 
             var todoTask = TodoTask.LoadFromHistory(events);
 

@@ -17,6 +17,9 @@ namespace Todo.Command.Validators
                 .Must(dueDate => dueDate.ToDateTime().Year < 2200)
                 .Must(dueDate => dueDate.ToDateTime().Year > 1800)
                 .WithMessage("Due Date should be within a valid range.");
+
+            RuleFor(c => c.Note)
+                .MaximumLength(1000);
         }
     }
 }

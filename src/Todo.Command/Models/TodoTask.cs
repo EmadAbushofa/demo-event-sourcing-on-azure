@@ -1,12 +1,17 @@
 ﻿using Todo.Command.CommandHandlers.Create;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
+using Todo.Command.Exceptions;
 using Todo.Command.Extensions;
 
 namespace Todo.Command.Models
 {
     public class TodoTask : Aggregate<TodoTask>, IAggregate
     {
+        private string? UserId { get; set; }
+        private string? Title { get; set; }
+        private string? Note { get; set; }
+
         public static TodoTask Create(CreateTaskCommand command)
         {
             var @event = command.ToEvent();
@@ -20,11 +25,19 @@ namespace Todo.Command.Models
 
         private void Mutate(TaskCreatedEvent @event)
         {
-
+            UserId = @event.UserId;
+            Title = @event.Data.Title;
+            Note = @event.Data.Note;
         }
 
         public void UpdateInfo(UpdateTaskInfoCommand command)
         {
+            if (UserId != command.UserId)
+                throw new NotFoundException();
+
+            if (Title == command.Title && Note == command.Note)
+                return;
+
             var @event = command.ToEvent(NextSequence);
 
             ApplyNewChange(@event);
