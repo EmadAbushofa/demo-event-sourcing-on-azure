@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Todo.Command.Server.TodoProto;
+using Todo.Command.TodoProto;
 
 namespace Todo.Command.Validators
 {

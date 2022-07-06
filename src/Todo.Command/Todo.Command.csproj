@@ -8,9 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<Protobuf Include="Protos\Client\tasks_query.proto" GrpcServices="Client" />
-	<Protobuf Include="Protos\Server\tasks_demo_events.proto" GrpcServices="Server" />
-	<Protobuf Include="Protos\Server\tasks_command.proto" GrpcServices="Server" />
+	<Protobuf Include="Protos\tasks_demo_events.proto" GrpcServices="Server" />
+	<Protobuf Include="Protos\tasks_command.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>

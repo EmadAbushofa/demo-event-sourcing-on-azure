@@ -12,10 +12,6 @@ namespace Todo.Command.Interceptors
             {
                 return await continuation(request, context);
             }
-            catch (AlreadyExistsException exception)
-            {
-                throw new RpcException(new Status(StatusCode.AlreadyExists, exception.Message));
-            }
             catch (NotFoundException)
             {
                 throw new RpcException(new Status(StatusCode.NotFound, "Result not found."));

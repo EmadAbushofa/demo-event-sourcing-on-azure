@@ -1,7 +1,7 @@
 using Grpc.Core;
 using MediatR;
 using Todo.Command.Extensions;
-using Todo.Command.Server.TodoProto;
+using Todo.Command.TodoProto;
 
 namespace Todo.Command.GrpcServices
 {

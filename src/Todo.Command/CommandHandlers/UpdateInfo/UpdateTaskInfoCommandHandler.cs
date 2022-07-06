@@ -8,12 +8,10 @@ namespace Todo.Command.CommandHandlers.UpdateInfo
     public class UpdateTaskInfoCommandHandler : IRequestHandler<UpdateTaskInfoCommand, Guid>
     {
         private readonly IEventStore _eventStore;
-        private readonly ITodoQuery _query;
 
-        public UpdateTaskInfoCommandHandler(IEventStore eventStore, ITodoQuery query)
+        public UpdateTaskInfoCommandHandler(IEventStore eventStore)
         {
             _eventStore = eventStore;
-            _query = query;
         }
 
         public async Task<Guid> Handle(UpdateTaskInfoCommand command, CancellationToken cancellationToken)

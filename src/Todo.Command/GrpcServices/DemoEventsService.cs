@@ -2,8 +2,8 @@
 using Grpc.Core;
 using Microsoft.Azure.Cosmos;
 using Todo.Command.Abstractions;
+using Todo.Command.DemoEventsProto;
 using Todo.Command.Events;
-using Todo.Command.Server.DemoEventsProto;
 
 namespace Todo.Command.GrpcServices
 {

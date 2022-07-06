@@ -17,7 +17,6 @@ namespace Todo.Command.Test.Live.TasksServiceTests.Create
         {
             _factory = factory.WithDefaultConfigurations(helper, services =>
             {
-                services.DisableQueryDuplicateDetection();
                 services.AddServiceBusListener();
             });
         }

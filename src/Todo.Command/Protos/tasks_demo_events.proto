@@ -4,7 +4,7 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-option csharp_namespace = "Todo.Command.Server.DemoEventsProto";
+option csharp_namespace = "Todo.Command.DemoEventsProto";
 
 package todo.command;
 

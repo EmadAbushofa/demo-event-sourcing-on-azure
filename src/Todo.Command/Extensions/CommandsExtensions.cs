@@ -1,6 +1,6 @@
 ﻿using Todo.Command.CommandHandlers.Create;
 using Todo.Command.CommandHandlers.UpdateInfo;
-using Todo.Command.Server.TodoProto;
+using Todo.Command.TodoProto;
 
 namespace Todo.Command.Extensions
 {

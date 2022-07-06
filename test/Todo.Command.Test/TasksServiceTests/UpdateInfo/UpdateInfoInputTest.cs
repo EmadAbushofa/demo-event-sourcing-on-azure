@@ -20,7 +20,6 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
             _factory = factory.WithDefaultConfigurations(helper, services =>
             {
                 services.ReplaceWithInMemoryEventStore();
-                services.DisableQueryDuplicateDetection();
             });
         }
 
