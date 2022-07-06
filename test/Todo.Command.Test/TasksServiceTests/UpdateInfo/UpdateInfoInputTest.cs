@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Todo.Command.Abstractions;
 using Todo.Command.Events;
 using Todo.Command.Test.Client.TodoProto;
-using Todo.Command.Test.Fakers.TaskCreated;
+using Todo.Command.Test.Fakers.Created;
 using Todo.Command.Test.Helpers;
 using Xunit.Abstractions;
 
@@ -149,14 +149,14 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
             var @events = await stream.GetStreamAsync(response.Id);
 
             Assert.Single(events);
-            Assert.Equal(EventType.TaskCreated, events[0].Type);
+            Assert.Equal(nameof(TaskCreated), events[0].Type);
         }
 
-        private async Task<TaskCreatedEvent> GenerateAndAppendToStreamAsync()
+        private async Task<TaskCreated> GenerateAndAppendToStreamAsync()
         {
             var eventStore = _factory.Services.GetRequiredService<IEventStore>();
 
-            var taskCreatedEvent = new TaskCreatedEventFaker()
+            var taskCreatedEvent = new TaskCreatedFaker()
                 .Generate();
 
             await eventStore.AppendToStreamAsync(taskCreatedEvent);

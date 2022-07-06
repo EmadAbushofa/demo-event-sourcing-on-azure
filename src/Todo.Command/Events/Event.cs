@@ -5,15 +5,13 @@
         protected Event(
             Guid aggregateId,
             int sequence,
-            string userId,
-            EventType type
+            string userId
         )
         {
             AggregateId = aggregateId;
             UserId = userId;
             Sequence = sequence;
             DateTime = DateTime.UtcNow;
-            Type = type;
             Version = 1;
         }
 
@@ -21,8 +19,8 @@
         public int Sequence { get; protected set; }
         public string UserId { get; protected set; }
         public DateTime DateTime { get; protected set; }
-        public EventType Type { get; protected set; }
         public int Version { get; protected set; }
+        public string Type => GetType().Name;
     }
 
     public abstract class Event<T> : Event
@@ -31,9 +29,8 @@
             Guid aggregateId,
             int sequence,
             T data,
-            string userId,
-            EventType type
-        ) : base(aggregateId, sequence, userId, type)
+            string userId
+        ) : base(aggregateId, sequence, userId)
         {
             Data = data;
         }

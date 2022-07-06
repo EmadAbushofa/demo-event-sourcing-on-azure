@@ -7,7 +7,7 @@ namespace Todo.Command.Extensions
 {
     public static class EventsExtensions
     {
-        public static TaskCreatedEvent ToEvent(this CreateTaskCommand command)
+        public static TaskCreated ToEvent(this CreateTaskCommand command)
             => new(
                 aggregateId: Guid.NewGuid(),
                 sequence: 1,
@@ -19,7 +19,7 @@ namespace Todo.Command.Extensions
                 )
             );
 
-        public static TaskInfoUpdatedEvent ToEvent(this UpdateTaskInfoCommand command, int sequence)
+        public static TaskInfoUpdated ToEvent(this UpdateTaskInfoCommand command, int sequence)
             => new(
                 aggregateId: command.Id,
                 sequence: sequence,

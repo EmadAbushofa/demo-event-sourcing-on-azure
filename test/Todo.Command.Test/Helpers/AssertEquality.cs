@@ -7,11 +7,10 @@ namespace Todo.Command.Test.Helpers
     {
         public static void OfCreatedEvent(Event @event, CreateRequest request, Response response)
         {
-            var createdEvent = (TaskCreatedEvent)@event;
+            var createdEvent = (TaskCreated)@event;
 
             Assert.Equal(response.Id, createdEvent.AggregateId.ToString());
             Assert.Equal(request.UserId, createdEvent.UserId);
-            Assert.Equal(EventType.TaskCreated, createdEvent.Type);
             Assert.Equal(DateTime.UtcNow, createdEvent.DateTime, TimeSpan.FromMinutes(1));
             Assert.Equal(1, createdEvent.Sequence);
             Assert.Equal(1, createdEvent.Version);
@@ -22,11 +21,10 @@ namespace Todo.Command.Test.Helpers
 
         public static void OfInfoUpdatedEvent(Event @event, UpdateInfoRequest request, Response response, int expectedSequence)
         {
-            var infoUpdatedEvent = (TaskInfoUpdatedEvent)@event;
+            var infoUpdatedEvent = (TaskInfoUpdated)@event;
 
             Assert.Equal(response.Id, infoUpdatedEvent.AggregateId.ToString());
             Assert.Equal(request.UserId, infoUpdatedEvent.UserId);
-            Assert.Equal(EventType.TaskInfoUpdated, infoUpdatedEvent.Type);
             Assert.Equal(DateTime.UtcNow, infoUpdatedEvent.DateTime, TimeSpan.FromMinutes(1));
             Assert.Equal(expectedSequence, infoUpdatedEvent.Sequence);
             Assert.Equal(1, infoUpdatedEvent.Version);

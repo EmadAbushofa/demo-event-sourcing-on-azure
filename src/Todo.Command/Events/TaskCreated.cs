@@ -2,14 +2,14 @@
 
 namespace Todo.Command.Events
 {
-    public class TaskCreatedEvent : Event<TaskCreatedData>
+    public class TaskCreated : Event<TaskCreatedData>
     {
-        public TaskCreatedEvent(
+        public TaskCreated(
             Guid aggregateId,
             int sequence,
             string userId,
             TaskCreatedData data
-        ) : base(aggregateId, sequence, data, userId, EventType.TaskCreated)
+        ) : base(aggregateId, sequence, data, userId)
         {
         }
     }

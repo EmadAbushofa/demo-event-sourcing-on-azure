@@ -1,6 +1,6 @@
 ﻿using Todo.Command.Events.DataTypes;
 
-namespace Todo.Command.Test.Fakers.TaskCreated
+namespace Todo.Command.Test.Fakers.Created
 {
     public class TaskCreatedDataFaker : RecordFaker<TaskCreatedData>
     {

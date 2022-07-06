@@ -23,7 +23,7 @@ namespace Todo.Command.Models
             return todoTask;
         }
 
-        private void Mutate(TaskCreatedEvent @event)
+        private void Mutate(TaskCreated @event)
         {
             UserId = @event.UserId;
             Title = @event.Data.Title;
@@ -48,7 +48,7 @@ namespace Todo.Command.Models
         {
             switch (@event)
             {
-                case TaskCreatedEvent taskCreated:
+                case TaskCreated taskCreated:
                     Mutate(taskCreated);
                     break;
 

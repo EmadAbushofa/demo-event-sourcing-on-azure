@@ -17,7 +17,7 @@ namespace Todo.Command.Infrastructure.Persistence
             Sequence = @event.Sequence;
             UserId = @event.UserId;
             DateTime = @event.DateTime;
-            Type = @event.Type.ToString();
+            Type = @event.Type;
             Version = @event.Version;
             Data = ((dynamic)@event).Data;
         }
@@ -33,15 +33,19 @@ namespace Todo.Command.Infrastructure.Persistence
 
         public Event ToEvent()
         {
+            if (Type == null)
+                throw new InvalidOperationException("Type cannot be null");
+
             var json = JsonConvert.SerializeObject(this);
 
-            return Type switch
-            {
-                nameof(EventType.TaskCreated) => Deserialize(json),
-                _ => throw new InvalidCastException("Unkown event type " + Type),
-            };
+            return Deserialize(json, Type);
         }
 
-        private static Event Deserialize(string json) => JsonConvert.DeserializeObject<TaskCreatedEvent>(json);
+        private static Event Deserialize(string json, string type)
+            => (Event)JsonConvert.DeserializeObject(json, System.Type.GetType(GetTypeName(type)));
+
+        private static string GetTypeName(string type)
+            => typeof(TaskCreated).FullName?.Replace(nameof(TaskCreated), type)
+                ?? throw new TypeLoadException("Cannot get full name of event.");
     }
 }

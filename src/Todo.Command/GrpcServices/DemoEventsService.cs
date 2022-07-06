@@ -28,7 +28,7 @@ namespace Todo.Command.GrpcServices
 
         public override async Task<Empty> Create(CreateRequest request, ServerCallContext context)
         {
-            var @event = new TaskCreatedEvent(
+            var @event = new TaskCreated(
                 aggregateId: Guid.Parse(request.Id),
                 sequence: 1,
                 userId: request.UserId,
@@ -44,7 +44,7 @@ namespace Todo.Command.GrpcServices
             return new Empty();
         }
 
-        private async Task AppendToStreamThenDeleteAsync(TaskCreatedEvent @event)
+        private async Task AppendToStreamThenDeleteAsync(TaskCreated @event)
         {
             await _eventStore.AppendToStreamAsync(@event);
 
