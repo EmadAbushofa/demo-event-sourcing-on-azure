@@ -10,20 +10,35 @@ namespace Todo.Query.Test.Fakers.Created
             RuleFor(e => e.Data, new TaskCreatedDataFaker());
         }
 
+        public TaskCreatedFaker RuleForTitle(string title)
+        {
+            var dataFaker = new TaskCreatedDataFaker()
+                .RuleFor(e => e.Title, title);
+
+            RuleFor(e => e.Data, dataFaker);
+
+            return this;
+        }
 
         public (TaskCreated, TaskCreated) Generate2EventsWithSameTitle(bool sameUser = true)
         {
             var @event = Generate();
 
-            var dataFaker = new TaskCreatedDataFaker()
-                .RuleFor(e => e.Title, @event.Data.Title);
-
             var secondEventFaker = new TaskCreatedFaker()
-                .RuleFor(e => e.Data, dataFaker);
+                .RuleForTitle(@event.Data.Title);
 
             var secondEvent = sameUser
                 ? secondEventFaker.RuleFor(e => e.UserId, @event.UserId).Generate()
                 : secondEventFaker.Generate();
+
+            return (@event, secondEvent);
+        }
+
+        public (TaskCreated, TaskCreated) Generate2EventsForSameUser()
+        {
+            var @event = Generate();
+
+            var secondEvent = new TaskCreatedFaker().RuleFor(e => e.UserId, @event.UserId).Generate();
 
             return (@event, secondEvent);
         }

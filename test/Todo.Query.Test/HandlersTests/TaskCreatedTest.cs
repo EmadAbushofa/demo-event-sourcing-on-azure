@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Todo.Query.Entities;
+using Todo.Query.Infrastructure.Data;
+using Todo.Query.Test.Fakers;
 using Todo.Query.Test.Fakers.Created;
 using Todo.Query.Test.Helpers;
 using Xunit.Abstractions;
@@ -37,7 +41,7 @@ namespace Todo.Query.Test.HandlersTests
         }
 
         [Fact]
-        public async Task When_DuplicateTaskCreatedEventHandled_TaskSaved()
+        public async Task When_DuplicateTaskCreatedEventHandled_DuplicateEventIgnored()
         {
             var @event = new TaskCreatedFaker().Generate();
             await _eventHandlerHelper.HandleAsync(@event);
@@ -67,6 +71,82 @@ namespace Todo.Query.Test.HandlersTests
                 t => AssertEquality.OfEventAndTask(first, t, isUnique: true),
                 t => AssertEquality.OfEventAndTask(second, t, isUnique: false)
             );
+        }
+
+        [Fact]
+        public async Task When_NewTasksWithDifferentTitleForSameUserArrived_TaskSavedCorrectly()
+        {
+            var (first, second) = new TaskCreatedFaker().Generate2EventsForSameUser();
+
+            await Task.WhenAll(
+                _eventHandlerHelper.HandleAsync(first),
+                _eventHandlerHelper.HandleAsync(second)
+            );
+
+            var todoTasks = await _dbContextHelper.Query(c => c.Tasks.ToListAsync());
+
+            Assert.Collection(
+                todoTasks,
+                t => AssertEquality.OfEventAndTask(first, t, isUnique: true),
+                t => AssertEquality.OfEventAndTask(second, t, isUnique: true)
+            );
+        }
+
+        [Fact]
+        public async Task When_NewTaskWithDuplicateTitleForDifferentUserArrived_BothSavedCorrectly()
+        {
+            var (first, second) = new TaskCreatedFaker().Generate2EventsWithSameTitle(sameUser: false);
+
+            await Task.WhenAll(
+                _eventHandlerHelper.HandleAsync(first),
+                _eventHandlerHelper.HandleAsync(second)
+            );
+
+            var todoTasks = await _dbContextHelper.Query(c => c.Tasks.ToListAsync());
+
+            Assert.Collection(
+                todoTasks,
+                t => AssertEquality.OfEventAndTask(first, t, isUnique: true),
+                t => AssertEquality.OfEventAndTask(second, t, isUnique: true)
+            );
+        }
+
+        [Fact]
+        public async Task When_NewTaskWithDuplicateTitleOfCompletedTaskArrived_NewTaskSaved()
+        {
+            var todoTask = await GenerateTodoTaskAsync(isCompleted: true);
+
+            var @event = new TaskCreatedFaker()
+                .RuleForTitle(todoTask.Title)
+                .RuleFor(u => u.UserId, todoTask.UserId)
+                .Generate();
+
+            await _eventHandlerHelper.HandleAsync(@event);
+
+            var todoTasks = await _dbContextHelper.Query(c => c.Tasks.ToListAsync());
+
+            Assert.All(todoTasks, t =>
+            {
+                Assert.Equal(todoTask.Title, t.Title);
+                Assert.True(t.IsUniqueTitle);
+            });
+        }
+
+        private async Task<TodoTask> GenerateTodoTaskAsync(bool isCompleted)
+        {
+            using var scope = _factory.Services.CreateScope();
+
+            var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
+
+            var todoTask = new TodoTaskFaker()
+                .RuleFor(e => e.IsCompleted, isCompleted)
+                .Generate();
+
+            await context.Tasks.AddAsync(todoTask);
+
+            await context.SaveChangesAsync();
+
+            return todoTask;
         }
     }
 }
