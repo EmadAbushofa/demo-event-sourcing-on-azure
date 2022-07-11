@@ -73,14 +73,17 @@ namespace Todo.Query.Entities
         public bool IsCompleted { get; private set; }
         public string? Note { get; private set; }
 
-        public void Apply(TaskInfoUpdated @event)
+        public void Apply(TaskInfoUpdated @event, bool isUniqueTitle = true)
         {
+            var title = isUniqueTitle ? @event.Data.Title : ToUniqueTitle(@event.Data.Title);
+
+            Title = title;
+            ActualTitle = @event.Data.Title;
+            IsUniqueTitle = isUniqueTitle;
+            NormalizedTitle = title.ToUpper();
+
             Sequence = @event.Sequence;
             LastUpdate = @event.DateTime;
-            Title = @event.Data.Title;
-            NormalizedTitle = @event.Data.Title.ToUpper();
-            ActualTitle = @event.Data.Title;
-            IsUniqueTitle = true;
             Note = @event.Data.Note;
         }
     }

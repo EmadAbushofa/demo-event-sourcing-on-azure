@@ -19,10 +19,18 @@ namespace Todo.Query.Test.Fakers
             RuleFor(e => e.LastUpdate, f => f.Date.Recent().ToUniversalTime());
         }
 
-        public static TodoTask GenerateCompletedTask()
+        public static TodoTask GenerateCompletedTask(bool isCompleted = true)
         {
             return new TodoTaskFaker()
-                .RuleFor(f => f.IsCompleted, true)
+                .RuleFor(f => f.IsCompleted, isCompleted)
+                .Generate();
+        }
+
+        public static TodoTask WithSameUser(TodoTask todoTask, bool isCompleted)
+        {
+            return new TodoTaskFaker()
+                .RuleFor(f => f.UserId, todoTask.UserId)
+                .RuleFor(f => f.IsCompleted, isCompleted)
                 .Generate();
         }
     }

@@ -31,7 +31,19 @@ namespace Todo.Query.EventHandlers.InfoUpdated
             if (todoTask.Sequence >= @event.Sequence)
                 return true;
 
-            todoTask.Apply(@event);
+            if (todoTask.IsCompleted)
+            {
+                todoTask.Apply(@event);
+            }
+            else
+            {
+                var isUniquetitle = !await _unitOfWork.Tasks.HasSimilarTodoTaskAsync(
+                    userId: @event.UserId,
+                    title: @event.Data.Title
+                );
+
+                todoTask.Apply(@event, isUniquetitle);
+            }
 
             await _unitOfWork.CompleteAsync();
 

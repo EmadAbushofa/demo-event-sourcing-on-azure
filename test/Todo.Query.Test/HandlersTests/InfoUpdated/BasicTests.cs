@@ -5,15 +5,15 @@ using Todo.Query.Test.Fakers.InfoUpdated;
 using Todo.Query.Test.Helpers;
 using Xunit.Abstractions;
 
-namespace Todo.Query.Test.HandlersTests
+namespace Todo.Query.Test.HandlersTests.InfoUpdated
 {
-    public class TaskInfoUpdatedTest : IClassFixture<WebApplicationFactory<Program>>
+    public class BasicTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
         private readonly DbContextHelper _dbContextHelper;
         private readonly EventHandlerHelper _eventHandlerHelper;
 
-        public TaskInfoUpdatedTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
+        public BasicTests(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
             _factory = factory.WithDefaultConfigurations(helper, services =>
             {
