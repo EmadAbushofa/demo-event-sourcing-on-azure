@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Todo.Query.Entities;
 using Todo.Query.Infrastructure.Data;
 
 namespace Todo.Query.Test.Helpers
@@ -24,6 +25,15 @@ namespace Todo.Query.Test.Helpers
             using var scope = _provider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
             return useInScope(context);
+        }
+
+        public async Task<TodoTask> InsertAsync(TodoTask todoTask)
+        {
+            using var scope = _provider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
+            await context.Tasks.AddAsync(todoTask);
+            await context.SaveChangesAsync();
+            return todoTask;
         }
     }
 }

@@ -17,5 +17,12 @@ namespace Todo.Query.Test.Fakers
             RuleFor(e => e.CreatedAt, f => f.Date.Recent(days: 3).ToUniversalTime());
             RuleFor(e => e.LastUpdate, f => f.Date.Recent().ToUniversalTime());
         }
+
+        public static TodoTask GenerateCompletedTask()
+        {
+            return new TodoTaskFaker()
+                .RuleFor(f => f.IsCompleted, true)
+                .Generate();
+        }
     }
 }
