@@ -1,4 +1,5 @@
 ﻿using Todo.Query.EventHandlers.Created;
+using Todo.Query.EventHandlers.InfoUpdated;
 
 namespace Todo.Query.Entities
 {
@@ -6,6 +7,7 @@ namespace Todo.Query.Entities
     {
         private TodoTask(
             Guid id,
+            int sequence,
             string userId,
             string title,
             string normalizedTitle,
@@ -19,6 +21,7 @@ namespace Todo.Query.Entities
         )
         {
             Id = id;
+            Sequence = sequence;
             UserId = userId;
             Title = title;
             NormalizedTitle = normalizedTitle;
@@ -37,6 +40,7 @@ namespace Todo.Query.Entities
 
             return new TodoTask(
                 id: @event.AggregateId,
+                sequence: @event.Sequence,
                 userId: @event.UserId,
                 title: title,
                 normalizedTitle: title.ToUpper(),
@@ -57,6 +61,7 @@ namespace Todo.Query.Entities
         }
 
         public Guid Id { get; private set; }
+        public int Sequence { get; private set; }
         public string UserId { get; private set; }
         public string Title { get; private set; }
         public string NormalizedTitle { get; private set; }
@@ -67,5 +72,16 @@ namespace Todo.Query.Entities
         public DateTime DueDate { get; private set; }
         public bool IsCompleted { get; private set; }
         public string? Note { get; private set; }
+
+        public void Apply(TaskInfoUpdated @event)
+        {
+            Sequence = @event.Sequence;
+            LastUpdate = @event.DateTime;
+            Title = @event.Data.Title;
+            NormalizedTitle = @event.Data.Title.ToUpper();
+            ActualTitle = @event.Data.Title;
+            IsUniqueTitle = true;
+            Note = @event.Data.Note;
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace Todo.Query.Test.Fakers
         public TodoTaskFaker()
         {
             RuleFor(e => e.UserId, f => f.Random.Guid().ToString());
+            RuleFor(e => e.Sequence, f => f.Random.Int(3, 9));
             RuleFor(e => e.DueDate, f => f.Date.Soon().ToUniversalTime().Date);
             RuleFor(e => e.IsCompleted, f => f.Random.Bool());
             RuleFor(e => e.ActualTitle, f => f.Lorem.Word());

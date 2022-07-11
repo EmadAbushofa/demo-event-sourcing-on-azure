@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Todo.Query.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using Todo.Query.Infrastructure.Data;
 namespace Todo.Query.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TodoTasksDbContext))]
-    partial class TodoTasksDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220711130649_AddSequenceInTodoTasks")]
+    partial class AddSequenceInTodoTasks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
