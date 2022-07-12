@@ -5,7 +5,7 @@ using Todo.ApiGateway.Test.Helpers;
 using Todo.ApiGateway.Test.Live.Helpers;
 using Xunit.Abstractions;
 
-namespace Todo.ApiGateway.Test.TasksServiceTests.Create
+namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 {
     public class CreateTaskInputTest : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -33,11 +33,11 @@ namespace Todo.ApiGateway.Test.TasksServiceTests.Create
 
             var response = await client.PostJsonAsync<InputResponse>("api/todo-tasks", input);
 
-            await Task.Delay(4000);
+            await Task.Delay(5000);
 
             var output = await client.GetAsync<TodoTaskOutput>($"api/todo-tasks/{response.Id}");
 
-            Assert.NotNull(output);
+            AssertEquality.Of(input, output);
         }
 
         [Fact]

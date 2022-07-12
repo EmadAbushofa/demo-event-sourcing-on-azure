@@ -27,7 +27,7 @@ namespace Todo.Query.GrpcServices
                 Id = result.Id.ToString(),
                 UserId = result.UserId,
                 Title = result.Title,
-                DueDate = result.DueDate.ToUniversalTime().Date.ToTimestamp(),
+                DueDate = DateTime.SpecifyKind(result.DueDate, DateTimeKind.Utc).ToTimestamp(),
                 Note = result.Note,
                 IsCompleted = result.IsCompleted
             };

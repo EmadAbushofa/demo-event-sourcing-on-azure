@@ -47,5 +47,15 @@ namespace Todo.ApiGateway.Controllers
 
             return new InputResponse() { Id = response.Id };
         }
+
+        [HttpPut("{id}/update-info")]
+        public async Task<InputResponse> UpdateInfoAsync(Guid id, [FromBody] UpdateInfoTaskInput input)
+        {
+            var request = input.ToRequest(id, User);
+
+            var response = await _commandClient.UpdateInfoAsync(request);
+
+            return new InputResponse() { Id = response.Id };
+        }
     }
 }

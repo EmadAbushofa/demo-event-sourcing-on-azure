@@ -9,6 +9,13 @@ namespace Todo.ApiGateway.ActionFilters
 {
     public class HttpResponseExceptionFilter : IActionFilter, IOrderedFilter
     {
+        private readonly ILogger<HttpResponseExceptionFilter> _logger;
+
+        public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger)
+        {
+            _logger = logger;
+        }
+
         public int Order => int.MaxValue - 10;
 
         public void OnActionExecuting(ActionExecutingContext context) { }
@@ -17,7 +24,7 @@ namespace Todo.ApiGateway.ActionFilters
         {
             if (context.Exception is RpcException rpcException)
             {
-                var validationErrors = rpcException.GetValidationErrors().ToList();
+                var validationErrors = GetValidationErrors(rpcException);
 
                 var modelState = GetErrors(validationErrors);
 
@@ -42,6 +49,20 @@ namespace Todo.ApiGateway.ActionFilters
                 });
 
                 context.ExceptionHandled = true;
+            }
+        }
+
+        private List<ValidationTrailers> GetValidationErrors(RpcException rpcException)
+        {
+            try
+            {
+                var errors = rpcException.GetValidationErrors().ToList();
+                return errors;
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(e, "GetValidationErrors exception.");
+                return new List<ValidationTrailers>();
             }
         }
 

@@ -27,5 +27,14 @@ namespace Todo.ApiGateway.Extensions
                 Note = input.Note,
                 Title = input.Title ?? "",
             };
+
+        public static UpdateInfoRequest ToRequest(this UpdateInfoTaskInput input, Guid id, ClaimsPrincipal claims)
+            => new()
+            {
+                Id = id.ToString(),
+                UserId = claims.GetUserId(),
+                Note = input.Note,
+                Title = input.Title ?? "",
+            };
     }
 }
