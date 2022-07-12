@@ -26,9 +26,10 @@ message CreateRequest {
 
 message UpdateInfoRequest {
   string id = 1;
-  string user_id = 2;
-  string title = 3;
-  google.protobuf.StringValue note = 4;
+  int32 sequence = 2;
+  string user_id = 3;
+  string title = 4;
+  google.protobuf.StringValue note = 5;
 }
 
 message ChangeDueDateRequest {

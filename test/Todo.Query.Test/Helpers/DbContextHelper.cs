@@ -13,18 +13,18 @@ namespace Todo.Query.Test.Helpers
             _provider = provider;
         }
 
-        public Task<TResult> Query<TResult>(Func<TodoTasksDbContext, Task<TResult>> useInScope)
+        public async Task<TResult> Query<TResult>(Func<TodoTasksDbContext, Task<TResult>> useInScope)
         {
             using var scope = _provider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
-            return useInScope(context);
+            return await useInScope(context);
         }
 
-        public ValueTask<TResult> Query<TResult>(Func<TodoTasksDbContext, ValueTask<TResult>> useInScope)
+        public async ValueTask<TResult> Query<TResult>(Func<TodoTasksDbContext, ValueTask<TResult>> useInScope)
         {
             using var scope = _provider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
-            return useInScope(context);
+            return await useInScope(context);
         }
 
         public async Task<TodoTask> InsertAsync(TodoTask todoTask)

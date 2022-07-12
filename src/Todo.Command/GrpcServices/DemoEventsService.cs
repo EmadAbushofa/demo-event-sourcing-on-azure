@@ -4,6 +4,7 @@ using Microsoft.Azure.Cosmos;
 using Todo.Command.Abstractions;
 using Todo.Command.DemoEventsProto;
 using Todo.Command.Events;
+using Todo.Command.Events.DataTypes;
 
 namespace Todo.Command.GrpcServices
 {
@@ -32,7 +33,7 @@ namespace Todo.Command.GrpcServices
                 aggregateId: Guid.Parse(request.Id),
                 sequence: 1,
                 userId: request.UserId,
-                data: new Events.DataTypes.TaskCreatedData(
+                data: new TaskCreatedData(
                     Title: request.Title,
                     DueDate: request.DueDate.ToDateTime(),
                     Note: request.Note
@@ -44,7 +45,24 @@ namespace Todo.Command.GrpcServices
             return new Empty();
         }
 
-        private async Task AppendToStreamThenDeleteAsync(TaskCreated @event)
+        public override async Task<Empty> UpdateInfo(UpdateInfoRequest request, ServerCallContext context)
+        {
+            var @event = new TaskInfoUpdated(
+                aggregateId: Guid.Parse(request.Id),
+                sequence: request.Sequence,
+                userId: request.UserId,
+                data: new TaskInfoUpdatedData(
+                    Title: request.Title,
+                    Note: request.Note
+                )
+            );
+
+            await AppendToStreamThenDeleteAsync(@event);
+
+            return new Empty();
+        }
+
+        private async Task AppendToStreamThenDeleteAsync(Event @event)
         {
             await _eventStore.AppendToStreamAsync(@event);
 

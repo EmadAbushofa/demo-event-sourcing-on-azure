@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Todo.Query.Infrastructure.Data;
 using Todo.Query.Test.Fakers.Created;
 using Todo.Query.Test.Helpers;
 using Todo.Query.Test.Live.Client.DemoEventsProto;
@@ -13,10 +11,12 @@ namespace Todo.Query.Test.HandlersTests
     public class TaskCreatedTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
+        private readonly DbContextHelper _dbContextHelper;
 
         public TaskCreatedTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
             _factory = factory.WithDefaultConfigurations(helper);
+            _dbContextHelper = new DbContextHelper(_factory.Services);
         }
 
 
@@ -36,13 +36,9 @@ namespace Todo.Query.Test.HandlersTests
                 UserId = @event.UserId,
             });
 
-            using var scope = _factory.Services.CreateScope();
-
             await Task.Delay(5000);
 
-            var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
-
-            var todoTask = await context.Tasks.FindAsync(@event.AggregateId);
+            var todoTask = await _dbContextHelper.Query(c => c.Tasks.FindAsync(@event.AggregateId));
 
             AssertEquality.OfEventAndTask(@event, todoTask);
         }
@@ -55,15 +51,11 @@ namespace Todo.Query.Test.HandlersTests
 
             var ids = await Generate2EventsWithSameTitle(title);
 
-            using var scope = _factory.Services.CreateScope();
-
             await Task.Delay(5000);
 
-            var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
-
-            var todoTasks = await context.Tasks
+            var todoTasks = await _dbContextHelper.Query(c => c.Tasks
                 .Where(t => ids.Contains(t.Id))
-                .ToListAsync();
+                .ToListAsync());
 
             Assert.Contains(todoTasks, t => t.Title == title);
             Assert.Contains(todoTasks, t => t.Title.StartsWith(title + "_Copy"));
