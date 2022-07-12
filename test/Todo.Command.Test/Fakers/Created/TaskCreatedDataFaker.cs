@@ -6,9 +6,9 @@ namespace Todo.Command.Test.Fakers.Created
     {
         public TaskCreatedDataFaker()
         {
-            RuleFor(e => e.Title, faker => faker.Lorem.Sentence());
+            RuleFor(e => e.Title, faker => faker.Lorem.Word());
             RuleFor(e => e.DueDate, faker => faker.Date.Future().ToUniversalTime().Date);
-            RuleFor(e => e.Note, faker => faker.Lorem.Paragraph());
+            RuleFor(e => e.Note, faker => faker.Lorem.Sentence());
         }
     }
 }

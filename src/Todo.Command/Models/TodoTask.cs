@@ -43,6 +43,11 @@ namespace Todo.Command.Models
             ApplyNewChange(@event);
         }
 
+        private void Mutate(TaskInfoUpdated @event)
+        {
+            Title = @event.Data.Title;
+            Note = @event.Data.Note;
+        }
 
         protected override void Mutate(Event @event)
         {
@@ -50,6 +55,10 @@ namespace Todo.Command.Models
             {
                 case TaskCreated taskCreated:
                     Mutate(taskCreated);
+                    break;
+
+                case TaskInfoUpdated taskInfoUpdated:
+                    Mutate(taskInfoUpdated);
                     break;
 
                 default:

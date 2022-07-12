@@ -77,6 +77,38 @@ namespace Todo.Command.Test.Live.TasksServiceTests.UpdateInfo
             AssertEquality.OfInfoUpdatedEvent(listener.Events[1], request, response, expectedSequence: 2);
         }
 
+        [Fact]
+        public async Task UpdateInfo_SendValidRequestTwice_TaskInfoUpdatedEventSavedOnce()
+        {
+            var createdEvent = await GenerateAndAppendToStreamAsync();
+
+            var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
+
+            var request = new UpdateInfoRequest()
+            {
+                Id = createdEvent.AggregateId.ToString(),
+                UserId = createdEvent.UserId,
+                Title = "New title",
+                Note = "New note",
+            };
+
+            Task<Response> SendAsync() => client.UpdateInfoAsync(request).ResponseAsync;
+
+            var responses = await Task.WhenAll(
+                SendAsync(),
+                SendAsync(),
+                SendAsync()
+            );
+
+            var stream = _factory.Services.GetRequiredService<IEventStore>();
+
+            var @events = await stream.GetStreamAsync(createdEvent.AggregateId);
+
+            Assert.All(responses, r => Assert.NotEmpty(r.Id));
+            Assert.Equal(2, events.Count);
+            AssertEquality.OfInfoUpdatedEvent(events[1], request, responses[1], expectedSequence: 2);
+        }
+
         private async Task<TaskCreated> GenerateAndAppendToStreamAsync()
         {
             var eventStore = _factory.Services.GetRequiredService<IEventStore>();

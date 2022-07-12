@@ -26,6 +26,9 @@ namespace Todo.Command.Infrastructure.Persistence
 
         private Task CreateAsync(IReadOnlyList<Event> events)
         {
+            if (events.Count == 0)
+                return Task.CompletedTask;
+
             var partitionKey = events[0].AggregateId.ToString();
 
             var batch = _container.CreateTransactionalBatch(new PartitionKey(partitionKey));
