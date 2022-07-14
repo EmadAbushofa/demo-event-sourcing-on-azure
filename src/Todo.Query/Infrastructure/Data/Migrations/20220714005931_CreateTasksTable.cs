@@ -14,10 +14,10 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Sequence = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(148)", maxLength: 148, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     NormalizedTitle = table.Column<string>(type: "nvarchar(148)", maxLength: 148, nullable: false),
-                    ActualTitle = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     IsUniqueTitle = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),

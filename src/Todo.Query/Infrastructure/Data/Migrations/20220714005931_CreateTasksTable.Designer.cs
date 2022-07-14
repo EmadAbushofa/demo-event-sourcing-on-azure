@@ -12,8 +12,8 @@ using Todo.Query.Infrastructure.Data;
 namespace Todo.Query.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TodoTasksDbContext))]
-    [Migration("20220711130649_AddSequenceInTodoTasks")]
-    partial class AddSequenceInTodoTasks
+    [Migration("20220714005931_CreateTasksTable")]
+    partial class CreateTasksTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,11 +29,6 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActualTitle")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("ClusterId")
                         .ValueGeneratedOnAdd()
@@ -70,8 +65,8 @@ namespace Todo.Query.Infrastructure.Data.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(148)
-                        .HasColumnType("nvarchar(148)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("UserId")
                         .IsRequired()

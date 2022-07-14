@@ -11,7 +11,6 @@ namespace Todo.Query.Entities
             string userId,
             string title,
             string normalizedTitle,
-            string actualTitle,
             bool isUniqueTitle,
             DateTime createdAt,
             DateTime lastUpdate,
@@ -25,7 +24,6 @@ namespace Todo.Query.Entities
             UserId = userId;
             Title = title;
             NormalizedTitle = normalizedTitle;
-            ActualTitle = actualTitle;
             IsUniqueTitle = isUniqueTitle;
             CreatedAt = createdAt;
             LastUpdate = lastUpdate;
@@ -36,15 +34,12 @@ namespace Todo.Query.Entities
 
         public static TodoTask FromCreatedEvent(TaskCreated @event, bool isUniqueTitle = true)
         {
-            var title = isUniqueTitle ? @event.Data.Title : ToUniqueTitle(@event.Data.Title);
-
             return new TodoTask(
                 id: @event.AggregateId,
                 sequence: @event.Sequence,
                 userId: @event.UserId,
-                title: title,
-                normalizedTitle: title.ToUpper(),
-                actualTitle: @event.Data.Title,
+                title: @event.Data.Title,
+                normalizedTitle: NormalizeTitle(@event.Data.Title, isUniqueTitle),
                 isUniqueTitle: isUniqueTitle,
                 createdAt: @event.DateTime,
                 lastUpdate: @event.DateTime,
@@ -54,10 +49,13 @@ namespace Todo.Query.Entities
             );
         }
 
-        private static string ToUniqueTitle(string title)
+        private static string NormalizeTitle(string title, bool isUnique)
         {
+            if (isUnique)
+                return title.ToUpper();
+
             var random = new Random();
-            return title + "_Copy:" + random.Next(9999).ToString().PadLeft(4, '0');
+            return (title + "_Copy:" + random.Next(9999).ToString().PadLeft(4, '0')).ToUpper();
         }
 
         public Guid Id { get; private set; }
@@ -65,7 +63,6 @@ namespace Todo.Query.Entities
         public string UserId { get; private set; }
         public string Title { get; private set; }
         public string NormalizedTitle { get; private set; }
-        public string ActualTitle { get; private set; }
         public bool IsUniqueTitle { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime LastUpdate { get; private set; }
@@ -75,13 +72,9 @@ namespace Todo.Query.Entities
 
         public void Apply(TaskInfoUpdated @event, bool isUniqueTitle = true)
         {
-            var title = isUniqueTitle ? @event.Data.Title : ToUniqueTitle(@event.Data.Title);
-
-            Title = title;
-            ActualTitle = @event.Data.Title;
+            Title = @event.Data.Title;
             IsUniqueTitle = isUniqueTitle;
-            NormalizedTitle = title.ToUpper();
-
+            NormalizedTitle = NormalizeTitle(@event.Data.Title, isUniqueTitle);
             Sequence = @event.Sequence;
             LastUpdate = @event.DateTime;
             Note = @event.Data.Note;

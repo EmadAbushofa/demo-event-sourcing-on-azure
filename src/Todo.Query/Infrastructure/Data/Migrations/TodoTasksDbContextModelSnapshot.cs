@@ -28,11 +28,6 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ActualTitle")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
                     b.Property<int>("ClusterId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
@@ -68,8 +63,8 @@ namespace Todo.Query.Infrastructure.Data.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(148)
-                        .HasColumnType("nvarchar(148)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("UserId")
                         .IsRequired()

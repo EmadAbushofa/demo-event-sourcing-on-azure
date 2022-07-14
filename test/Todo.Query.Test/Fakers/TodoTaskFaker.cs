@@ -10,8 +10,7 @@ namespace Todo.Query.Test.Fakers
             RuleFor(e => e.Sequence, f => f.Random.Int(3, 9));
             RuleFor(e => e.DueDate, f => f.Date.Soon().ToUniversalTime().Date);
             RuleFor(e => e.IsCompleted, f => f.Random.Bool());
-            RuleFor(e => e.ActualTitle, f => f.Lorem.Word());
-            RuleFor(e => e.Title, (_, t) => t.ActualTitle);
+            RuleFor(e => e.Title, f => f.Lorem.Word());
             RuleFor(e => e.NormalizedTitle, (_, t) => t.Title.ToUpper());
             RuleFor(e => e.IsUniqueTitle, true);
             RuleFor(e => e.Note, f => f.Lorem.Sentences());
