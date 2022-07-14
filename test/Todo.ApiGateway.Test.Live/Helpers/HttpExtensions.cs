@@ -17,6 +17,9 @@ namespace Todo.ApiGateway.Test.Live.Helpers
         {
             var body = await message.Content.ReadAsStringAsync();
 
+            if (string.IsNullOrWhiteSpace(body))
+                throw new JsonException($"Body is null or empty with Status Code {message.StatusCode}.");
+
             var result = DeserializeJson<ValidationProblemDetails>(body);
 
             Assert.NotNull(result);

@@ -22,7 +22,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         [Fact]
         public async Task Create_SendValidCommand_QueryResultSucceed()
         {
-            var client = _factory.CreateClient();
+            var client = _factory.CreateClientWithUser("Emad");
 
             var input = new CreateTaskInput()
             {
@@ -33,7 +33,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var response = await client.PostJsonAsync<InputResponse>("api/todo-tasks", input);
 
-            await Task.Delay(5000);
+            await Task.Delay(8000);
 
             var output = await client.GetAsync<TodoTaskOutput>($"api/todo-tasks/{response.Id}");
 
@@ -43,7 +43,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         [Fact]
         public async Task Create_SendInvalidCommand_ReturnBadRequest()
         {
-            var client = _factory.CreateClient();
+            var client = _factory.CreateClientWithUser("Emad");
 
             var input = new CreateTaskInput().ToHttpContent();
 
@@ -54,6 +54,23 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.NotEmpty(result.Detail);
             Assert.NotEmpty(result.Errors);
+        }
+
+        [Fact]
+        public async Task Create_UnauthorizedRequestSent_ReturnUnauthorized()
+        {
+            var client = _factory.CreateClient();
+
+            var input = new CreateTaskInput()
+            {
+                DueDate = DateTime.UtcNow,
+                Note = "Some note",
+                Title = $"My title {DateTime.UtcNow.Ticks}"
+            }.ToHttpContent();
+
+            var response = await client.PostAsync("api/todo-tasks", input);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
     }
 }

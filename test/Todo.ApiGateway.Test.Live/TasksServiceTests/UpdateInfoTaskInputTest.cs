@@ -22,9 +22,9 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         [Fact]
         public async Task UpdateInfo_SendValidCommand_QueryResultSucceed()
         {
-            var id = await CreateAsync();
+            var id = await CreateAsync("Emad");
 
-            var client = _factory.CreateClient();
+            var client = _factory.CreateClientWithUser("Emad");
 
             var input = new UpdateInfoTaskInput()
             {
@@ -34,7 +34,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var response = await client.PutJsonAsync<InputResponse>($"api/todo-tasks/{id}/update-info", input);
 
-            await Task.Delay(5000);
+            await Task.Delay(8000);
 
             var output = await client.GetAsync<TodoTaskOutput>($"api/todo-tasks/{response.Id}");
 
@@ -44,7 +44,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         [Fact]
         public async Task UpdateInfo_SendInvalidCommand_ReturnBadRequest()
         {
-            var client = _factory.CreateClient();
+            var client = _factory.CreateClientWithUser("Emad");
 
             var input = new UpdateInfoTaskInput().ToHttpContent();
 
@@ -57,9 +57,64 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
             Assert.NotEmpty(result.Errors);
         }
 
-        private async Task<string> CreateAsync()
+        [Fact]
+        public async Task UpdateInfo_SendInvalidId_ReturnNotFound()
         {
+            var client = _factory.CreateClientWithUser("Emad");
+
+            var input = new UpdateInfoTaskInput()
+            {
+                Note = "New note",
+                Title = $"My new title {DateTime.UtcNow.Ticks}"
+            }.ToHttpContent();
+
+            var response = await client.PutAsync($"api/todo-tasks/{Guid.NewGuid()}/update-info", input);
+
+            var result = await response.GetErrorResult();
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.NotEmpty(result.Detail);
+        }
+
+        [Fact]
+        public async Task UpdateInfo_UpdateAnotherUsersTask_ReturnNotFound()
+        {
+            var id = await CreateAsync("Yhwach");
+
+            var client = _factory.CreateClientWithUser("Emad");
+
+            var input = new UpdateInfoTaskInput()
+            {
+                Note = "New note",
+                Title = $"My new title {DateTime.UtcNow.Ticks}"
+            }.ToHttpContent();
+
+            var response = await client.PutAsync($"api/todo-tasks/{id}/update-info", input);
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateInfo_UnauthorizedRequestSent_ReturnUnauthorized()
+        {
+            var id = await CreateAsync("Yhwach");
+
             var client = _factory.CreateClient();
+
+            var input = new UpdateInfoTaskInput()
+            {
+                Note = "New note",
+                Title = $"My new title {DateTime.UtcNow.Ticks}"
+            }.ToHttpContent();
+
+            var response = await client.PutAsync($"api/todo-tasks/{id}/update-info", input);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        private async Task<string> CreateAsync(string user)
+        {
+            var client = _factory.CreateClientWithUser(user);
 
             var input = new CreateTaskInput()
             {

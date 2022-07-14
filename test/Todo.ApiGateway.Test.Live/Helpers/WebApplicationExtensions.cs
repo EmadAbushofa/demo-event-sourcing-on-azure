@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
+using System.Net.Http.Headers;
 using Xunit.Abstractions;
 
 namespace Todo.ApiGateway.Test.Helpers
@@ -24,5 +25,12 @@ namespace Todo.ApiGateway.Test.Helpers
                    if (servicesConfiguration != null)
                        builder.ConfigureTestServices(servicesConfiguration);
                });
+
+        public static HttpClient CreateClientWithUser(this WebApplicationFactory<Program> factory, string user)
+        {
+            var client = factory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("TestUser", user);
+            return client;
+        }
     }
 }
