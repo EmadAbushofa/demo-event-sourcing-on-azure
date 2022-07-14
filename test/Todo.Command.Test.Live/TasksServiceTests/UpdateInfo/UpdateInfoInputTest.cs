@@ -69,7 +69,7 @@ namespace Todo.Command.Test.Live.TasksServiceTests.UpdateInfo
 
             listener.Events.Clear();
 
-            await Task.Delay(5000);
+            await Task.Delay(8000);
 
             await listener.CloseAsync();
 

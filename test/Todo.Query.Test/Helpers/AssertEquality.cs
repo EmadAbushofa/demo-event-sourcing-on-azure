@@ -92,7 +92,7 @@ namespace Todo.Query.Test.Helpers
             Assert.Equal(todoTask.UserId, response.UserId);
             Assert.Equal(todoTask.IsCompleted, response.IsCompleted);
             Assert.Equal(todoTask.Title, response.Title);
-            Assert.Equal(todoTask.DueDate, DateOnly.FromDateTime(response.DueDate.ToDateTime()));
+            Assert.Equal(todoTask.DueDate, response.DueDate.ToDateTime());
             Assert.Equal(todoTask.Note, response.Note);
         }
     }

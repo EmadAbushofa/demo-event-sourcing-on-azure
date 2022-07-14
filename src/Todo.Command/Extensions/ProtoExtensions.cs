@@ -4,15 +4,14 @@ namespace Todo.Command.Extensions
 {
     public static class ProtoExtensions
     {
-        public static Timestamp ToTimestamp(this DateOnly dateOnly)
+        public static Timestamp ToUtcTimestamp(this DateTime dateTime)
         {
-            var dateTime = dateOnly.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-            return Timestamp.FromDateTime(dateTime);
+            return Timestamp.FromDateTime(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc));
         }
 
-        public static DateOnly ToDateOnly(this Timestamp timestamp)
+        public static DateTime ToDate(this Timestamp timestamp)
         {
-            return DateOnly.FromDateTime(timestamp.ToDateTime());
+            return timestamp.ToDateTime().Date;
         }
     }
 }

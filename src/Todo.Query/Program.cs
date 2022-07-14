@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Http.Json;
 using Serilog;
 using Todo.Query.GrpcServices;
 using Todo.Query.Services;
@@ -17,6 +18,9 @@ builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddEntityFramework(builder.Configuration);
 builder.Services.AddServiceBus();
 builder.Services.AddHostedServices();
+builder.Services.Configure<JsonOptions>(options =>
+{
+});
 
 builder.Host.UseSerilog();
 

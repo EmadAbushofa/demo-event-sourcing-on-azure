@@ -6,7 +6,7 @@ namespace Todo.Query.Test.Fakers.DueDateChanged
     {
         public TaskDueDateChangedDataFaker()
         {
-            RuleFor(e => e.DueDate, faker => DateOnly.FromDateTime(faker.Date.Future()));
+            RuleFor(e => e.DueDate, faker => faker.Date.Future().Date);
         }
     }
 }

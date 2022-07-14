@@ -31,7 +31,7 @@ namespace Todo.Query.Test.HandlersTests
             await client.CreateAsync(new CreateRequest()
             {
                 Id = @event.AggregateId.ToString(),
-                DueDate = @event.Data.DueDate.ToTimestamp(),
+                DueDate = @event.Data.DueDate.ToUtcTimestamp(),
                 Note = @event.Data.Note,
                 Title = @event.Data.Title,
                 UserId = @event.UserId,
@@ -46,7 +46,7 @@ namespace Todo.Query.Test.HandlersTests
 
 
         [Fact]
-        public async Task When_NewTaskWithDuplicateTitleArrived_TaskSavedWithDifferentTitle()
+        public async Task When_NewTaskWithDuplicateTitleArrived_TaskSavedWithDifferentNormalizedTitle()
         {
             var title = "My title " + Guid.NewGuid();
 
@@ -58,8 +58,8 @@ namespace Todo.Query.Test.HandlersTests
                 .Where(t => ids.Contains(t.Id))
                 .ToListAsync());
 
-            Assert.Contains(todoTasks, t => t.Title == title);
-            Assert.Contains(todoTasks, t => t.Title.StartsWith(title + "_Copy"));
+            Assert.Contains(todoTasks, t => t.NormalizedTitle == title.ToUpper());
+            Assert.Contains(todoTasks, t => t.NormalizedTitle.StartsWith(title.ToUpper() + "_COPY"));
         }
 
         private static async Task<List<Guid>> Generate2EventsWithSameTitle(string title)

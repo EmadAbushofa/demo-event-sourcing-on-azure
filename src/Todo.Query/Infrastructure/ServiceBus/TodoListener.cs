@@ -3,6 +3,7 @@ using MediatR;
 using Newtonsoft.Json;
 using System.Text;
 using Todo.Query.EventHandlers.Created;
+using Todo.Query.EventHandlers.DueDateChanged;
 using Todo.Query.EventHandlers.InfoUpdated;
 
 namespace Todo.Query.Infrastructure.ServiceBus
@@ -67,6 +68,7 @@ namespace Todo.Query.Infrastructure.ServiceBus
             {
                 nameof(TaskCreated) => await mediator.Send(Deserialize<TaskCreated>(json)),
                 nameof(TaskInfoUpdated) => await mediator.Send(Deserialize<TaskInfoUpdated>(json)),
+                nameof(TaskDueDateChanged) => await mediator.Send(Deserialize<TaskDueDateChanged>(json)),
                 _ => true,
             };
         }

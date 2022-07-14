@@ -8,7 +8,7 @@ namespace Todo.Query.Test.Fakers
         {
             RuleFor(e => e.UserId, f => f.Random.Guid().ToString());
             RuleFor(e => e.Sequence, f => f.Random.Int(3, 9));
-            RuleFor(e => e.DueDate, f => f.Date.SoonDateOnly());
+            RuleFor(e => e.DueDate, f => f.Date.Soon().Date);
             RuleFor(e => e.IsCompleted, f => f.Random.Bool());
             RuleFor(e => e.Title, f => f.Lorem.Word());
             RuleFor(e => e.NormalizedTitle, (_, t) => t.Title.ToUpper());

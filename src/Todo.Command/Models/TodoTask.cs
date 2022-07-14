@@ -12,7 +12,7 @@ namespace Todo.Command.Models
         private string? UserId { get; set; }
         private string? Title { get; set; }
         private string? Note { get; set; }
-        private DateOnly DueDate { get; set; }
+        private DateTime DueDate { get; set; }
 
         public static TodoTask Create(CreateTaskCommand command)
         {

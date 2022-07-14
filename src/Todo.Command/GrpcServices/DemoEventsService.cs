@@ -36,7 +36,7 @@ namespace Todo.Command.GrpcServices
                 userId: request.UserId,
                 data: new TaskCreatedData(
                     Title: request.Title,
-                    DueDate: request.DueDate.ToDateOnly(),
+                    DueDate: ProtoExtensions.ToDate(request.DueDate),
                     Note: request.Note
                 )
             );
@@ -55,6 +55,22 @@ namespace Todo.Command.GrpcServices
                 data: new TaskInfoUpdatedData(
                     Title: request.Title,
                     Note: request.Note
+                )
+            );
+
+            await AppendToStreamThenDeleteAsync(@event);
+
+            return new Empty();
+        }
+
+        public override async Task<Empty> ChangeDueDate(ChangeDueDateRequest request, ServerCallContext context)
+        {
+            var @event = new TaskDueDateChanged(
+                aggregateId: Guid.Parse(request.Id),
+                sequence: request.Sequence,
+                userId: request.UserId,
+                data: new TaskDueDateChangedData(
+                    DueDate: ProtoExtensions.ToDate(request.DueDate)
                 )
             );
 

@@ -7,7 +7,7 @@ namespace Todo.Query.Test.Fakers.Created
         public TaskCreatedDataFaker()
         {
             RuleFor(e => e.Title, faker => faker.Lorem.Word());
-            RuleFor(e => e.DueDate, faker => faker.Date.FutureDateOnly());
+            RuleFor(e => e.DueDate, faker => faker.Date.Future().Date);
             RuleFor(e => e.Note, faker => faker.Lorem.Paragraph());
         }
     }

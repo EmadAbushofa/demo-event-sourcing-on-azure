@@ -1,4 +1,3 @@
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
 using Todo.Query.Extensions;
@@ -28,7 +27,7 @@ namespace Todo.Query.GrpcServices
                 Id = result.Id.ToString(),
                 UserId = result.UserId,
                 Title = result.Title,
-                DueDate = result.DueDate.ToTimestamp(),
+                DueDate = result.DueDate.ToUtcTimestamp(),
                 Note = result.Note,
                 IsCompleted = result.IsCompleted
             };

@@ -16,7 +16,7 @@ namespace Todo.Command.Test.Helpers
             Assert.Equal(1, created.Sequence);
             Assert.Equal(1, created.Version);
             Assert.Equal(request.Title, created.Data.Title);
-            Assert.Equal(request.DueDate.ToDateOnly(), created.Data.DueDate);
+            Assert.Equal(request.DueDate.ToDate(), created.Data.DueDate);
             Assert.Equal(request.Note, created.Data.Note);
         }
 
@@ -42,7 +42,7 @@ namespace Todo.Command.Test.Helpers
             Assert.Equal(DateTime.UtcNow, dueDateChanged.DateTime, TimeSpan.FromMinutes(1));
             Assert.Equal(expectedSequence, dueDateChanged.Sequence);
             Assert.Equal(1, dueDateChanged.Version);
-            Assert.Equal(request.DueDate.ToDateOnly(), dueDateChanged.Data.DueDate);
+            Assert.Equal(request.DueDate.ToDate(), dueDateChanged.Data.DueDate);
         }
     }
 }

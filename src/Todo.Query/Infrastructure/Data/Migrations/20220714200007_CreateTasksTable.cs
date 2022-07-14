@@ -21,7 +21,7 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                     IsUniqueTitle = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DueDate = table.Column<DateTime>(type: "date", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "Date", nullable: false),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     ClusterId = table.Column<int>(type: "int", nullable: false)

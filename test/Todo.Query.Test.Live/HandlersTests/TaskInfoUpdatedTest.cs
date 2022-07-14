@@ -73,8 +73,8 @@ namespace Todo.Query.Test.HandlersTests
                 .Where(t => t.Id == todoTask1.Id || t.Id == todoTask2.Id)
                 .ToListAsync());
 
-            Assert.Contains(todoTasks, t => t.Title == "My title");
-            Assert.Contains(todoTasks, t => t.Title.StartsWith("My title" + "_Copy"));
+            Assert.Contains(todoTasks, t => t.NormalizedTitle == "My title".ToUpper());
+            Assert.Contains(todoTasks, t => t.NormalizedTitle.StartsWith("My title".ToUpper() + "_COPY"));
         }
     }
 }

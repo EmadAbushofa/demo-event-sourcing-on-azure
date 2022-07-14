@@ -135,7 +135,7 @@ namespace Todo.Command.Test.TasksServiceTests.ChangeDueDate
             {
                 Id = createdEvent.AggregateId.ToString(),
                 UserId = createdEvent.UserId,
-                DueDate = createdEvent.Data.DueDate.ToTimestamp(),
+                DueDate = createdEvent.Data.DueDate.ToUtcTimestamp(),
             };
 
             var response = await client.ChangeDueDateAsync(request);

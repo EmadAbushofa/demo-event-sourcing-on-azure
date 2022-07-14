@@ -11,7 +11,7 @@ namespace Todo.Query.Test.Fakers.DueDateChanged
             RuleFor(e => e.Data, new TaskDueDateChangedDataFaker());
         }
 
-        public TaskDueDateChangedFaker RuleForDueDate(DateOnly date)
+        public TaskDueDateChangedFaker RuleForDueDate(DateTime date)
         {
             var dataFaker = new TaskDueDateChangedDataFaker()
                 .RuleFor(e => e.DueDate, date);
