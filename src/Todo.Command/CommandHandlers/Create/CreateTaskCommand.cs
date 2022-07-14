@@ -5,7 +5,7 @@ namespace Todo.Command.CommandHandlers.Create
     public record CreateTaskCommand(
         string UserId,
         string Title,
-        DateTime DueDate,
+        DateOnly DueDate,
         string Note
     ) : IRequest<Guid>;
 }

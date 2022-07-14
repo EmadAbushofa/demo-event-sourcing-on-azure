@@ -2,7 +2,7 @@
 {
     public record TaskCreatedData(
         string Title,
-        DateTime DueDate,
+        DateOnly DueDate,
         string Note
     );
 }

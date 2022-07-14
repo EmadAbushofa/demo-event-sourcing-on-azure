@@ -11,7 +11,7 @@ namespace Todo.Command.Extensions
             => new(
                 UserId: request.UserId,
                 Title: request.Title,
-                DueDate: request.DueDate.ToDateTime().Date,
+                DueDate: request.DueDate.ToDateOnly(),
                 Note: request.Note
             );
 
@@ -27,7 +27,7 @@ namespace Todo.Command.Extensions
             => new(
                 Id: Guid.Parse(request.Id),
                 UserId: request.UserId,
-                DueDate: request.DueDate.ToDateTime().Date
+                DueDate: request.DueDate.ToDateOnly()
             );
     }
 }

@@ -5,6 +5,7 @@ using Todo.Command.Abstractions;
 using Todo.Command.DemoEventsProto;
 using Todo.Command.Events;
 using Todo.Command.Events.DataTypes;
+using Todo.Command.Extensions;
 
 namespace Todo.Command.GrpcServices
 {
@@ -35,7 +36,7 @@ namespace Todo.Command.GrpcServices
                 userId: request.UserId,
                 data: new TaskCreatedData(
                     Title: request.Title,
-                    DueDate: request.DueDate.ToDateTime(),
+                    DueDate: request.DueDate.ToDateOnly(),
                     Note: request.Note
                 )
             );

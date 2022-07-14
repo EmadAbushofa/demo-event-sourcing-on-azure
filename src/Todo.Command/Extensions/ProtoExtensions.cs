@@ -1,6 +1,6 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 
-namespace Todo.Query.Extensions
+namespace Todo.Command.Extensions
 {
     public static class ProtoExtensions
     {
