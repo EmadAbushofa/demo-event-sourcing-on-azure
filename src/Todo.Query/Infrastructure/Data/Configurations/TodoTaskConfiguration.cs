@@ -16,8 +16,13 @@ namespace Todo.Query.Infrastructure.Data.Configurations
             builder.Property(e => e.Title).HasMaxLength(128);
             builder.Property(e => e.NormalizedTitle).HasMaxLength(148);
             builder.Property(e => e.UserId).HasMaxLength(128);
-            builder.Property(e => e.DueDate).HasColumnType("Date");
             builder.Property(e => e.Note).HasMaxLength(1000);
+
+            builder.Property(e => e.DueDate)
+                   .HasConversion(
+                        dateOnly => dateOnly.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
+                        dateTime => DateOnly.FromDateTime(dateTime)
+                    ).HasColumnType("date");
 
             builder.HasIndex(e => e.DueDate);
 

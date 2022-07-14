@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Todo.Query.Extensions;
 using Todo.Query.Test.Fakers.Created;
 using Todo.Query.Test.Helpers;
 using Todo.Query.Test.Live.Client.DemoEventsProto;
@@ -30,7 +31,7 @@ namespace Todo.Query.Test.HandlersTests
             await client.CreateAsync(new CreateRequest()
             {
                 Id = @event.AggregateId.ToString(),
-                DueDate = @event.Data.DueDate.ToUtcTimestamp(),
+                DueDate = @event.Data.DueDate.ToTimestamp(),
                 Note = @event.Data.Note,
                 Title = @event.Data.Title,
                 UserId = @event.UserId,

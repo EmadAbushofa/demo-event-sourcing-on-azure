@@ -1,4 +1,5 @@
 ﻿using Todo.Query.EventHandlers.Created;
+using Todo.Query.EventHandlers.DueDateChanged;
 using Todo.Query.EventHandlers.InfoUpdated;
 
 namespace Todo.Query.Entities
@@ -14,7 +15,7 @@ namespace Todo.Query.Entities
             bool isUniqueTitle,
             DateTime createdAt,
             DateTime lastUpdate,
-            DateTime dueDate,
+            DateOnly dueDate,
             bool isCompleted,
             string note
         )
@@ -66,7 +67,7 @@ namespace Todo.Query.Entities
         public bool IsUniqueTitle { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime LastUpdate { get; private set; }
-        public DateTime DueDate { get; private set; }
+        public DateOnly DueDate { get; private set; }
         public bool IsCompleted { get; private set; }
         public string? Note { get; private set; }
 
@@ -78,6 +79,13 @@ namespace Todo.Query.Entities
             Sequence = @event.Sequence;
             LastUpdate = @event.DateTime;
             Note = @event.Data.Note;
+        }
+
+        public void Apply(TaskDueDateChanged @event)
+        {
+            Sequence = @event.Sequence;
+            LastUpdate = @event.DateTime;
+            DueDate = @event.Data.DueDate;
         }
     }
 }

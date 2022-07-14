@@ -1,6 +1,7 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using Todo.Query.Extensions;
 using Todo.Query.QueryHandlers.Find;
 using Todo.Query.QueryHandlers.SimilarTitleCheck;
 using Todo.Query.Server.TodoProto;
@@ -27,7 +28,7 @@ namespace Todo.Query.GrpcServices
                 Id = result.Id.ToString(),
                 UserId = result.UserId,
                 Title = result.Title,
-                DueDate = DateTime.SpecifyKind(result.DueDate, DateTimeKind.Utc).ToTimestamp(),
+                DueDate = result.DueDate.ToTimestamp(),
                 Note = result.Note,
                 IsCompleted = result.IsCompleted
             };

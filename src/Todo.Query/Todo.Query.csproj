@@ -30,8 +30,4 @@
     <Protobuf Include="Protos\tasks_query.proto" GrpcServices="Server" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
 </Project>

@@ -12,7 +12,7 @@ using Todo.Query.Infrastructure.Data;
 namespace Todo.Query.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TodoTasksDbContext))]
-    [Migration("20220714005931_CreateTasksTable")]
+    [Migration("20220714141650_CreateTasksTable")]
     partial class CreateTasksTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,7 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DueDate")
-                        .HasColumnType("Date");
+                        .HasColumnType("date");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");

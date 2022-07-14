@@ -38,7 +38,7 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DueDate")
-                        .HasColumnType("Date");
+                        .HasColumnType("date");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");

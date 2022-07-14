@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Todo.Query.Entities;
 using Todo.Query.EventHandlers.Created;
+using Todo.Query.EventHandlers.DueDateChanged;
 using Todo.Query.EventHandlers.InfoUpdated;
 using Todo.Query.Test.Client.TodoProto;
 
@@ -61,6 +62,19 @@ namespace Todo.Query.Test.Helpers
             }
         }
 
+        public static void OfEventAndTask(TaskDueDateChanged @event, TodoTask? todoTask)
+        {
+            Assert.NotNull(todoTask);
+
+            if (todoTask == null) throw new ArgumentNullException(nameof(todoTask));
+
+            Assert.Equal(@event.AggregateId, todoTask.Id);
+            Assert.Equal(@event.Sequence, todoTask.Sequence);
+            Assert.Equal(@event.UserId, todoTask.UserId);
+            Assert.Equal(@event.DateTime, todoTask.LastUpdate, TimeSpan.FromMinutes(1));
+            Assert.Equal(@event.Data.DueDate, todoTask.DueDate);
+        }
+
         public static void OfBoth(object? obj1, object? obj2)
         {
             Assert.NotNull(obj1);
@@ -78,7 +92,7 @@ namespace Todo.Query.Test.Helpers
             Assert.Equal(todoTask.UserId, response.UserId);
             Assert.Equal(todoTask.IsCompleted, response.IsCompleted);
             Assert.Equal(todoTask.Title, response.Title);
-            Assert.Equal(todoTask.DueDate, response.DueDate.ToDateTime());
+            Assert.Equal(todoTask.DueDate, DateOnly.FromDateTime(response.DueDate.ToDateTime()));
             Assert.Equal(todoTask.Note, response.Note);
         }
     }
