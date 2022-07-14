@@ -9,13 +9,13 @@ using Todo.Command.Test.Live.EventBus;
 using Todo.Command.Test.Live.Helpers;
 using Xunit.Abstractions;
 
-namespace Todo.Command.Test.Live.TasksServiceTests.UpdateInfo
+namespace Todo.Command.Test.Live.TasksServiceTests.ChangeDueDate
 {
-    public class UpdateInfoInputTest : IClassFixture<WebApplicationFactory<Program>>
+    public class ChangeDueDateInputTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
 
-        public UpdateInfoInputTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
+        public ChangeDueDateInputTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
             _factory = factory.WithDefaultConfigurations(helper, services =>
             {
@@ -24,32 +24,31 @@ namespace Todo.Command.Test.Live.TasksServiceTests.UpdateInfo
         }
 
         [Fact]
-        public async Task UpdateInfo_SendValidRequest_TaskInfoUpdatedEventSaved()
+        public async Task ChangeDueDate_SendValidRequest_TaskDueDateChangedEventSaved()
         {
             var createdEvent = await GenerateAndAppendToStreamAsync();
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
-            var request = new UpdateInfoRequest()
+            var request = new ChangeDueDateRequest()
             {
                 Id = createdEvent.AggregateId.ToString(),
                 UserId = createdEvent.UserId,
-                Title = "New title",
-                Note = "New note",
+                DueDate = ProtoConverters.ToUtcTimestamp("2022-04-12"),
             };
 
-            var response = await client.UpdateInfoAsync(request);
+            var response = await client.ChangeDueDateAsync(request);
 
             var stream = _factory.Services.GetRequiredService<IEventStore>();
 
             var @events = await stream.GetStreamAsync(response.Id);
 
             Assert.Equal(2, events.Count);
-            AssertEquality.OfInfoUpdatedEvent(events[1], request, response, expectedSequence: 2);
+            AssertEquality.OfDueDateChangedEvent(events[1], request, response, expectedSequence: 2);
         }
 
         [Fact]
-        public async Task UpdateInfo_SendValidRequest_TaskInfoUpdatedEventPublished()
+        public async Task ChangeDueDate_SendValidRequest_TaskDueDateChangedEventPublished()
         {
             var listener = _factory.Services.GetRequiredService<TodoCommandListener>();
 
@@ -57,15 +56,14 @@ namespace Todo.Command.Test.Live.TasksServiceTests.UpdateInfo
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
-            var request = new UpdateInfoRequest()
+            var request = new ChangeDueDateRequest()
             {
                 Id = createdEvent.AggregateId.ToString(),
                 UserId = createdEvent.UserId,
-                Title = "New title",
-                Note = "New note",
+                DueDate = ProtoConverters.ToUtcTimestamp("2022-04-12"),
             };
 
-            var response = await client.UpdateInfoAsync(request);
+            var response = await client.ChangeDueDateAsync(request);
 
             listener.Events.Clear();
 
@@ -74,25 +72,24 @@ namespace Todo.Command.Test.Live.TasksServiceTests.UpdateInfo
             await listener.CloseAsync();
 
             Assert.Equal(2, listener.Events.Count);
-            AssertEquality.OfInfoUpdatedEvent(listener.Events[1], request, response, expectedSequence: 2);
+            AssertEquality.OfDueDateChangedEvent(listener.Events[1], request, response, expectedSequence: 2);
         }
 
         [Fact]
-        public async Task UpdateInfo_SendValidRequestMultipleTimes_TaskInfoUpdatedEventSavedOnce()
+        public async Task ChangeDueDate_SendValidRequestMultipleTimes_TaskDueDateChangedEventSavedOnce()
         {
             var createdEvent = await GenerateAndAppendToStreamAsync();
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
-            var request = new UpdateInfoRequest()
+            var request = new ChangeDueDateRequest()
             {
                 Id = createdEvent.AggregateId.ToString(),
                 UserId = createdEvent.UserId,
-                Title = "New title",
-                Note = "New note",
+                DueDate = ProtoConverters.ToUtcTimestamp("2022-04-12"),
             };
 
-            Task<Response> SendAsync() => client.UpdateInfoAsync(request).ResponseAsync;
+            Task<Response> SendAsync() => client.ChangeDueDateAsync(request).ResponseAsync;
 
             var responses = await Task.WhenAll(
                 SendAsync(),
@@ -106,7 +103,7 @@ namespace Todo.Command.Test.Live.TasksServiceTests.UpdateInfo
 
             Assert.All(responses, r => Assert.NotEmpty(r.Id));
             Assert.Equal(2, events.Count);
-            AssertEquality.OfInfoUpdatedEvent(events[1], request, responses[1], expectedSequence: 2);
+            AssertEquality.OfDueDateChangedEvent(events[1], request, responses[1], expectedSequence: 2);
         }
 
         private async Task<TaskCreated> GenerateAndAppendToStreamAsync()
