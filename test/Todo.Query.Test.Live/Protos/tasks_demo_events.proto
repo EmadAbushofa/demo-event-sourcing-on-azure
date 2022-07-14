@@ -34,8 +34,9 @@ message UpdateInfoRequest {
 
 message ChangeDueDateRequest {
   string id = 1;
-  string user_id = 2;
-  google.protobuf.Timestamp due_date = 3;
+  int32 sequence = 2;
+  string user_id = 3;
+  google.protobuf.Timestamp due_date = 4;
 }
 
 message CompleteRequest {
