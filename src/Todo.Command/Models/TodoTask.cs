@@ -1,4 +1,5 @@
-﻿using Todo.Command.CommandHandlers.Create;
+﻿using Todo.Command.CommandHandlers.ChangeDueDate;
+using Todo.Command.CommandHandlers.Create;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
 using Todo.Command.Exceptions;
@@ -11,6 +12,7 @@ namespace Todo.Command.Models
         private string? UserId { get; set; }
         private string? Title { get; set; }
         private string? Note { get; set; }
+        private DateTime DueDate { get; set; }
 
         public static TodoTask Create(CreateTaskCommand command)
         {
@@ -28,6 +30,7 @@ namespace Todo.Command.Models
             UserId = @event.UserId;
             Title = @event.Data.Title;
             Note = @event.Data.Note;
+            DueDate = @event.Data.DueDate;
         }
 
         public void UpdateInfo(UpdateTaskInfoCommand command)
@@ -49,6 +52,24 @@ namespace Todo.Command.Models
             Note = @event.Data.Note;
         }
 
+        public void ChangeDueDate(ChangeDueDateCommand command)
+        {
+            if (UserId != command.UserId)
+                throw new NotFoundException();
+
+            if (DueDate == command.DueDate)
+                return;
+
+            var @event = command.ToEvent(NextSequence);
+
+            ApplyNewChange(@event);
+        }
+
+        private void Mutate(TaskDueDateChanged @event)
+        {
+            DueDate = @event.Data.DueDate;
+        }
+
         protected override void Mutate(Event @event)
         {
             switch (@event)
@@ -59,6 +80,10 @@ namespace Todo.Command.Models
 
                 case TaskInfoUpdated taskInfoUpdated:
                     Mutate(taskInfoUpdated);
+                    break;
+
+                case TaskDueDateChanged taskDueDateChanged:
+                    Mutate(taskDueDateChanged);
                     break;
 
                 default:

@@ -23,6 +23,7 @@ namespace Todo.Command.Services
             services.AddGrpcValidation();
             services.AddValidator<CreateRequestValidator>();
             services.AddValidator<UpdateInfoRequestValidator>();
+            services.AddValidator<ChangeDueDateRequestValidator>();
         }
     }
 }

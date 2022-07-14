@@ -7,29 +7,41 @@ namespace Todo.Command.Test.Helpers
     {
         public static void OfCreatedEvent(Event @event, CreateRequest request, Response response)
         {
-            var createdEvent = (TaskCreated)@event;
+            var created = (TaskCreated)@event;
 
-            Assert.Equal(response.Id, createdEvent.AggregateId.ToString());
-            Assert.Equal(request.UserId, createdEvent.UserId);
-            Assert.Equal(DateTime.UtcNow, createdEvent.DateTime, TimeSpan.FromMinutes(1));
-            Assert.Equal(1, createdEvent.Sequence);
-            Assert.Equal(1, createdEvent.Version);
-            Assert.Equal(request.Title, createdEvent.Data.Title);
-            Assert.Equal(request.DueDate.ToDateTime().Date, createdEvent.Data.DueDate);
-            Assert.Equal(request.Note, createdEvent.Data.Note);
+            Assert.Equal(response.Id, created.AggregateId.ToString());
+            Assert.Equal(request.UserId, created.UserId);
+            Assert.Equal(DateTime.UtcNow, created.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(1, created.Sequence);
+            Assert.Equal(1, created.Version);
+            Assert.Equal(request.Title, created.Data.Title);
+            Assert.Equal(request.DueDate.ToDateTime().Date, created.Data.DueDate);
+            Assert.Equal(request.Note, created.Data.Note);
         }
 
         public static void OfInfoUpdatedEvent(Event @event, UpdateInfoRequest request, Response response, int expectedSequence)
         {
-            var infoUpdatedEvent = (TaskInfoUpdated)@event;
+            var infoUpdated = (TaskInfoUpdated)@event;
 
-            Assert.Equal(response.Id, infoUpdatedEvent.AggregateId.ToString());
-            Assert.Equal(request.UserId, infoUpdatedEvent.UserId);
-            Assert.Equal(DateTime.UtcNow, infoUpdatedEvent.DateTime, TimeSpan.FromMinutes(1));
-            Assert.Equal(expectedSequence, infoUpdatedEvent.Sequence);
-            Assert.Equal(1, infoUpdatedEvent.Version);
-            Assert.Equal(request.Title, infoUpdatedEvent.Data.Title);
-            Assert.Equal(request.Note, infoUpdatedEvent.Data.Note);
+            Assert.Equal(response.Id, infoUpdated.AggregateId.ToString());
+            Assert.Equal(request.UserId, infoUpdated.UserId);
+            Assert.Equal(DateTime.UtcNow, infoUpdated.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(expectedSequence, infoUpdated.Sequence);
+            Assert.Equal(1, infoUpdated.Version);
+            Assert.Equal(request.Title, infoUpdated.Data.Title);
+            Assert.Equal(request.Note, infoUpdated.Data.Note);
+        }
+
+        public static void OfDueDateChangedEvent(Event @event, ChangeDueDateRequest request, Response response, int expectedSequence)
+        {
+            var dueDateChanged = (TaskDueDateChanged)@event;
+
+            Assert.Equal(response.Id, dueDateChanged.AggregateId.ToString());
+            Assert.Equal(request.UserId, dueDateChanged.UserId);
+            Assert.Equal(DateTime.UtcNow, dueDateChanged.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(expectedSequence, dueDateChanged.Sequence);
+            Assert.Equal(1, dueDateChanged.Version);
+            Assert.Equal(request.DueDate.ToDateTime().Date, dueDateChanged.Data.DueDate);
         }
     }
 }

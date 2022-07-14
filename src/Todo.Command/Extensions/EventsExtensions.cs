@@ -1,4 +1,5 @@
-﻿using Todo.Command.CommandHandlers.Create;
+﻿using Todo.Command.CommandHandlers.ChangeDueDate;
+using Todo.Command.CommandHandlers.Create;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
 using Todo.Command.Events.DataTypes;
@@ -27,6 +28,16 @@ namespace Todo.Command.Extensions
                 data: new TaskInfoUpdatedData(
                     Title: command.Title,
                     Note: command.Note
+                )
+            );
+
+        public static TaskDueDateChanged ToEvent(this ChangeDueDateCommand command, int sequence)
+            => new(
+                aggregateId: command.Id,
+                sequence: sequence,
+                userId: command.UserId,
+                data: new TaskDueDateChangedData(
+                    DueDate: command.DueDate
                 )
             );
     }

@@ -4,8 +4,5 @@
         string Title,
         DateTime DueDate,
         string Note
-    )
-    {
-        public DateTime DueDate { get; init; } = DueDate.Date;
-    }
+    );
 }
