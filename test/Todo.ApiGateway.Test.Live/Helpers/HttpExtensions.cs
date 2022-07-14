@@ -77,6 +77,23 @@ namespace Todo.ApiGateway.Test.Live.Helpers
             return result!;
         }
 
+        public static async Task<TResult> PatchJsonAsync<TResult>(this HttpClient client, string url, object value)
+        {
+            var input = value.ToHttpContent();
+
+            var response = await client.PatchAsync(url, input);
+
+            response.EnsureSuccessStatusCode();
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            var result = DeserializeJson<TResult>(body);
+
+            Assert.NotNull(result);
+
+            return result!;
+        }
+
         private static TValue? DeserializeJson<TValue>(string value)
             => JsonSerializer.Deserialize<TValue>(value, new JsonSerializerOptions()
             {

@@ -57,5 +57,15 @@ namespace Todo.ApiGateway.Controllers
 
             return new InputResponse() { Id = response.Id };
         }
+
+        [HttpPatch("{id}/change-due-date")]
+        public async Task<InputResponse> ChangeDueDateAsync(Guid id, [FromBody] ChangeDueDateTaskInput input)
+        {
+            var request = input.ToRequest(id, User);
+
+            var response = await _commandClient.ChangeDueDateAsync(request);
+
+            return new InputResponse() { Id = response.Id };
+        }
     }
 }

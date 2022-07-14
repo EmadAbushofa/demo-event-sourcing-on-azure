@@ -36,5 +36,13 @@ namespace Todo.ApiGateway.Extensions
                 Note = input.Note,
                 Title = input.Title ?? "",
             };
+
+        public static ChangeDueDateRequest ToRequest(this ChangeDueDateTaskInput input, Guid id, ClaimsPrincipal claims)
+            => new()
+            {
+                Id = id.ToString(),
+                UserId = claims.GetUserId(),
+                DueDate = input.DueDate.ToUniversalTime().ToTimestamp(),
+            };
     }
 }
