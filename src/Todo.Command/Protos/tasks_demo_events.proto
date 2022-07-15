@@ -13,6 +13,7 @@ service DemoEvents {
   rpc UpdateInfo (UpdateInfoRequest) returns (google.protobuf.Empty);
   rpc ChangeDueDate (ChangeDueDateRequest) returns (google.protobuf.Empty);
   rpc Complete (CompleteRequest) returns (google.protobuf.Empty);
+  rpc Uncomplete (CompleteRequest) returns (google.protobuf.Empty);
   rpc Delete (DeleteRequest) returns (google.protobuf.Empty);
 }
 
@@ -47,5 +48,6 @@ message CompleteRequest {
 
 message DeleteRequest {
   string id = 1;
-  string user_id = 2;
+  int32 sequence = 2;
+  string user_id = 3;
 }
