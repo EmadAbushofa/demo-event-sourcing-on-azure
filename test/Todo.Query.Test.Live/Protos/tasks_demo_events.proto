@@ -41,7 +41,8 @@ message ChangeDueDateRequest {
 
 message CompleteRequest {
   string id = 1;
-  string user_id = 2;
+  int32 sequence = 2;
+  string user_id = 3;
 }
 
 message DeleteRequest {
