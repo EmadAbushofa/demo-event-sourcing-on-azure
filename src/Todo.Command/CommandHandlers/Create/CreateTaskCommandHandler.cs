@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Todo.Command.Abstractions;
-using Todo.Command.Models;
+using Todo.Command.Abstractions.Persistence;
+using Todo.Command.Domain;
 
 namespace Todo.Command.CommandHandlers.Create
 {

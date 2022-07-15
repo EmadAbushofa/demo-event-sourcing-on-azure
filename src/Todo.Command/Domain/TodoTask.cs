@@ -1,23 +1,31 @@
-﻿using Todo.Command.CommandHandlers.ChangeDueDate;
+﻿using Todo.Command.Abstractions.Domain;
+using Todo.Command.CommandHandlers.ChangeDueDate;
 using Todo.Command.CommandHandlers.Complete;
 using Todo.Command.CommandHandlers.Create;
 using Todo.Command.CommandHandlers.Delete;
 using Todo.Command.CommandHandlers.Uncomplete;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
-using Todo.Command.Exceptions;
 using Todo.Command.Extensions;
 
-namespace Todo.Command.Models
+namespace Todo.Command.Domain
 {
     public class TodoTask : Aggregate<TodoTask>, IAggregate
     {
-        private string? UserId { get; set; }
-        private string? Title { get; set; }
-        private string? Note { get; set; }
-        private DateTime DueDate { get; set; }
-        private bool IsCompleted { get; set; }
-        private bool IsDeleted { get; set; }
+        private readonly BusinessRules _businessRules;
+        private readonly ChangeDetector _changeDetector;
+        private TodoTask()
+        {
+            _businessRules = new BusinessRules(this);
+            _changeDetector = new ChangeDetector(this);
+        }
+
+        public string? UserId { get; private set; }
+        public bool IsCompleted { get; private set; }
+        public bool IsDeleted { get; private set; }
+        public string? Title { get; private set; }
+        public string? Note { get; private set; }
+        public DateTime DueDate { get; private set; }
 
         public static TodoTask Create(CreateTaskCommand command)
         {
@@ -40,15 +48,14 @@ namespace Todo.Command.Models
 
         public void UpdateInfo(UpdateTaskInfoCommand command)
         {
-            if (UserId != command.UserId)
-                throw new NotFoundException();
+            _businessRules.Validate(command);
 
-            if (Title == command.Title && Note == command.Note)
-                return;
+            if (_changeDetector.HaveDifferentValues(command))
+            {
+                var @event = command.ToEvent(NextSequence);
 
-            var @event = command.ToEvent(NextSequence);
-
-            ApplyNewChange(@event);
+                ApplyNewChange(@event);
+            }
         }
 
         private void Mutate(TaskInfoUpdated @event)
@@ -59,15 +66,14 @@ namespace Todo.Command.Models
 
         public void ChangeDueDate(ChangeDueDateCommand command)
         {
-            if (UserId != command.UserId)
-                throw new NotFoundException();
+            _businessRules.Validate(command);
 
-            if (DueDate == command.DueDate)
-                return;
+            if (_changeDetector.HaveDifferentValues(command))
+            {
+                var @event = command.ToEvent(NextSequence);
 
-            var @event = command.ToEvent(NextSequence);
-
-            ApplyNewChange(@event);
+                ApplyNewChange(@event);
+            }
         }
 
         private void Mutate(TaskDueDateChanged @event)
@@ -77,11 +83,7 @@ namespace Todo.Command.Models
 
         public void Complete(CompleteCommand command)
         {
-            if (UserId != command.UserId)
-                throw new NotFoundException();
-
-            if (IsCompleted)
-                throw new RuleViolationException("Task is already completed.");
+            _businessRules.Validate(command);
 
             var @event = command.ToEvent(NextSequence);
 
@@ -95,11 +97,7 @@ namespace Todo.Command.Models
 
         public void Uncomplete(UncompleteCommand command)
         {
-            if (UserId != command.UserId)
-                throw new NotFoundException();
-
-            if (!IsCompleted)
-                throw new RuleViolationException("Task is already uncompleted.");
+            _businessRules.Validate(command);
 
             var @event = command.ToEvent(NextSequence);
 
@@ -113,11 +111,7 @@ namespace Todo.Command.Models
 
         public void Delete(DeleteCommand command)
         {
-            if (UserId != command.UserId)
-                throw new NotFoundException();
-
-            if (IsDeleted)
-                throw new NotFoundException();
+            _businessRules.Validate(command);
 
             var @event = command.ToEvent(NextSequence);
 

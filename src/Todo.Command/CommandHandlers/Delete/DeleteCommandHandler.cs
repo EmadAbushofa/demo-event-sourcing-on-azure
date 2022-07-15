@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Persistence;
+using Todo.Command.Domain;
 using Todo.Command.Exceptions;
-using Todo.Command.Models;
 
 namespace Todo.Command.CommandHandlers.Delete
 {

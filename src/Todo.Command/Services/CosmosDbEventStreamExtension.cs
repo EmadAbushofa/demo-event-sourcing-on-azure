@@ -1,6 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Infrastructure.Persistence;
 
 namespace Todo.Command.Services

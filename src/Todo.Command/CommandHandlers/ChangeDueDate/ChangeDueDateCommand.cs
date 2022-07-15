@@ -6,5 +6,5 @@ namespace Todo.Command.CommandHandlers.ChangeDueDate
         Guid Id,
         string UserId,
         DateTime DueDate
-    ) : IRequest<Guid>;
+    ) : IRequest<Guid>, ITodoCommand;
 }

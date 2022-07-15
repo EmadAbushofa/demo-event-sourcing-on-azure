@@ -7,5 +7,5 @@ namespace Todo.Command.CommandHandlers.UpdateInfo
         string UserId,
         string Title,
         string Note
-    ) : IRequest<Guid>;
+    ) : IRequest<Guid>, ITodoCommand;
 }

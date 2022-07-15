@@ -1,6 +1,6 @@
 ﻿using Todo.Command.Events;
 
-namespace Todo.Command.Models
+namespace Todo.Command.Abstractions.Domain
 {
     public abstract class Aggregate<T> where T : Aggregate<T>, IAggregate
     {

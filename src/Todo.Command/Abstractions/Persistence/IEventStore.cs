@@ -1,7 +1,7 @@
-﻿using Todo.Command.Events;
-using Todo.Command.Models;
+﻿using Todo.Command.Abstractions.Domain;
+using Todo.Command.Events;
 
-namespace Todo.Command.Abstractions
+namespace Todo.Command.Abstractions.Persistence
 {
     public interface IEventStore
     {

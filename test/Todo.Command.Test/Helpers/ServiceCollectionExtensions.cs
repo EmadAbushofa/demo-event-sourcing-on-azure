@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Test.FakeServices;
 
 namespace Todo.Command.Test.Helpers

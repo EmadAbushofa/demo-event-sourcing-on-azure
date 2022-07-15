@@ -1,7 +1,7 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Azure.Cosmos;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.DemoEventsProto;
 using Todo.Command.Events;
 using Todo.Command.Events.DataTypes;

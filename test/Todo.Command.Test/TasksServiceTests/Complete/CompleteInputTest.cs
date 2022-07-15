@@ -2,11 +2,11 @@ using Calzolari.Grpc.Net.Client.Validation;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Todo.Command.Abstractions;
-using Todo.Command.Events;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Fakers.Completed;
 using Todo.Command.Test.Fakers.Created;
+using Todo.Command.Test.Fakers.Deleted;
 using Todo.Command.Test.Helpers;
 using Xunit.Abstractions;
 
@@ -15,6 +15,7 @@ namespace Todo.Command.Test.TasksServiceTests.Complete
     public class CompleteInputTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
+        private readonly EventStoreHelper _eventStoreHelper;
 
         public CompleteInputTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
@@ -22,12 +23,13 @@ namespace Todo.Command.Test.TasksServiceTests.Complete
             {
                 services.ReplaceWithInMemoryEventStore();
             });
+            _eventStoreHelper = new EventStoreHelper(_factory.Services);
         }
 
         [Fact]
         public async Task Complete_SendValidRequest_TaskCompletedEventSaved()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -56,7 +58,7 @@ namespace Todo.Command.Test.TasksServiceTests.Complete
             string errorPropertyName
         )
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -97,7 +99,7 @@ namespace Todo.Command.Test.TasksServiceTests.Complete
         [Fact]
         public async Task Complete_CompleteOtherUsersTask_ThrowsNotFoundRpcException()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -115,8 +117,8 @@ namespace Todo.Command.Test.TasksServiceTests.Complete
         [Fact]
         public async Task Complete_CompleteAlreadyCompletedTask_ThrowsFailedPreconditionRpcException()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
-            await GenerateAndAppendToStreamAsync(new TaskCompletedFaker().For(createdEvent));
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCompletedFaker().For(createdEvent));
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -131,26 +133,23 @@ namespace Todo.Command.Test.TasksServiceTests.Complete
             Assert.Equal(StatusCode.FailedPrecondition, exception.StatusCode);
         }
 
-        private async Task<TaskCreated> GenerateAndAppendToStreamAsync(TaskCreatedFaker faker)
+        [Fact]
+        public async Task Complete_CompleteDeletedTask_ThrowsNotFoundRpcException()
         {
-            var eventStore = _factory.Services.GetRequiredService<IEventStore>();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskDeletedFaker().For(createdEvent));
 
-            var taskCreated = faker.Generate();
+            var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
-            await eventStore.AppendToStreamAsync(taskCreated);
+            var request = new CompleteRequest()
+            {
+                Id = createdEvent.AggregateId.ToString(),
+                UserId = createdEvent.UserId,
+            };
 
-            return taskCreated;
-        }
+            var exception = await Assert.ThrowsAsync<RpcException>(async () => await client.CompleteAsync(request));
 
-        private async Task<TaskCompleted> GenerateAndAppendToStreamAsync(TaskCompletedFaker faker)
-        {
-            var eventStore = _factory.Services.GetRequiredService<IEventStore>();
-
-            var taskCompleted = faker.Generate();
-
-            await eventStore.AppendToStreamAsync(taskCompleted);
-
-            return taskCompleted;
+            Assert.Equal(StatusCode.NotFound, exception.StatusCode);
         }
     }
 }

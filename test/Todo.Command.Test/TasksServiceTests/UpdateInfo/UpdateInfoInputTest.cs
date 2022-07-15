@@ -2,10 +2,11 @@ using Calzolari.Grpc.Net.Client.Validation;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Events;
 using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Fakers.Created;
+using Todo.Command.Test.Fakers.Deleted;
 using Todo.Command.Test.Helpers;
 using Xunit.Abstractions;
 
@@ -14,6 +15,7 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
     public class UpdateInfoInputTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
+        private readonly EventStoreHelper _eventStoreHelper;
 
         public UpdateInfoInputTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
@@ -21,6 +23,7 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
             {
                 services.ReplaceWithInMemoryEventStore();
             });
+            _eventStoreHelper = new EventStoreHelper(_factory.Services);
         }
 
 
@@ -33,7 +36,7 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
             string note
         )
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -66,7 +69,7 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
             string errorPropertyName
         )
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -110,7 +113,7 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
         [Fact]
         public async Task UpdateInfo_UpdateOtherUsersTask_ThrowsNotFoundRpcException()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -130,7 +133,7 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
         [Fact]
         public async Task UpdateInfo_NothingChanged_NoNewEventSaved()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -152,16 +155,25 @@ namespace Todo.Command.Test.TasksServiceTests.UpdateInfo
             Assert.Equal(nameof(TaskCreated), events[0].Type);
         }
 
-        private async Task<TaskCreated> GenerateAndAppendToStreamAsync()
+        [Fact]
+        public async Task UpdateInfo_UpdateDeletedTask_ThrowsNotFoundRpcException()
         {
-            var eventStore = _factory.Services.GetRequiredService<IEventStore>();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskDeletedFaker().For(createdEvent));
 
-            var taskCreatedEvent = new TaskCreatedFaker()
-                .Generate();
+            var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
-            await eventStore.AppendToStreamAsync(taskCreatedEvent);
+            var request = new UpdateInfoRequest()
+            {
+                Id = createdEvent.AggregateId.ToString(),
+                UserId = createdEvent.UserId,
+                Title = "Some title",
+                Note = "Note"
+            };
 
-            return taskCreatedEvent;
+            var exception = await Assert.ThrowsAsync<RpcException>(async () => await client.UpdateInfoAsync(request));
+
+            Assert.Equal(StatusCode.NotFound, exception.StatusCode);
         }
     }
 }

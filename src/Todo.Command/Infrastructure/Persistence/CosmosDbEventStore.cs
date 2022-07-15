@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Domain;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Events;
-using Todo.Command.Models;
 
 namespace Todo.Command.Infrastructure.Persistence
 {

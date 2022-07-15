@@ -2,7 +2,7 @@ using Calzolari.Grpc.Net.Client.Validation;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Helpers;
 using Xunit.Abstractions;
@@ -20,7 +20,6 @@ namespace Todo.Command.Test.TasksServiceTests.Create
                 services.ReplaceWithInMemoryEventStore();
             });
         }
-
 
         [Theory]
         [InlineData("1", "Workout", "2022-03-27", "Take your proteins.")]

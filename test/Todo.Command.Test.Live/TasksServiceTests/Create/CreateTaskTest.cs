@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Helpers;
 using Todo.Command.Test.Live.EventBus;

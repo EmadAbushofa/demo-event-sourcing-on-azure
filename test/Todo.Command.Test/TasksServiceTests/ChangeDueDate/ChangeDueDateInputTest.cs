@@ -3,11 +3,12 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Todo.Command.Abstractions;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Events;
 using Todo.Command.Extensions;
 using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Fakers.Created;
+using Todo.Command.Test.Fakers.Deleted;
 using Todo.Command.Test.Helpers;
 using Xunit.Abstractions;
 
@@ -16,6 +17,7 @@ namespace Todo.Command.Test.TasksServiceTests.ChangeDueDate
     public class ChangeDueDateInputTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
+        private readonly EventStoreHelper _eventStoreHelper;
 
         public ChangeDueDateInputTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
@@ -23,6 +25,7 @@ namespace Todo.Command.Test.TasksServiceTests.ChangeDueDate
             {
                 services.ReplaceWithInMemoryEventStore();
             });
+            _eventStoreHelper = new EventStoreHelper(_factory.Services);
         }
 
 
@@ -32,7 +35,7 @@ namespace Todo.Command.Test.TasksServiceTests.ChangeDueDate
         [InlineData("2024-12-31")]
         public async Task ChangeDueDate_SendValidRequest_TaskDueDateChangedEventSaved(string dueDate)
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -65,7 +68,7 @@ namespace Todo.Command.Test.TasksServiceTests.ChangeDueDate
             string errorPropertyName
         )
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -108,7 +111,7 @@ namespace Todo.Command.Test.TasksServiceTests.ChangeDueDate
         [Fact]
         public async Task ChangeDueDate_ChangeOtherUsersTask_ThrowsNotFoundRpcException()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -127,7 +130,7 @@ namespace Todo.Command.Test.TasksServiceTests.ChangeDueDate
         [Fact]
         public async Task ChangeDueDate_NothingChanged_NoNewEventSaved()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -148,16 +151,24 @@ namespace Todo.Command.Test.TasksServiceTests.ChangeDueDate
             Assert.Equal(nameof(TaskCreated), events[0].Type);
         }
 
-        private async Task<TaskCreated> GenerateAndAppendToStreamAsync()
+        [Fact]
+        public async Task ChangeDueDate_ChangeDeletedTask_ThrowsNotFoundRpcException()
         {
-            var eventStore = _factory.Services.GetRequiredService<IEventStore>();
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskDeletedFaker().For(createdEvent));
 
-            var taskCreatedEvent = new TaskCreatedFaker()
-                .Generate();
+            var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
-            await eventStore.AppendToStreamAsync(taskCreatedEvent);
+            var request = new ChangeDueDateRequest()
+            {
+                Id = createdEvent.AggregateId.ToString(),
+                UserId = createdEvent.UserId,
+                DueDate = DateTime.UtcNow.ToUtcTimestamp(),
+            };
 
-            return taskCreatedEvent;
+            var exception = await Assert.ThrowsAsync<RpcException>(async () => await client.ChangeDueDateAsync(request));
+
+            Assert.Equal(StatusCode.NotFound, exception.StatusCode);
         }
     }
 }

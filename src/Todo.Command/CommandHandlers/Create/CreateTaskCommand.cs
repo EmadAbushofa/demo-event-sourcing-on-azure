@@ -7,5 +7,5 @@ namespace Todo.Command.CommandHandlers.Create
         string Title,
         DateTime DueDate,
         string Note
-    ) : IRequest<Guid>;
+    ) : IRequest<Guid>, ITodoCommand;
 }

@@ -2,8 +2,7 @@ using Calzolari.Grpc.Net.Client.Validation;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Todo.Command.Abstractions;
-using Todo.Command.Events;
+using Todo.Command.Abstractions.Persistence;
 using Todo.Command.Test.Client.TodoProto;
 using Todo.Command.Test.Fakers.Created;
 using Todo.Command.Test.Fakers.Deleted;
@@ -15,6 +14,7 @@ namespace Todo.Command.Test.TasksServiceTests.Delete
     public class DeleteInputTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
+        private readonly EventStoreHelper _eventStoreHelper;
 
         public DeleteInputTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
@@ -22,12 +22,13 @@ namespace Todo.Command.Test.TasksServiceTests.Delete
             {
                 services.ReplaceWithInMemoryEventStore();
             });
+            _eventStoreHelper = new EventStoreHelper(_factory.Services);
         }
 
         [Fact]
         public async Task Delete_DeleteExistingTask_TaskDeletedEventSaved()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -56,7 +57,7 @@ namespace Todo.Command.Test.TasksServiceTests.Delete
             string errorPropertyName
         )
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -97,7 +98,7 @@ namespace Todo.Command.Test.TasksServiceTests.Delete
         [Fact]
         public async Task Delete_DeleteOtherUsersTask_ThrowsNotFoundRpcException()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -115,8 +116,8 @@ namespace Todo.Command.Test.TasksServiceTests.Delete
         [Fact]
         public async Task Delete_DeleteAlreadyDeletedTask_ThrowsNotFoundRpcException()
         {
-            var createdEvent = await GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
-            await GenerateAndAppendToStreamAsync(new TaskDeletedFaker().For(createdEvent));
+            var createdEvent = await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskCreatedFaker());
+            await _eventStoreHelper.GenerateAndAppendToStreamAsync(new TaskDeletedFaker().For(createdEvent));
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 
@@ -129,28 +130,6 @@ namespace Todo.Command.Test.TasksServiceTests.Delete
             var exception = await Assert.ThrowsAsync<RpcException>(async () => await client.DeleteAsync(request));
 
             Assert.Equal(StatusCode.NotFound, exception.StatusCode);
-        }
-
-        private async Task<TaskCreated> GenerateAndAppendToStreamAsync(TaskCreatedFaker faker)
-        {
-            var eventStore = _factory.Services.GetRequiredService<IEventStore>();
-
-            var taskCreated = faker.Generate();
-
-            await eventStore.AppendToStreamAsync(taskCreated);
-
-            return taskCreated;
-        }
-
-        private async Task<TaskDeleted> GenerateAndAppendToStreamAsync(TaskDeletedFaker faker)
-        {
-            var eventStore = _factory.Services.GetRequiredService<IEventStore>();
-
-            var taskDeleted = faker.Generate();
-
-            await eventStore.AppendToStreamAsync(taskDeleted);
-
-            return taskDeleted;
         }
     }
 }
