@@ -82,5 +82,19 @@ namespace Todo.ApiGateway.Controllers
 
             return new InputResponse() { Id = response.Id };
         }
+
+        [HttpPatch("{id}/uncomplete")]
+        public async Task<InputResponse> UncompleteAsync(Guid id)
+        {
+            var request = new CompleteRequest()
+            {
+                Id = id.ToString(),
+                UserId = User.GetUserId(),
+            };
+
+            var response = await _commandClient.UncompleteAsync(request);
+
+            return new InputResponse() { Id = response.Id };
+        }
     }
 }

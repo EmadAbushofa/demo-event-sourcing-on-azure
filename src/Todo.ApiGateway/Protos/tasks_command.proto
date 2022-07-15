@@ -12,6 +12,7 @@ service Tasks {
   rpc UpdateInfo (UpdateInfoRequest) returns (Response);
   rpc ChangeDueDate (ChangeDueDateRequest) returns (Response);
   rpc Complete (CompleteRequest) returns (Response);
+  rpc Uncomplete (CompleteRequest) returns (Response);
   rpc Delete (DeleteRequest) returns (Response);
 }
 
