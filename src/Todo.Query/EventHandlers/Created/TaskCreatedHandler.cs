@@ -15,12 +15,13 @@ namespace Todo.Query.EventHandlers.Created
 
         public async Task<bool> Handle(TaskCreated @event, CancellationToken cancellationToken)
         {
-            if (await _unitOfWork.Tasks.ExistsAsync(@event.AggregateId))
+            if (await _unitOfWork.Tasks.ExistsAsync(@event.AggregateId, cancellationToken))
                 return true;
 
             var similarTitleExists = await _unitOfWork.Tasks.HasSimilarTodoTaskAsync(
                 userId: @event.UserId,
-                title: @event.Data.Title
+                title: @event.Data.Title,
+                cancellationToken
             );
 
             var task = similarTitleExists
@@ -29,7 +30,7 @@ namespace Todo.Query.EventHandlers.Created
 
             await _unitOfWork.Tasks.AddAsync(task);
 
-            await _unitOfWork.CompleteAsync();
+            await _unitOfWork.CompleteAsync(cancellationToken);
 
             return true;
         }

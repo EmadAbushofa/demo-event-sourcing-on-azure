@@ -35,5 +35,14 @@ namespace Todo.Query.Test.Helpers
             await context.SaveChangesAsync();
             return todoTask;
         }
+
+        public async Task<List<TodoTask>> InsertAsync(List<TodoTask> todoTasks)
+        {
+            using var scope = _provider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
+            await context.Tasks.AddRangeAsync(todoTasks);
+            await context.SaveChangesAsync();
+            return todoTasks;
+        }
     }
 }

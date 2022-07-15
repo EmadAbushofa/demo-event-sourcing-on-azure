@@ -16,7 +16,7 @@ namespace Todo.Query.EventHandlers.Deleted
 
         public async Task<bool> Handle(TaskDeleted @event, CancellationToken cancellationToken)
         {
-            var todoTask = await _unitOfWork.Tasks.FindAsync(@event.AggregateId);
+            var todoTask = await _unitOfWork.Tasks.FindAsync(@event.AggregateId, cancellationToken);
 
             if (todoTask == null || todoTask.Sequence < @event.Sequence - 1)
             {
@@ -32,7 +32,7 @@ namespace Todo.Query.EventHandlers.Deleted
                 return true;
 
             await _unitOfWork.Tasks.RemoveAsync(todoTask);
-            await _unitOfWork.CompleteAsync();
+            await _unitOfWork.CompleteAsync(cancellationToken);
             return true;
         }
     }

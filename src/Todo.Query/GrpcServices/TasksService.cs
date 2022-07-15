@@ -1,8 +1,6 @@
 using Grpc.Core;
 using MediatR;
 using Todo.Query.Extensions;
-using Todo.Query.QueryHandlers.Find;
-using Todo.Query.QueryHandlers.SimilarTitleCheck;
 using Todo.Query.Server.TodoProto;
 
 namespace Todo.Query.GrpcServices
@@ -16,34 +14,42 @@ namespace Todo.Query.GrpcServices
             _mediator = mediator;
         }
 
+        public override async Task<FilterResponse> Filter(FilterRequest request, ServerCallContext context)
+        {
+            var query = request.ToQuery();
+
+            var result = await _mediator.Send(query, context.CancellationToken);
+
+            var outputs = result.Tasks.Select(t => t.ToFilterOutput());
+
+            return new FilterResponse()
+            {
+                Page = result.Page,
+                Size = result.Size,
+                Total = result.Total,
+                Tasks =
+                {
+                    outputs
+                }
+            };
+        }
+
         public override async Task<FindResponse> Find(FindRequest request, ServerCallContext context)
         {
-            var query = new FindQuery(Guid.Parse(request.Id));
+            var query = request.ToQuery();
 
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, context.CancellationToken);
 
-            return new FindResponse()
-            {
-                Id = result.Id.ToString(),
-                UserId = result.UserId,
-                Title = result.Title,
-                DueDate = result.DueDate.ToUtcTimestamp(),
-                Note = result.Note,
-                IsCompleted = result.IsCompleted
-            };
+            return result.ToFindResponse();
         }
 
         public override async Task<SimilarTitleExistsResponse> SimilarTitleExists(SimilarTitleExistsRequest request, ServerCallContext context)
         {
-            var query = new SimilarTitleQuery(UserId: request.UserId, Title: request.Title);
+            var query = request.ToQuery();
 
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(query, context.CancellationToken);
 
-            return new SimilarTitleExistsResponse()
-            {
-                Id = result?.Id.ToString(),
-                Exists = result != null
-            };
+            return result.ToSimilarTitleResponse();
         }
     }
 }

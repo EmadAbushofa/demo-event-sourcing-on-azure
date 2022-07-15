@@ -14,7 +14,7 @@ namespace Todo.Query.Infrastructure.Data
 
         public ITasksRepository Tasks { get; }
 
-        public Task CompleteAsync() => _context.SaveChangesAsync();
+        public Task CompleteAsync(CancellationToken cancellationToken) => _context.SaveChangesAsync(cancellationToken);
 
         public void Dispose() => _context.Dispose();
     }

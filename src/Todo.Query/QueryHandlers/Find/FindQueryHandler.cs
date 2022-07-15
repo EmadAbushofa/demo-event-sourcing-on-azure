@@ -16,7 +16,7 @@ namespace Todo.Query.QueryHandlers.Find
 
         public async Task<TodoTask> Handle(FindQuery request, CancellationToken cancellationToken)
         {
-            var todoTask = await _unitOfWork.Tasks.FindAsync(request.Id);
+            var todoTask = await _unitOfWork.Tasks.FindAsync(request.Id, cancellationToken);
 
             if (todoTask == null)
                 throw new NotFoundException("Task not found.");

@@ -8,7 +8,7 @@ using Todo.Query.Test.Fakers;
 using Todo.Query.Test.Helpers;
 using Xunit.Abstractions;
 
-namespace Todo.Query.Test.HandlersTests
+namespace Todo.Query.Test.QueryTests
 {
     public class SimilarTitleExistsTest : IClassFixture<WebApplicationFactory<Program>>
     {

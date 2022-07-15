@@ -3,6 +3,6 @@
     public interface IUnitOfWork : IDisposable
     {
         ITasksRepository Tasks { get; }
-        Task CompleteAsync();
+        Task CompleteAsync(CancellationToken cancellationToken);
     }
 }

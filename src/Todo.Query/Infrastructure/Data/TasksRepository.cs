@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Todo.Query.Abstractions;
 using Todo.Query.Entities;
+using Todo.Query.QueryHandlers.Filter;
 
 namespace Todo.Query.Infrastructure.Data
 {
@@ -13,12 +14,24 @@ namespace Todo.Query.Infrastructure.Data
             _context = context;
         }
 
-        public Task<TodoTask?> FindAsync(Guid id)
-            => _context.Tasks.FindAsync(id).AsTask();
+        public async Task<FilterResult> FilterAsync(FilterQuery filter, CancellationToken cancellationToken)
+        {
+            var results = await _context.Tasks.ToListAsync(cancellationToken);
+            return new FilterResult(
+                Page: filter.Page,
+                Size: filter.Size,
+                Total: results.Count,
+                Tasks: results
+            );
+        }
 
-        public Task<bool> ExistsAsync(Guid id) => _context.Tasks.AnyAsync(t => t.Id == id);
+        public Task<TodoTask?> FindAsync(Guid id, CancellationToken cancellationToken) =>
+            _context.Tasks.FindAsync(new object[] { id }, cancellationToken: cancellationToken).AsTask();
 
-        public Task<bool> HasSimilarTodoTaskAsync(string userId, string title)
+        public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken) =>
+            _context.Tasks.AnyAsync(t => t.Id == id, cancellationToken);
+
+        public Task<bool> HasSimilarTodoTaskAsync(string userId, string title, CancellationToken cancellationToken)
         {
             title = title.Trim().ToUpper();
 
@@ -27,10 +40,10 @@ namespace Todo.Query.Infrastructure.Data
                                 t.UserId == userId &&
                                 t.NormalizedTitle == title &&
                                 t.IsCompleted == false
-                        );
+                        , cancellationToken);
         }
 
-        public Task<TodoTask?> GetSimilarTodoTaskAsync(string userId, string title)
+        public Task<TodoTask?> GetSimilarTodoTaskAsync(string userId, string title, CancellationToken cancellationToken)
         {
             title = title.Trim().ToUpper();
 
@@ -39,7 +52,7 @@ namespace Todo.Query.Infrastructure.Data
                                 t.UserId == userId &&
                                 t.NormalizedTitle == title &&
                                 t.IsCompleted == false
-                        );
+                        , cancellationToken);
         }
 
         public Task AddAsync(TodoTask task) => _context.Tasks.AddAsync(task).AsTask();

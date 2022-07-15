@@ -17,7 +17,8 @@ namespace Todo.Query.QueryHandlers.SimilarTitleCheck
         {
             return await _unitOfWork.Tasks.GetSimilarTodoTaskAsync(
                 userId: request.UserId,
-                title: request.Title
+                title: request.Title,
+                cancellationToken
             );
         }
     }

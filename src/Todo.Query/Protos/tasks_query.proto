@@ -16,8 +16,9 @@ service Tasks {
 message FilterRequest {
   google.protobuf.Int32Value page = 1;
   google.protobuf.Int32Value size = 2;
-  google.protobuf.StringValue user_id = 3;
-  google.protobuf.Timestamp due_date = 4;
+  google.protobuf.BoolValue is_completed = 3;
+  google.protobuf.StringValue user_id = 4;
+  google.protobuf.Timestamp due_date = 5;
 }
 
 message FilterResponse {

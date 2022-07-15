@@ -16,7 +16,7 @@ namespace Todo.Query.EventHandlers.InfoUpdated
 
         public async Task<bool> Handle(TaskInfoUpdated @event, CancellationToken cancellationToken)
         {
-            var todoTask = await _unitOfWork.Tasks.FindAsync(@event.AggregateId);
+            var todoTask = await _unitOfWork.Tasks.FindAsync(@event.AggregateId, cancellationToken);
 
             if (todoTask == null || todoTask.Sequence < @event.Sequence - 1)
             {
@@ -39,13 +39,14 @@ namespace Todo.Query.EventHandlers.InfoUpdated
             {
                 var isUniquetitle = !await _unitOfWork.Tasks.HasSimilarTodoTaskAsync(
                     userId: @event.UserId,
-                    title: @event.Data.Title
+                    title: @event.Data.Title,
+                    cancellationToken
                 );
 
                 todoTask.Apply(@event, isUniquetitle);
             }
 
-            await _unitOfWork.CompleteAsync();
+            await _unitOfWork.CompleteAsync(cancellationToken);
 
             return true;
         }
