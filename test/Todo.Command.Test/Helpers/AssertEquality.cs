@@ -47,13 +47,24 @@ namespace Todo.Command.Test.Helpers
 
         public static void OfCompletedEvent(Event @event, CompleteRequest request, Response response, int expectedSequence)
         {
-            var dueDateChanged = (TaskCompleted)@event;
+            var taskCompleted = (TaskCompleted)@event;
 
-            Assert.Equal(response.Id, dueDateChanged.AggregateId.ToString());
-            Assert.Equal(request.UserId, dueDateChanged.UserId);
-            Assert.Equal(DateTime.UtcNow, dueDateChanged.DateTime, TimeSpan.FromMinutes(1));
-            Assert.Equal(expectedSequence, dueDateChanged.Sequence);
-            Assert.Equal(1, dueDateChanged.Version);
+            Assert.Equal(response.Id, taskCompleted.AggregateId.ToString());
+            Assert.Equal(request.UserId, taskCompleted.UserId);
+            Assert.Equal(DateTime.UtcNow, taskCompleted.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(expectedSequence, taskCompleted.Sequence);
+            Assert.Equal(1, taskCompleted.Version);
+        }
+
+        public static void OfUncompletedEvent(Event @event, CompleteRequest request, Response response, int expectedSequence)
+        {
+            var taskUncompleted = (TaskUncompleted)@event;
+
+            Assert.Equal(response.Id, taskUncompleted.AggregateId.ToString());
+            Assert.Equal(request.UserId, taskUncompleted.UserId);
+            Assert.Equal(DateTime.UtcNow, taskUncompleted.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(expectedSequence, taskUncompleted.Sequence);
+            Assert.Equal(1, taskUncompleted.Version);
         }
     }
 }

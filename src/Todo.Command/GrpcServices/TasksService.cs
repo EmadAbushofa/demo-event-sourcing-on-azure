@@ -49,5 +49,14 @@ namespace Todo.Command.GrpcServices
 
             return new Response() { Id = id.ToString() };
         }
+
+        public override async Task<Response> Uncomplete(CompleteRequest request, ServerCallContext context)
+        {
+            var command = request.ToUncompleteCommand();
+
+            var id = await _mediator.Send(command);
+
+            return new Response() { Id = id.ToString() };
+        }
     }
 }

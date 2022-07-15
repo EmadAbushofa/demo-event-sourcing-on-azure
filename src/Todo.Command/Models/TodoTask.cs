@@ -1,6 +1,7 @@
 ﻿using Todo.Command.CommandHandlers.ChangeDueDate;
 using Todo.Command.CommandHandlers.Complete;
 using Todo.Command.CommandHandlers.Create;
+using Todo.Command.CommandHandlers.Uncomplete;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
 using Todo.Command.Exceptions;
@@ -78,7 +79,7 @@ namespace Todo.Command.Models
                 throw new NotFoundException();
 
             if (IsCompleted)
-                throw new RuleViolationException("Task already completed.");
+                throw new RuleViolationException("Task is already completed.");
 
             var @event = command.ToEvent(NextSequence);
 
@@ -88,6 +89,24 @@ namespace Todo.Command.Models
         private void Mutate(TaskCompleted _)
         {
             IsCompleted = true;
+        }
+
+        public void Uncomplete(UncompleteCommand command)
+        {
+            if (UserId != command.UserId)
+                throw new NotFoundException();
+
+            if (!IsCompleted)
+                throw new RuleViolationException("Task is already uncompleted.");
+
+            var @event = command.ToEvent(NextSequence);
+
+            ApplyNewChange(@event);
+        }
+
+        private void Mutate(TaskUncompleted _)
+        {
+            IsCompleted = false;
         }
 
         protected override void Mutate(Event @event)
@@ -108,6 +127,10 @@ namespace Todo.Command.Models
 
                 case TaskCompleted taskCompleted:
                     Mutate(taskCompleted);
+                    break;
+
+                case TaskUncompleted taskUncompleted:
+                    Mutate(taskUncompleted);
                     break;
 
                 default:
