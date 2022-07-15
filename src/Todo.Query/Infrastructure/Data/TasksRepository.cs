@@ -43,5 +43,10 @@ namespace Todo.Query.Infrastructure.Data
         }
 
         public Task AddAsync(TodoTask task) => _context.Tasks.AddAsync(task).AsTask();
+        public Task RemoveAsync(TodoTask task)
+        {
+            _context.Tasks.Remove(task);
+            return Task.CompletedTask;
+        }
     }
 }

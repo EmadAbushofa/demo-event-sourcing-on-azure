@@ -9,5 +9,6 @@ namespace Todo.Query.Abstractions
         Task<bool> HasSimilarTodoTaskAsync(string userId, string title);
         Task<TodoTask?> GetSimilarTodoTaskAsync(string userId, string title);
         Task AddAsync(TodoTask task);
+        Task RemoveAsync(TodoTask task);
     }
 }

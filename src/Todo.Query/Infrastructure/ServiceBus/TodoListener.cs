@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Todo.Query.EventHandlers.Completed;
 using Todo.Query.EventHandlers.Created;
+using Todo.Query.EventHandlers.Deleted;
 using Todo.Query.EventHandlers.DueDateChanged;
 using Todo.Query.EventHandlers.InfoUpdated;
 using Todo.Query.EventHandlers.Uncompleted;
@@ -73,6 +74,7 @@ namespace Todo.Query.Infrastructure.ServiceBus
                 nameof(TaskDueDateChanged) => await mediator.Send(Deserialize<TaskDueDateChanged>(json)),
                 nameof(TaskCompleted) => await mediator.Send(Deserialize<TaskCompleted>(json)),
                 nameof(TaskUncompleted) => await mediator.Send(Deserialize<TaskUncompleted>(json)),
+                nameof(TaskDeleted) => await mediator.Send(Deserialize<TaskDeleted>(json)),
                 _ => false,
             };
         }
