@@ -28,7 +28,6 @@ namespace Todo.ApiGateway.Controllers
             _queryClient = queryClient;
         }
 
-
         [HttpGet("{id}")]
         public async Task<TodoTaskOutput> FindAsync(string id)
         {
@@ -93,6 +92,20 @@ namespace Todo.ApiGateway.Controllers
             };
 
             var response = await _commandClient.UncompleteAsync(request);
+
+            return new InputResponse() { Id = response.Id };
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<InputResponse> DeleteAsync(Guid id)
+        {
+            var request = new DeleteRequest()
+            {
+                Id = id.ToString(),
+                UserId = User.GetUserId(),
+            };
+
+            var response = await _commandClient.DeleteAsync(request);
 
             return new InputResponse() { Id = response.Id };
         }
