@@ -44,5 +44,16 @@ namespace Todo.Command.Test.Helpers
             Assert.Equal(1, dueDateChanged.Version);
             Assert.Equal(request.DueDate.ToDate(), dueDateChanged.Data.DueDate);
         }
+
+        public static void OfCompletedEvent(Event @event, CompleteRequest request, Response response, int expectedSequence)
+        {
+            var dueDateChanged = (TaskCompleted)@event;
+
+            Assert.Equal(response.Id, dueDateChanged.AggregateId.ToString());
+            Assert.Equal(request.UserId, dueDateChanged.UserId);
+            Assert.Equal(DateTime.UtcNow, dueDateChanged.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(expectedSequence, dueDateChanged.Sequence);
+            Assert.Equal(1, dueDateChanged.Version);
+        }
     }
 }

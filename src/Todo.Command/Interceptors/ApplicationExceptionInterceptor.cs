@@ -16,6 +16,10 @@ namespace Todo.Command.Interceptors
             {
                 throw new RpcException(new Status(StatusCode.NotFound, "Result not found."));
             }
+            catch (RuleViolationException e)
+            {
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, e.Message));
+            }
         }
     }
 }

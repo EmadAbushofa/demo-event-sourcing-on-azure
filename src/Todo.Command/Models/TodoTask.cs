@@ -1,4 +1,5 @@
 ﻿using Todo.Command.CommandHandlers.ChangeDueDate;
+using Todo.Command.CommandHandlers.Complete;
 using Todo.Command.CommandHandlers.Create;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
@@ -13,6 +14,7 @@ namespace Todo.Command.Models
         private string? Title { get; set; }
         private string? Note { get; set; }
         private DateTime DueDate { get; set; }
+        private bool IsCompleted { get; set; }
 
         public static TodoTask Create(CreateTaskCommand command)
         {
@@ -70,6 +72,24 @@ namespace Todo.Command.Models
             DueDate = @event.Data.DueDate;
         }
 
+        public void Complete(CompleteCommand command)
+        {
+            if (UserId != command.UserId)
+                throw new NotFoundException();
+
+            if (IsCompleted)
+                throw new RuleViolationException("Task already completed.");
+
+            var @event = command.ToEvent(NextSequence);
+
+            ApplyNewChange(@event);
+        }
+
+        private void Mutate(TaskCompleted _)
+        {
+            IsCompleted = true;
+        }
+
         protected override void Mutate(Event @event)
         {
             switch (@event)
@@ -84,6 +104,10 @@ namespace Todo.Command.Models
 
                 case TaskDueDateChanged taskDueDateChanged:
                     Mutate(taskDueDateChanged);
+                    break;
+
+                case TaskCompleted taskCompleted:
+                    Mutate(taskCompleted);
                     break;
 
                 default:

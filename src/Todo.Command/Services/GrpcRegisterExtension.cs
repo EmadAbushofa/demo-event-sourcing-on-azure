@@ -24,6 +24,7 @@ namespace Todo.Command.Services
             services.AddValidator<CreateRequestValidator>();
             services.AddValidator<UpdateInfoRequestValidator>();
             services.AddValidator<ChangeDueDateRequestValidator>();
+            services.AddValidator<CompleteRequestValidator>();
         }
     }
 }

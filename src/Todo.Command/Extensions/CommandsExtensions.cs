@@ -1,4 +1,5 @@
 ﻿using Todo.Command.CommandHandlers.ChangeDueDate;
+using Todo.Command.CommandHandlers.Complete;
 using Todo.Command.CommandHandlers.Create;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.TodoProto;
@@ -28,6 +29,12 @@ namespace Todo.Command.Extensions
                 Id: Guid.Parse(request.Id),
                 UserId: request.UserId,
                 DueDate: request.DueDate.ToDate()
+            );
+
+        public static CompleteCommand ToCommand(this CompleteRequest request)
+            => new(
+                Id: Guid.Parse(request.Id),
+                UserId: request.UserId
             );
     }
 }

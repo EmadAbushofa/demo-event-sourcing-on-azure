@@ -1,4 +1,5 @@
 ﻿using Todo.Command.CommandHandlers.ChangeDueDate;
+using Todo.Command.CommandHandlers.Complete;
 using Todo.Command.CommandHandlers.Create;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
@@ -39,6 +40,14 @@ namespace Todo.Command.Extensions
                 data: new TaskDueDateChangedData(
                     DueDate: command.DueDate
                 )
+            );
+
+        public static TaskCompleted ToEvent(this CompleteCommand command, int sequence)
+            => new(
+                aggregateId: command.Id,
+                sequence: sequence,
+                userId: command.UserId,
+                data: new object()
             );
     }
 }
