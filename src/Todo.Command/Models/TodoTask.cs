@@ -1,6 +1,7 @@
 ﻿using Todo.Command.CommandHandlers.ChangeDueDate;
 using Todo.Command.CommandHandlers.Complete;
 using Todo.Command.CommandHandlers.Create;
+using Todo.Command.CommandHandlers.Delete;
 using Todo.Command.CommandHandlers.Uncomplete;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
@@ -16,6 +17,7 @@ namespace Todo.Command.Models
         private string? Note { get; set; }
         private DateTime DueDate { get; set; }
         private bool IsCompleted { get; set; }
+        private bool IsDeleted { get; set; }
 
         public static TodoTask Create(CreateTaskCommand command)
         {
@@ -109,6 +111,24 @@ namespace Todo.Command.Models
             IsCompleted = false;
         }
 
+        public void Delete(DeleteCommand command)
+        {
+            if (UserId != command.UserId)
+                throw new NotFoundException();
+
+            if (IsDeleted)
+                throw new NotFoundException();
+
+            var @event = command.ToEvent(NextSequence);
+
+            ApplyNewChange(@event);
+        }
+
+        private void Mutate(TaskDeleted _)
+        {
+            IsDeleted = true;
+        }
+
         protected override void Mutate(Event @event)
         {
             switch (@event)
@@ -131,6 +151,10 @@ namespace Todo.Command.Models
 
                 case TaskUncompleted taskUncompleted:
                     Mutate(taskUncompleted);
+                    break;
+
+                case TaskDeleted taskDeleted:
+                    Mutate(taskDeleted);
                     break;
 
                 default:

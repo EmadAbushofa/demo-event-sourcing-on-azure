@@ -66,5 +66,16 @@ namespace Todo.Command.Test.Helpers
             Assert.Equal(expectedSequence, taskUncompleted.Sequence);
             Assert.Equal(1, taskUncompleted.Version);
         }
+
+        public static void OfDeletedEvent(Event @event, DeleteRequest request, Response response, int expectedSequence)
+        {
+            var taskDeleted = (TaskDeleted)@event;
+
+            Assert.Equal(response.Id, taskDeleted.AggregateId.ToString());
+            Assert.Equal(request.UserId, taskDeleted.UserId);
+            Assert.Equal(DateTime.UtcNow, taskDeleted.DateTime, TimeSpan.FromMinutes(1));
+            Assert.Equal(expectedSequence, taskDeleted.Sequence);
+            Assert.Equal(1, taskDeleted.Version);
+        }
     }
 }

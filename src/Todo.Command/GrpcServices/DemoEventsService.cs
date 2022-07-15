@@ -107,6 +107,20 @@ namespace Todo.Command.GrpcServices
             return new Empty();
         }
 
+        public override async Task<Empty> Delete(DeleteRequest request, ServerCallContext context)
+        {
+            var @event = new TaskDeleted(
+                aggregateId: Guid.Parse(request.Id),
+                sequence: request.Sequence,
+                userId: request.UserId,
+                data: new object()
+            );
+
+            await AppendToStreamThenDeleteAsync(@event);
+
+            return new Empty();
+        }
+
         private async Task AppendToStreamThenDeleteAsync(Event @event)
         {
             await _eventStore.AppendToStreamAsync(@event);

@@ -1,6 +1,7 @@
 ﻿using Todo.Command.CommandHandlers.ChangeDueDate;
 using Todo.Command.CommandHandlers.Complete;
 using Todo.Command.CommandHandlers.Create;
+using Todo.Command.CommandHandlers.Delete;
 using Todo.Command.CommandHandlers.Uncomplete;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.Events;
@@ -52,6 +53,14 @@ namespace Todo.Command.Extensions
             );
 
         public static TaskUncompleted ToEvent(this UncompleteCommand command, int sequence)
+            => new(
+                aggregateId: command.Id,
+                sequence: sequence,
+                userId: command.UserId,
+                data: new object()
+            );
+
+        public static TaskDeleted ToEvent(this DeleteCommand command, int sequence)
             => new(
                 aggregateId: command.Id,
                 sequence: sequence,

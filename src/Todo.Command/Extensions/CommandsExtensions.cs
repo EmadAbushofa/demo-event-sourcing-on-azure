@@ -1,6 +1,7 @@
 ﻿using Todo.Command.CommandHandlers.ChangeDueDate;
 using Todo.Command.CommandHandlers.Complete;
 using Todo.Command.CommandHandlers.Create;
+using Todo.Command.CommandHandlers.Delete;
 using Todo.Command.CommandHandlers.Uncomplete;
 using Todo.Command.CommandHandlers.UpdateInfo;
 using Todo.Command.TodoProto;
@@ -39,6 +40,12 @@ namespace Todo.Command.Extensions
             );
 
         public static UncompleteCommand ToUncompleteCommand(this CompleteRequest request)
+            => new(
+                Id: Guid.Parse(request.Id),
+                UserId: request.UserId
+            );
+
+        public static DeleteCommand ToCommand(this DeleteRequest request)
             => new(
                 Id: Guid.Parse(request.Id),
                 UserId: request.UserId
