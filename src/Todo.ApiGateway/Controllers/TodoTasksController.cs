@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using Todo.ApiGateway.Extensions;
 using Todo.ApiGateway.Models.TodoTasks;
+using Todo.ApiGateway.TodoProto.Command;
 using Todo.ApiGateway.TodoProto.Query;
 using CommandClient = Todo.ApiGateway.TodoProto.Command.Tasks.TasksClient;
 using QueryClient = Todo.ApiGateway.TodoProto.Query.Tasks.TasksClient;
@@ -64,6 +65,20 @@ namespace Todo.ApiGateway.Controllers
             var request = input.ToRequest(id, User);
 
             var response = await _commandClient.ChangeDueDateAsync(request);
+
+            return new InputResponse() { Id = response.Id };
+        }
+
+        [HttpPatch("{id}/complete")]
+        public async Task<InputResponse> CompleteAsync(Guid id)
+        {
+            var request = new CompleteRequest()
+            {
+                Id = id.ToString(),
+                UserId = User.GetUserId(),
+            };
+
+            var response = await _commandClient.CompleteAsync(request);
 
             return new InputResponse() { Id = response.Id };
         }

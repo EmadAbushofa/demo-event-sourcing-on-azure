@@ -77,9 +77,9 @@ namespace Todo.ApiGateway.Test.Live.Helpers
             return result!;
         }
 
-        public static async Task<TResult> PatchJsonAsync<TResult>(this HttpClient client, string url, object value)
+        public static async Task<TResult> PatchJsonAsync<TResult>(this HttpClient client, string url, object? value = null)
         {
-            var input = value.ToHttpContent();
+            var input = value?.ToHttpContent();
 
             var response = await client.PatchAsync(url, input);
 
