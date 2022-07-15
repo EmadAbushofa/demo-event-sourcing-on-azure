@@ -2,6 +2,7 @@
 using Todo.Query.EventHandlers.Created;
 using Todo.Query.EventHandlers.DueDateChanged;
 using Todo.Query.EventHandlers.InfoUpdated;
+using Todo.Query.EventHandlers.Uncompleted;
 
 namespace Todo.Query.Entities
 {
@@ -94,6 +95,13 @@ namespace Todo.Query.Entities
             Sequence = @event.Sequence;
             LastUpdate = @event.DateTime;
             IsCompleted = true;
+        }
+
+        public void Apply(TaskUncompleted @event)
+        {
+            Sequence = @event.Sequence;
+            LastUpdate = @event.DateTime;
+            IsCompleted = false;
         }
     }
 }

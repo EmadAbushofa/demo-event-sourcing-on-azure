@@ -6,6 +6,7 @@ using Todo.Query.EventHandlers.Completed;
 using Todo.Query.EventHandlers.Created;
 using Todo.Query.EventHandlers.DueDateChanged;
 using Todo.Query.EventHandlers.InfoUpdated;
+using Todo.Query.EventHandlers.Uncompleted;
 
 namespace Todo.Query.Infrastructure.ServiceBus
 {
@@ -71,6 +72,7 @@ namespace Todo.Query.Infrastructure.ServiceBus
                 nameof(TaskInfoUpdated) => await mediator.Send(Deserialize<TaskInfoUpdated>(json)),
                 nameof(TaskDueDateChanged) => await mediator.Send(Deserialize<TaskDueDateChanged>(json)),
                 nameof(TaskCompleted) => await mediator.Send(Deserialize<TaskCompleted>(json)),
+                nameof(TaskUncompleted) => await mediator.Send(Deserialize<TaskUncompleted>(json)),
                 _ => false,
             };
         }
