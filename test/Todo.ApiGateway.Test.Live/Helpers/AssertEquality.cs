@@ -4,6 +4,12 @@ namespace Todo.ApiGateway.Test.Live.Helpers
 {
     public static class AssertEquality
     {
+        public static void Of(FilterResult result, string id)
+        {
+            Assert.Single(result.Tasks);
+            Assert.Equal(id, result.Tasks[0].Id);
+        }
+
         public static void Of(CreateTaskInput input, TodoTaskOutput output)
         {
             Assert.NotNull(input);

@@ -8,6 +8,22 @@ namespace Todo.ApiGateway.Extensions
 {
     public static class TodoTasksExtensions
     {
+        public static FilterResult ToOutput(this FilterResponse response)
+            => new()
+            {
+                Page = response.Page,
+                Size = response.Size,
+                Total = response.Total,
+                Tasks = response.Tasks.Select(t => new TodoTaskFilterOutput()
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    UserId = t.UserId,
+                    IsCompleted = t.IsCompleted,
+                    DueDate = t.DueDate.ToDateTime(),
+                }).ToList()
+            };
+
         public static TodoTaskOutput ToOutput(this FindResponse response)
             => new()
             {
@@ -17,6 +33,24 @@ namespace Todo.ApiGateway.Extensions
                 Note = response.Note,
                 Title = response.Title,
                 IsCompleted = response.IsCompleted,
+            };
+
+        public static SimilarTitleOutput ToOutput(this SimilarTitleExistsResponse response)
+            => new()
+            {
+                Id = response.Id,
+                Exists = response.Exists,
+            };
+
+        public static FilterRequest ToRequest(this FilterModel filter, ClaimsPrincipal claims)
+            => new()
+            {
+                UserId = claims.GetUserId(),
+                Page = filter.Page,
+                Size = filter.Size,
+                IsCompleted = filter.IsCompleted,
+                DueDateTo = filter.DueDateTo?.ToUniversalTime().ToTimestamp(),
+                DueDateFrom = filter.DueDateFrom?.ToUniversalTime().ToTimestamp(),
             };
 
         public static CreateRequest ToRequest(this CreateTaskInput input, ClaimsPrincipal claims)

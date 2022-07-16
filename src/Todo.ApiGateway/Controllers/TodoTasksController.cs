@@ -28,12 +28,32 @@ namespace Todo.ApiGateway.Controllers
             _queryClient = queryClient;
         }
 
+        [HttpGet]
+        public async Task<FilterResult> IndexAsync([FromQuery] FilterModel filter)
+        {
+            var request = filter.ToRequest(User);
+
+            var response = await _queryClient.FilterAsync(request);
+
+            return response.ToOutput();
+        }
+
         [HttpGet("{id}")]
         public async Task<TodoTaskOutput> FindAsync(string id)
         {
             var request = new FindRequest() { Id = id };
 
             var response = await _queryClient.FindAsync(request);
+
+            return response.ToOutput();
+        }
+
+        [HttpGet("similar-title-exists")]
+        public async Task<SimilarTitleOutput> SimilarTitleExistsAsync(string? title)
+        {
+            var request = new SimilarTitleExistsRequest() { Title = title ?? "", UserId = User.GetUserId() };
+
+            var response = await _queryClient.SimilarTitleExistsAsync(request);
 
             return response.ToOutput();
         }
