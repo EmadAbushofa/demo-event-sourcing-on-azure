@@ -1,11 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Todo.Query.EventHandlers.Created;
 using Todo.Query.Extensions;
 using Todo.Query.Test.Fakers.Created;
 using Todo.Query.Test.Helpers;
 using Todo.Query.Test.Live.Client.DemoEventsProto;
+using Todo.Query.Test.Live.EventBus;
 using Todo.Query.Test.Live.Helpers;
 using Xunit.Abstractions;
+using AssertEquality = Todo.Query.Test.Helpers.AssertEquality;
+using LiveAssertEquality = Todo.Query.Test.Live.Helpers.AssertEquality;
 
 namespace Todo.Query.Test.HandlersTests
 {
@@ -16,10 +21,12 @@ namespace Todo.Query.Test.HandlersTests
 
         public TaskCreatedTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
-            _factory = factory.WithDefaultConfigurations(helper);
+            _factory = factory.WithDefaultConfigurations(helper, services =>
+            {
+                services.AddEventHandlingListener();
+            });
             _dbContextHelper = new DbContextHelper(_factory.Services);
         }
-
 
         [Fact]
         public async Task When_NewTaskCreatedEventArrived_TaskSaved()
@@ -44,6 +51,35 @@ namespace Todo.Query.Test.HandlersTests
             AssertEquality.OfEventAndTask(@event, todoTask);
         }
 
+        [Fact]
+        public async Task When_NewTaskCreatedEventHandled_EventConsumedPublished()
+        {
+            var listener = _factory.Services.GetRequiredService<TodoHandlingListener>();
+
+            var @event = new TaskCreatedFaker().Generate();
+
+            var client = CommandServiceHelper.CreateDemoEventsClient();
+
+            listener.Messages.Clear();
+
+            await client.CreateAsync(new CreateRequest()
+            {
+                Id = @event.AggregateId.ToString(),
+                DueDate = @event.Data.DueDate.ToUtcTimestamp(),
+                Note = @event.Data.Note,
+                Title = @event.Data.Title,
+                UserId = @event.UserId,
+            });
+
+            await Task.Delay(10000);
+
+            await listener.CloseAsync();
+
+            var todoTask = await _dbContextHelper.Query(c => c.Tasks.FindAsync(@event.AggregateId));
+
+            Assert.Single(listener.Messages);
+            LiveAssertEquality.OfEventAndEntityAndMessage<TaskCreated>(@event, todoTask, listener.Messages[0]);
+        }
 
         [Fact]
         public async Task When_NewTaskWithDuplicateTitleArrived_TaskSavedWithDifferentNormalizedTitle()

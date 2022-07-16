@@ -5,5 +5,6 @@
         public const string ServiceBus = "ServiceBus";
         public string? TopicName { get; set; }
         public string? SubscriptionName { get; set; }
+        public string? QueryTopicName { get; set; }
     }
 }

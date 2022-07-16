@@ -75,9 +75,7 @@ namespace Todo.Query.Test.Helpers
         {
             Assert.NotNull(todoTask);
 
-            if (todoTask == null) throw new ArgumentNullException(nameof(todoTask));
-
-            Assert.Equal(@event.AggregateId, todoTask.Id);
+            Assert.Equal(@event.AggregateId, todoTask!.Id);
             Assert.Equal(@event.Sequence, todoTask.Sequence);
             Assert.Equal(@event.UserId, todoTask.UserId);
             Assert.Equal(@event.DateTime, todoTask.LastUpdate, TimeSpan.FromMinutes(1));
@@ -88,9 +86,7 @@ namespace Todo.Query.Test.Helpers
         {
             Assert.NotNull(todoTask);
 
-            if (todoTask == null) throw new ArgumentNullException(nameof(todoTask));
-
-            Assert.Equal(@event.AggregateId, todoTask.Id);
+            Assert.Equal(@event.AggregateId, todoTask!.Id);
             Assert.Equal(@event.Sequence, todoTask.Sequence);
             Assert.Equal(@event.UserId, todoTask.UserId);
             Assert.Equal(@event.DateTime, todoTask.LastUpdate, TimeSpan.FromMinutes(1));

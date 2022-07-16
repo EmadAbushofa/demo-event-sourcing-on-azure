@@ -15,6 +15,6 @@ namespace Todo.Query.ServicesExtensions
             => services.AddHostedService<DatabaseRunner>();
 
         private static void ListenToEvents(IServiceCollection services)
-            => services.AddHostedService<TodoListener>();
+            => services.AddHostedService<TodoEventsListener>();
     }
 }

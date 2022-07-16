@@ -11,16 +11,16 @@ using Todo.Query.EventHandlers.Uncompleted;
 
 namespace Todo.Query.Infrastructure.ServiceBus
 {
-    public class TodoListener : IHostedService
+    public class TodoEventsListener : IHostedService
     {
         private readonly ServiceBusSessionProcessor _processor;
         private readonly IServiceProvider _provider;
-        private readonly ILogger<TodoListener> _logger;
+        private readonly ILogger<TodoEventsListener> _logger;
 
-        public TodoListener(
+        public TodoEventsListener(
             IServiceProvider provider,
             IConfiguration configuration,
-            ILogger<TodoListener> logger,
+            ILogger<TodoEventsListener> logger,
             ServiceBusClient client
         )
         {

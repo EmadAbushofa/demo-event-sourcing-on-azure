@@ -5,6 +5,7 @@ using Todo.Query.Test.Helpers;
 using Todo.Query.Test.Live.Client.DemoEventsProto;
 using Todo.Query.Test.Live.Helpers;
 using Xunit.Abstractions;
+using AssertEquality = Todo.Query.Test.Helpers.AssertEquality;
 
 namespace Todo.Query.Test.HandlersTests
 {

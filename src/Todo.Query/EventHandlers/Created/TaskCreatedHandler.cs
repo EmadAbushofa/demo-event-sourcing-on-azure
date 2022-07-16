@@ -7,10 +7,12 @@ namespace Todo.Query.EventHandlers.Created
     public class TaskCreatedHandler : IRequestHandler<TaskCreated, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
 
-        public TaskCreatedHandler(IUnitOfWork unitOfWork)
+        public TaskCreatedHandler(IUnitOfWork unitOfWork, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
 
         public async Task<bool> Handle(TaskCreated @event, CancellationToken cancellationToken)
@@ -31,6 +33,8 @@ namespace Todo.Query.EventHandlers.Created
             await _unitOfWork.Tasks.AddAsync(task);
 
             await _unitOfWork.CompleteAsync(cancellationToken);
+
+            await _mediator.Publish(new EventConsumed(@event, task));
 
             return true;
         }

@@ -7,5 +7,5 @@
         DateTime DateTime,
         T Data,
         int Version
-    );
+    ) : IEvent;
 }
