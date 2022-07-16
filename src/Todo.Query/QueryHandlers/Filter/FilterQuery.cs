@@ -7,6 +7,10 @@ namespace Todo.Query.QueryHandlers.Filter
         int Size,
         bool? IsCompleted,
         string? UserId,
-        DateTime? DueDate
-    ) : IRequest<FilterResult>;
+        DateTime? DueDateFrom,
+        DateTime? DueDateTo
+    ) : IRequest<FilterResult>
+    {
+        public int Skip => (Page - 1) * Size;
+    }
 }

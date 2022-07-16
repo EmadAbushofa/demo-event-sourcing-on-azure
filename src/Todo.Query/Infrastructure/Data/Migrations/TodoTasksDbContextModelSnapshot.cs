@@ -28,11 +28,11 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("ClusterId")
+                    b.Property<int>("ClusterIndex")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClusterId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClusterIndex"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -75,9 +75,9 @@ namespace Todo.Query.Infrastructure.Data.Migrations
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"), false);
 
-                    b.HasIndex("ClusterId");
+                    b.HasIndex("ClusterIndex");
 
-                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("ClusterId"));
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("ClusterIndex"));
 
                     b.HasIndex("DueDate");
 

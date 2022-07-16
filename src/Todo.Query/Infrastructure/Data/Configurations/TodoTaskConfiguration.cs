@@ -10,8 +10,8 @@ namespace Todo.Query.Infrastructure.Data.Configurations
         {
             builder.HasKey(e => e.Id).IsClustered(false);
 
-            builder.Property<int>("ClusterId").ValueGeneratedOnAdd();
-            builder.HasIndex("ClusterId").IsClustered();
+            builder.Property(e => e.ClusterIndex).ValueGeneratedOnAdd();
+            builder.HasIndex(e => e.ClusterIndex).IsClustered();
 
             builder.Property(e => e.Title).HasMaxLength(128);
             builder.Property(e => e.NormalizedTitle).HasMaxLength(148);

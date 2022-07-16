@@ -118,6 +118,29 @@ namespace Todo.Query.Test.Helpers
             Assert.Equal(todoTask.Note, response.Note);
         }
 
+        public static void OfExpectationAndFilterResponse(
+            int expectedPage,
+            int expectedSize,
+            int expectedTotal,
+            int expectedTasks,
+            FilterResponse response
+        )
+        {
+            Assert.Equal(expectedPage, response.Page);
+            Assert.Equal(expectedSize, response.Size);
+            Assert.Equal(expectedTotal, response.Total);
+            Assert.Equal(expectedTasks, response.Tasks.Count);
+        }
+
+        public static void OfTasksAndFilterOutputs(List<TodoTask> todoTasks, FilterResponse response)
+        {
+            Assert.All(todoTasks, task =>
+            {
+                var output = response.Tasks.SingleOrDefault(t => t.Id == task.Id.ToString());
+                OfTaskAndFilterOutput(task, output);
+            });
+        }
+
         public static void OfTaskAndFilterOutput(TodoTask todoTask, TaskFilterOutput? output)
         {
             Assert.NotNull(output);

@@ -13,7 +13,8 @@ namespace Todo.Query.Extensions
                 Size: request.Size ?? 25,
                 IsCompleted: request.IsCompleted,
                 UserId: request.UserId,
-                DueDate: request.DueDate?.ToDate()
+                DueDateFrom: request.DueDateFrom?.ToDate(),
+                DueDateTo: request.DueDateTo?.ToDate()
             );
 
         public static FindQuery ToQuery(this FindRequest request)

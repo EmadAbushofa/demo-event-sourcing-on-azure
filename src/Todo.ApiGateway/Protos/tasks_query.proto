@@ -18,7 +18,8 @@ message FilterRequest {
   google.protobuf.Int32Value size = 2;
   google.protobuf.BoolValue is_completed = 3;
   google.protobuf.StringValue user_id = 4;
-  google.protobuf.Timestamp due_date = 5;
+  google.protobuf.Timestamp due_date_from = 5;
+  google.protobuf.Timestamp due_date_to = 6;
 }
 
 message FilterResponse {

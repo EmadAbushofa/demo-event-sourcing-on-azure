@@ -16,11 +16,31 @@ namespace Todo.Query.Infrastructure.Data
 
         public async Task<FilterResult> FilterAsync(FilterQuery filter, CancellationToken cancellationToken)
         {
-            var results = await _context.Tasks.ToListAsync(cancellationToken);
+            var query = _context.Tasks.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter.UserId))
+                query = query.Where(t => t.UserId == filter.UserId);
+
+            if (filter.IsCompleted != null)
+                query = query.Where(t => t.IsCompleted == filter.IsCompleted);
+
+            if (filter.DueDateFrom != null)
+                query = query.Where(t => t.DueDate >= filter.DueDateFrom);
+
+            if (filter.DueDateTo != null)
+                query = query.Where(t => t.DueDate <= filter.DueDateTo);
+
+            var total = await query.CountAsync(cancellationToken);
+
+            var results = await query.Skip(filter.Skip)
+                .Take(filter.Size)
+                .OrderBy(t => t.ClusterIndex)
+                .ToListAsync(cancellationToken);
+
             return new FilterResult(
                 Page: filter.Page,
                 Size: filter.Size,
-                Total: results.Count,
+                Total: total,
                 Tasks: results
             );
         }

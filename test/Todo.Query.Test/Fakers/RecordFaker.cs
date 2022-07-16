@@ -7,8 +7,10 @@ namespace Todo.Query.Test.Fakers
     {
         public RecordFaker()
         {
-            var type = FormatterServices.GetUninitializedObject(typeof(T)) as T ?? throw new TypeLoadException();
-            CustomInstantiator(_ => type);
+            CustomInstantiator(_ => Initialize());
         }
+
+        private static T Initialize() =>
+            FormatterServices.GetUninitializedObject(typeof(T)) as T ?? throw new TypeLoadException();
     }
 }

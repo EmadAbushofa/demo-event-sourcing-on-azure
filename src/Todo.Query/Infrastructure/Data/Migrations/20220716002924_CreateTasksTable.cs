@@ -14,6 +14,8 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClusterIndex = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Sequence = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
@@ -23,9 +25,7 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "Date", nullable: false),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    ClusterId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
+                    Note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -34,9 +34,9 @@ namespace Todo.Query.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_ClusterId",
+                name: "IX_Tasks_ClusterIndex",
                 table: "Tasks",
-                column: "ClusterId")
+                column: "ClusterIndex")
                 .Annotation("SqlServer:Clustered", true);
 
             migrationBuilder.CreateIndex(

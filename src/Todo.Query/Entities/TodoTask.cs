@@ -61,6 +61,7 @@ namespace Todo.Query.Entities
             return (title + "_Copy:" + random.Next(9999).ToString().PadLeft(4, '0')).ToUpper();
         }
 
+        public int ClusterIndex { get; private set; }
         public Guid Id { get; private set; }
         public int Sequence { get; private set; }
         public string UserId { get; private set; }
