@@ -3,9 +3,10 @@ using Todo.Query.Entities;
 using Todo.Query.Test.Client.TodoProto;
 using Todo.Query.Test.Fakers;
 using Todo.Query.Test.Helpers;
+using Todo.Query.Test.Live.Helpers;
 using Xunit.Abstractions;
 
-namespace Todo.Query.Test.QueryTests
+namespace Todo.Query.Test.Live.QueryTests
 {
     public class FilterTest : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -16,7 +17,7 @@ namespace Todo.Query.Test.QueryTests
         {
             _factory = factory.WithDefaultConfigurations(helper, services =>
             {
-                services.ReplaceWithInMemoryDatabase();
+                services.TruncateSqlTables();
             });
             _dbContextHelper = new DbContextHelper(_factory.Services);
         }
@@ -177,7 +178,6 @@ namespace Todo.Query.Test.QueryTests
         [InlineData("2022-07-05", null)]
         [InlineData(null, "2022-03-01")]
         [InlineData(null, "2022-03-02", 1)]
-        [InlineData("2022-03-02 01:00:00", "2022-03-03", 1)]
         public async Task Filter_FilterDueDate_ReturnOnlyAsExpected(
             string? dueDateFrom,
             string? dueDateTo,
