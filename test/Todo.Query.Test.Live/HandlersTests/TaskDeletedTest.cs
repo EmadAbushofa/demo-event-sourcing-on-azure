@@ -2,11 +2,10 @@
 using Todo.Query.Test.Fakers;
 using Todo.Query.Test.Fakers.Deleted;
 using Todo.Query.Test.Helpers;
-using Todo.Query.Test.Live.Client.DemoEventsProto;
 using Todo.Query.Test.Live.Helpers;
 using Xunit.Abstractions;
 
-namespace Todo.Query.Test.HandlersTests
+namespace Todo.Query.Test.Live.HandlersTests
 {
     public class TaskDeletedTest : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -28,20 +27,30 @@ namespace Todo.Query.Test.HandlersTests
             var @event = new TaskDeletedFaker()
                 .For(todoTask).Generate();
 
-            var client = CommandServiceHelper.CreateDemoEventsClient();
-
-            await client.DeleteAsync(new DeleteRequest()
-            {
-                Id = @event.AggregateId.ToString(),
-                UserId = @event.UserId,
-                Sequence = @event.Sequence,
-            });
-
+            await CommandServiceHelper.SendAsync(@event);
             await Task.Delay(5000);
 
             todoTask = await _dbContextHelper.Query(c => c.Tasks.FindAsync(@event.AggregateId));
 
             Assert.Null(todoTask);
+        }
+
+        [Fact]
+        public async Task When_TaskDeletedEventConsumed_ReturnsNotification()
+        {
+            using var streamHelper = new NotificationsStreamHelper(_factory);
+
+            var todoTaskBefore = await _dbContextHelper.InsertAsync(new TodoTaskFaker().Generate());
+
+            var @event = new TaskDeletedFaker()
+                .For(todoTaskBefore)
+                .Generate();
+
+            await CommandServiceHelper.SendAsync(@event);
+            await Task.Delay(5000);
+
+            Assert.Single(streamHelper.Notifications);
+            AssertEquality.OfEventAndEntityAndNotification(@event, todoTaskBefore, streamHelper.Notifications[0]);
         }
     }
 }

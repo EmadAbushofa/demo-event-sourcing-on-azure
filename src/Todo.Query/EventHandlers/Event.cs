@@ -1,4 +1,6 @@
-﻿namespace Todo.Query.EventHandlers
+﻿using Newtonsoft.Json;
+
+namespace Todo.Query.EventHandlers
 {
     public record Event<T>(
         Guid AggregateId,
@@ -7,5 +9,13 @@
         DateTime DateTime,
         T Data,
         int Version
-    ) : IEvent;
+    ) : IEvent
+    {
+        public string GetDataAsJson() =>
+            JsonConvert.SerializeObject(Data, new JsonSerializerSettings()
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+            });
+    }
 }

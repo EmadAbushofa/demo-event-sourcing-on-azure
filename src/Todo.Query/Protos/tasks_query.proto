@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 option csharp_namespace = "Todo.Query.Server.TodoProto";
 
@@ -11,6 +12,7 @@ service Tasks {
   rpc Filter (FilterRequest) returns (FilterResponse);
   rpc Find (FindRequest) returns (FindResponse);
   rpc SimilarTitleExists (SimilarTitleExistsRequest) returns (SimilarTitleExistsResponse);
+  rpc Notifications (google.protobuf.Empty) returns (stream NotificationResponse);
 }
 
 message FilterRequest {
@@ -58,4 +60,28 @@ message SimilarTitleExistsRequest {
 message SimilarTitleExistsResponse {
   google.protobuf.StringValue id = 1;
   bool exists = 2;
+}
+
+message NotificationResponse {
+	string type = 1;
+	TaskOutput task = 2;
+	ConsumedEvent event = 3;
+}
+
+message TaskOutput {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  google.protobuf.Timestamp due_date = 4;
+  google.protobuf.StringValue note = 5;
+  bool is_completed = 6;
+}
+
+message ConsumedEvent {
+  string aggregate_id = 1;
+  string user_id = 2;
+  int32 sequence = 3;
+  google.protobuf.Timestamp date_time = 4;
+  int32 version = 5;
+  google.protobuf.StringValue data = 6;
 }

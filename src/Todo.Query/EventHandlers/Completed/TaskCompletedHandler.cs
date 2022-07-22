@@ -6,11 +6,17 @@ namespace Todo.Query.EventHandlers.Completed
     public class TaskCompletedHandler : IRequestHandler<TaskCompleted, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
         private readonly ILogger<TaskCompletedHandler> _logger;
 
-        public TaskCompletedHandler(IUnitOfWork unitOfWork, ILogger<TaskCompletedHandler> logger)
+        public TaskCompletedHandler(
+            IUnitOfWork unitOfWork,
+            IMediator mediator,
+            ILogger<TaskCompletedHandler> logger
+        )
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -32,9 +38,8 @@ namespace Todo.Query.EventHandlers.Completed
                 return true;
 
             todoTask.Apply(@event);
-
             await _unitOfWork.CompleteAsync(cancellationToken);
-
+            await _mediator.Publish(new EventConsumed(@event, todoTask));
             return true;
         }
     }

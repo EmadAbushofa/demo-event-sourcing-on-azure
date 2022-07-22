@@ -6,11 +6,17 @@ namespace Todo.Query.EventHandlers.DueDateChanged
     public class TaskDueDateChangedHandler : IRequestHandler<TaskDueDateChanged, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
         private readonly ILogger<TaskDueDateChangedHandler> _logger;
 
-        public TaskDueDateChangedHandler(IUnitOfWork unitOfWork, ILogger<TaskDueDateChangedHandler> logger)
+        public TaskDueDateChangedHandler(
+            IUnitOfWork unitOfWork,
+            IMediator mediator,
+            ILogger<TaskDueDateChangedHandler> logger
+        )
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -32,9 +38,8 @@ namespace Todo.Query.EventHandlers.DueDateChanged
                 return true;
 
             todoTask.Apply(@event);
-
             await _unitOfWork.CompleteAsync(cancellationToken);
-
+            await _mediator.Publish(new EventConsumed(@event, todoTask));
             return true;
         }
     }

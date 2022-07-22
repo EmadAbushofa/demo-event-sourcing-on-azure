@@ -7,5 +7,6 @@
         string UserId { get; }
         DateTime DateTime { get; }
         int Version { get; }
+        string GetDataAsJson();
     }
 }

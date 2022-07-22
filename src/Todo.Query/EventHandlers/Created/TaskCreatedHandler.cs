@@ -31,11 +31,8 @@ namespace Todo.Query.EventHandlers.Created
                 : TodoTask.FromCreatedEvent(@event, isUniqueTitle: true);
 
             await _unitOfWork.Tasks.AddAsync(task);
-
             await _unitOfWork.CompleteAsync(cancellationToken);
-
             await _mediator.Publish(new EventConsumed(@event, task));
-
             return true;
         }
     }

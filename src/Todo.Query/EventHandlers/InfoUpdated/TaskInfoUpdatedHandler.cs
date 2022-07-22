@@ -6,11 +6,17 @@ namespace Todo.Query.EventHandlers.InfoUpdated
     public class TaskInfoUpdatedHandler : IRequestHandler<TaskInfoUpdated, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
         private readonly ILogger<TaskInfoUpdatedHandler> _logger;
 
-        public TaskInfoUpdatedHandler(IUnitOfWork unitOfWork, ILogger<TaskInfoUpdatedHandler> logger)
+        public TaskInfoUpdatedHandler(
+            IUnitOfWork unitOfWork,
+            IMediator mediator,
+            ILogger<TaskInfoUpdatedHandler> logger
+        )
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -47,7 +53,7 @@ namespace Todo.Query.EventHandlers.InfoUpdated
             }
 
             await _unitOfWork.CompleteAsync(cancellationToken);
-
+            await _mediator.Publish(new EventConsumed(@event, todoTask));
             return true;
         }
     }

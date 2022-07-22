@@ -1,6 +1,4 @@
 ﻿using Azure.Messaging.ServiceBus;
-using Todo.Query.Abstractions;
-using Todo.Query.Infrastructure.ServiceBus;
 
 namespace Todo.Query.ServicesExtensions
 {
@@ -15,8 +13,6 @@ namespace Todo.Query.ServicesExtensions
 
                 return new ServiceBusClient(connectionString);
             });
-
-            services.AddSingleton<IMessagePublisher, ServiceBusPublisher>();
         }
     }
 }

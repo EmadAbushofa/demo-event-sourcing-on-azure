@@ -4,11 +4,6 @@ namespace Todo.Query.Infrastructure.Abstractions.MessageObjects
 {
     public class EventConsumedMessage
     {
-        public EventConsumedMessage()
-        {
-
-        }
-
         public EventConsumedMessage(IEvent @event, TodoTaskDto entity)
         {
             Type = @event.GetType().Name;
@@ -16,8 +11,8 @@ namespace Todo.Query.Infrastructure.Abstractions.MessageObjects
             Entity = entity;
         }
 
-        public string? Type { get; set; }
-        public IEvent? Event { get; set; }
-        public TodoTaskDto? Entity { get; set; }
+        public string Type { get; private set; }
+        public IEvent Event { get; private set; }
+        public TodoTaskDto Entity { get; private set; }
     }
 }

@@ -1,18 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Todo.Query.EventHandlers.Created;
-using Todo.Query.Extensions;
 using Todo.Query.Test.Fakers.Created;
 using Todo.Query.Test.Helpers;
-using Todo.Query.Test.Live.Client.DemoEventsProto;
-using Todo.Query.Test.Live.EventBus;
 using Todo.Query.Test.Live.Helpers;
 using Xunit.Abstractions;
-using AssertEquality = Todo.Query.Test.Helpers.AssertEquality;
-using LiveAssertEquality = Todo.Query.Test.Live.Helpers.AssertEquality;
 
-namespace Todo.Query.Test.HandlersTests
+namespace Todo.Query.Test.Live.HandlersTests
 {
     public class TaskCreatedTest : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -21,10 +14,7 @@ namespace Todo.Query.Test.HandlersTests
 
         public TaskCreatedTest(WebApplicationFactory<Program> factory, ITestOutputHelper helper)
         {
-            _factory = factory.WithDefaultConfigurations(helper, services =>
-            {
-                services.AddEventHandlingListener();
-            });
+            _factory = factory.WithDefaultConfigurations(helper);
             _dbContextHelper = new DbContextHelper(_factory.Services);
         }
 
@@ -33,17 +23,7 @@ namespace Todo.Query.Test.HandlersTests
         {
             var @event = new TaskCreatedFaker().Generate();
 
-            var client = CommandServiceHelper.CreateDemoEventsClient();
-
-            await client.CreateAsync(new CreateRequest()
-            {
-                Id = @event.AggregateId.ToString(),
-                DueDate = @event.Data.DueDate.ToUtcTimestamp(),
-                Note = @event.Data.Note,
-                Title = @event.Data.Title,
-                UserId = @event.UserId,
-            });
-
+            await CommandServiceHelper.SendAsync(@event);
             await Task.Delay(5000);
 
             var todoTask = await _dbContextHelper.Query(c => c.Tasks.FindAsync(@event.AggregateId));
@@ -52,33 +32,19 @@ namespace Todo.Query.Test.HandlersTests
         }
 
         [Fact]
-        public async Task When_NewTaskCreatedEventHandled_EventConsumedPublished()
+        public async Task When_TaskCreatedEventConsumed_ReturnsNotification()
         {
-            var listener = _factory.Services.GetRequiredService<TodoHandlingListener>();
+            using var streamHelper = new NotificationsStreamHelper(_factory);
 
             var @event = new TaskCreatedFaker().Generate();
 
-            var client = CommandServiceHelper.CreateDemoEventsClient();
-
-            listener.Messages.Clear();
-
-            await client.CreateAsync(new CreateRequest()
-            {
-                Id = @event.AggregateId.ToString(),
-                DueDate = @event.Data.DueDate.ToUtcTimestamp(),
-                Note = @event.Data.Note,
-                Title = @event.Data.Title,
-                UserId = @event.UserId,
-            });
-
-            await Task.Delay(10000);
-
-            await listener.CloseAsync();
+            await CommandServiceHelper.SendAsync(@event);
+            await Task.Delay(5000);
 
             var todoTask = await _dbContextHelper.Query(c => c.Tasks.FindAsync(@event.AggregateId));
 
-            Assert.Single(listener.Messages);
-            LiveAssertEquality.OfEventAndEntityAndMessage<TaskCreated>(@event, todoTask, listener.Messages[0]);
+            Assert.Single(streamHelper.Notifications);
+            AssertEquality.OfEventAndEntityAndNotification(@event, todoTask, streamHelper.Notifications[0]);
         }
 
         [Fact]
@@ -87,7 +53,6 @@ namespace Todo.Query.Test.HandlersTests
             var title = "My title " + Guid.NewGuid();
 
             var ids = await Generate2EventsWithSameTitle(title);
-
             await Task.Delay(5000);
 
             var todoTasks = await _dbContextHelper.Query(c => c.Tasks
@@ -100,24 +65,20 @@ namespace Todo.Query.Test.HandlersTests
 
         private static async Task<List<Guid>> Generate2EventsWithSameTitle(string title)
         {
-            var client = CommandServiceHelper.CreateDemoEventsClient();
-
             var userId = Guid.NewGuid().ToString();
 
             var ids = new List<Guid>();
 
             Task CreateAsync()
             {
-                var id = Guid.NewGuid();
-                ids.Add(id);
+                var @event = new TaskCreatedFaker()
+                    .RuleForTitle(title)
+                    .RuleFor(e => e.UserId, userId)
+                    .Generate();
 
-                return client.CreateAsync(new CreateRequest()
-                {
-                    Id = id.ToString(),
-                    DueDate = DateTime.UtcNow.ToUtcTimestamp(),
-                    Title = title,
-                    UserId = userId,
-                }).ResponseAsync;
+                ids.Add(@event.AggregateId);
+
+                return CommandServiceHelper.SendAsync(@event).ResponseAsync;
             }
 
             await Task.WhenAll(CreateAsync(), CreateAsync());

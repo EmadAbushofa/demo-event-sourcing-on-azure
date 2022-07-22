@@ -6,11 +6,17 @@ namespace Todo.Query.EventHandlers.Deleted
     public class TaskDeletedHandler : IRequestHandler<TaskDeleted, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
         private readonly ILogger<TaskDeletedHandler> _logger;
 
-        public TaskDeletedHandler(IUnitOfWork unitOfWork, ILogger<TaskDeletedHandler> logger)
+        public TaskDeletedHandler(
+            IUnitOfWork unitOfWork,
+            IMediator mediator,
+            ILogger<TaskDeletedHandler> logger
+        )
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -33,6 +39,7 @@ namespace Todo.Query.EventHandlers.Deleted
 
             await _unitOfWork.Tasks.RemoveAsync(todoTask);
             await _unitOfWork.CompleteAsync(cancellationToken);
+            await _mediator.Publish(new EventConsumed(@event, todoTask));
             return true;
         }
     }
