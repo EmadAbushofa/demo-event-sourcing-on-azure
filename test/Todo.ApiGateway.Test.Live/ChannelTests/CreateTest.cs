@@ -44,6 +44,30 @@ namespace Todo.ApiGateway.Test.Live.ChannelTests
         }
 
         [Fact]
+        public async Task Create_SendDuplicateTitleCreateCommand_NotificationReturnedWithWarning()
+        {
+            var streamHelper = new NotificationsStreamHelper(_factory, "Emad");
+
+            var title = $"My title {DateTime.UtcNow.Ticks}";
+            await CreateAsync("Emad", title);
+
+            var client = _factory.CreateClientWithUser("Emad");
+
+            var input = new CreateTaskInput()
+            {
+                DueDate = DateTime.UtcNow,
+                Note = "Some note",
+                Title = title
+            };
+
+            var response = await client.PostJsonAsync<InputResponse>("api/todo-tasks", input);
+
+            await Task.Delay(8000);
+
+            Assert.Contains(streamHelper.Notifications, n => n.Status == NotificationStatus.Warning);
+        }
+
+        [Fact]
         public async Task Create_SendValidCommandFromOtherUser_NoNotificationReturned()
         {
             var streamHelper = new NotificationsStreamHelper(_factory, "Emad");
@@ -62,6 +86,23 @@ namespace Todo.ApiGateway.Test.Live.ChannelTests
             await Task.Delay(8000);
 
             Assert.Empty(streamHelper.Notifications);
+        }
+
+
+        private async Task<string> CreateAsync(string user, string title)
+        {
+            var client = _factory.CreateClientWithUser(user);
+
+            var input = new CreateTaskInput()
+            {
+                DueDate = DateTime.UtcNow,
+                Note = "Some note",
+                Title = title
+            };
+
+            var response = await client.PostJsonAsync<InputResponse>("api/todo-tasks", input);
+
+            return response?.Id ?? throw new InvalidOperationException();
         }
     }
 }
