@@ -57,6 +57,7 @@ message FindResponse {
 message SimilarTitleExistsRequest {
   string user_id = 1;
   string title = 2;
+  google.protobuf.StringValue excluded_id = 3;
 }
 
 message SimilarTitleExistsResponse {

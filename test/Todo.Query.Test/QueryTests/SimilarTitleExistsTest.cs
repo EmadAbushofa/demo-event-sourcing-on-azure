@@ -42,6 +42,26 @@ namespace Todo.Query.Test.QueryTests
         }
 
         [Fact]
+        public async Task SimilarTitleExists_QueryWithSimilarTitleAndUserButWithExcludingId_ReturnNotExists()
+        {
+            var todoTask = await GenerateTodoTaskAsync(isCompleted: false);
+
+            var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
+
+            var request = new SimilarTitleExistsRequest()
+            {
+                UserId = todoTask.UserId,
+                Title = " " + todoTask.Title.ToUpper() + " ",
+                ExcludedId = todoTask.Id.ToString(),
+            };
+
+            var response = await client.SimilarTitleExistsAsync(request);
+
+            Assert.False(response.Exists);
+            Assert.Null(response.Id);
+        }
+
+        [Fact]
         public async Task SimilarTitleExists_QueryCompletedTaskWithSimilarTitleAndUser_ReturnNotExists()
         {
             var todoTask = await GenerateTodoTaskAsync(isCompleted: true);

@@ -63,14 +63,23 @@ namespace Todo.Query.Infrastructure.Data
                         , cancellationToken);
         }
 
-        public Task<TodoTask?> GetSimilarTodoTaskAsync(string userId, string title, CancellationToken cancellationToken)
+        public Task<TodoTask?> GetSimilarTodoTaskAsync(string userId, string title, Guid? excludedId, CancellationToken cancellationToken)
         {
             title = title.Trim().ToUpper();
+
+            if (excludedId == null)
+                return _context.Tasks.FirstOrDefaultAsync(
+                                t =>
+                                    t.UserId == userId &&
+                                    t.NormalizedTitle == title &&
+                                    t.IsCompleted == false
+                            , cancellationToken);
 
             return _context.Tasks.FirstOrDefaultAsync(
                             t =>
                                 t.UserId == userId &&
                                 t.NormalizedTitle == title &&
+                                t.Id != excludedId &&
                                 t.IsCompleted == false
                         , cancellationToken);
         }

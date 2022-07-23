@@ -23,7 +23,8 @@ namespace Todo.Query.Extensions
         public static SimilarTitleQuery ToQuery(this SimilarTitleExistsRequest request)
             => new(
                 UserId: request.UserId,
-                Title: request.Title
+                Title: request.Title,
+                ExcludedId: Guid.TryParse(request.ExcludedId, out var excludedId) ? excludedId : null
             );
     }
 }

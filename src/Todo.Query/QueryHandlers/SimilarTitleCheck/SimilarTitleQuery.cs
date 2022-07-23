@@ -5,6 +5,7 @@ namespace Todo.Query.QueryHandlers.SimilarTitleCheck
 {
     public record SimilarTitleQuery(
         string UserId,
-        string Title
+        string Title,
+        Guid? ExcludedId
     ) : IRequest<TodoTask?>;
 }
