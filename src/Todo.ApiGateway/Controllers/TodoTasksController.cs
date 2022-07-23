@@ -49,9 +49,9 @@ namespace Todo.ApiGateway.Controllers
         }
 
         [HttpGet("similar-title-exists")]
-        public async Task<SimilarTitleOutput> SimilarTitleExistsAsync(string? title)
+        public async Task<SimilarTitleOutput> SimilarTitleExistsAsync([FromQuery] SimilarTitleQuery query)
         {
-            var request = new SimilarTitleExistsRequest() { Title = title ?? "", UserId = User.GetId() };
+            var request = query.ToRequest(User);
 
             var response = await _queryClient.SimilarTitleExistsAsync(request);
 

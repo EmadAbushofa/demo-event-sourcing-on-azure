@@ -55,6 +55,14 @@ namespace Todo.ApiGateway.Extensions
                 DueDateFrom = filter.DueDateFrom?.ToUniversalTime().ToTimestamp(),
             };
 
+        public static SimilarTitleExistsRequest ToRequest(this SimilarTitleQuery query, ClaimsPrincipal claims)
+            => new()
+            {
+                UserId = claims.GetId(),
+                Title = query.Title ?? "",
+                ExcludedId = query.ExcludedId?.ToString(),
+            };
+
         public static CreateRequest ToRequest(this CreateTaskInput input, ClaimsPrincipal claims)
             => new()
             {

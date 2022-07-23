@@ -36,6 +36,22 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         }
 
         [Fact]
+        public async Task GetSimilarTitle_QueryExistingTitleWithExludingTheId_ReturnNotExists()
+        {
+            var title = $"My title {Guid.NewGuid()}";
+            var id = await CreateAsync("Emad", title);
+
+            await Task.Delay(5000);
+
+            var client = _factory.CreateClientWithUser("Emad");
+
+            var response = await client.GetAsync<SimilarTitleOutput>($"api/todo-tasks/similar-title-exists?title={title}&excludedId={id}");
+
+            Assert.False(response.Exists);
+            Assert.Null(response.Id);
+        }
+
+        [Fact]
         public async Task GetSimilarTitle_QueryNonExistingTitle_ReturnNotExists()
         {
             var client = _factory.CreateClientWithUser("Emad");
@@ -51,7 +67,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         {
             var client = _factory.CreateClientWithUser("Emad");
 
-            var response = await client.GetAsync($"api/todo-tasks/similar-title-exists");
+            var response = await client.GetAsync($"api/todo-tasks/similar-title-exists?excludedId=abc");
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
