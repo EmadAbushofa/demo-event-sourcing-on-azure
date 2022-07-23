@@ -21,6 +21,7 @@ namespace Todo.ApiGateway.Extensions
                     UserId = t.UserId,
                     IsCompleted = t.IsCompleted,
                     DueDate = t.DueDate.ToDateTime(),
+                    DuplicateTitle = t.DuplicateTitle,
                 }).ToList()
             };
 
@@ -33,6 +34,7 @@ namespace Todo.ApiGateway.Extensions
                 Note = response.Note,
                 Title = response.Title,
                 IsCompleted = response.IsCompleted,
+                DuplicateTitle = response.DuplicateTitle,
             };
 
         public static SimilarTitleOutput ToOutput(this SimilarTitleExistsResponse response)
@@ -45,7 +47,7 @@ namespace Todo.ApiGateway.Extensions
         public static FilterRequest ToRequest(this FilterModel filter, ClaimsPrincipal claims)
             => new()
             {
-                UserId = claims.GetUserId(),
+                UserId = claims.GetId(),
                 Page = filter.Page,
                 Size = filter.Size,
                 IsCompleted = filter.IsCompleted,
@@ -56,7 +58,7 @@ namespace Todo.ApiGateway.Extensions
         public static CreateRequest ToRequest(this CreateTaskInput input, ClaimsPrincipal claims)
             => new()
             {
-                UserId = claims.GetUserId(),
+                UserId = claims.GetId(),
                 DueDate = input.DueDate.ToUniversalTime().ToTimestamp(),
                 Note = input.Note,
                 Title = input.Title ?? "",
@@ -66,7 +68,7 @@ namespace Todo.ApiGateway.Extensions
             => new()
             {
                 Id = id.ToString(),
-                UserId = claims.GetUserId(),
+                UserId = claims.GetId(),
                 Note = input.Note,
                 Title = input.Title ?? "",
             };
@@ -75,7 +77,7 @@ namespace Todo.ApiGateway.Extensions
             => new()
             {
                 Id = id.ToString(),
-                UserId = claims.GetUserId(),
+                UserId = claims.GetId(),
                 DueDate = input.DueDate.ToUniversalTime().ToTimestamp(),
             };
     }

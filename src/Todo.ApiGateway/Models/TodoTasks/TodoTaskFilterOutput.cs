@@ -7,5 +7,6 @@
         public string? Title { get; set; }
         public DateTime DueDate { get; set; }
         public bool IsCompleted { get; set; }
+        public bool DuplicateTitle { get; set; }
     }
 }

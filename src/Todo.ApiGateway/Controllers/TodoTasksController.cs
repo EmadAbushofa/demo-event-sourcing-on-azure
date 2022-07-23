@@ -51,7 +51,7 @@ namespace Todo.ApiGateway.Controllers
         [HttpGet("similar-title-exists")]
         public async Task<SimilarTitleOutput> SimilarTitleExistsAsync(string? title)
         {
-            var request = new SimilarTitleExistsRequest() { Title = title ?? "", UserId = User.GetUserId() };
+            var request = new SimilarTitleExistsRequest() { Title = title ?? "", UserId = User.GetId() };
 
             var response = await _queryClient.SimilarTitleExistsAsync(request);
 
@@ -94,7 +94,7 @@ namespace Todo.ApiGateway.Controllers
             var request = new CompleteRequest()
             {
                 Id = id.ToString(),
-                UserId = User.GetUserId(),
+                UserId = User.GetId(),
             };
 
             var response = await _commandClient.CompleteAsync(request);
@@ -108,7 +108,7 @@ namespace Todo.ApiGateway.Controllers
             var request = new CompleteRequest()
             {
                 Id = id.ToString(),
-                UserId = User.GetUserId(),
+                UserId = User.GetId(),
             };
 
             var response = await _commandClient.UncompleteAsync(request);
@@ -122,7 +122,7 @@ namespace Todo.ApiGateway.Controllers
             var request = new DeleteRequest()
             {
                 Id = id.ToString(),
-                UserId = User.GetUserId(),
+                UserId = User.GetId(),
             };
 
             var response = await _commandClient.DeleteAsync(request);
