@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Serilog;
+using Todo.ApiGateway.GrpcServices;
 using Todo.ApiGateway.Services;
 
 Log.Logger = LoggerServiceBuilder.Build();
@@ -15,6 +16,7 @@ builder.Services.AddControllersWithConfigurations();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddGrpc();
 builder.Services.AddGrpcClients(builder.Configuration);
 
 builder.Host.UseSerilog();
@@ -39,6 +41,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGrpcService<TasksChannelService>();
 
 app.Run();
 

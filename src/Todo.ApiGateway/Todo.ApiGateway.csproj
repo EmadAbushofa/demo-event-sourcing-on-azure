@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\Server\tasks_channel.proto" />
     <None Remove="Protos\tasks_command.proto" />
     <None Remove="Protos\tasks_query.proto" />
   </ItemGroup>
@@ -15,6 +16,7 @@
   <ItemGroup>
 	<PackageReference Include="Calzolari.Grpc.Net.Client.Validation" Version="6.1.1" />
 	<PackageReference Include="Google.Protobuf" Version="3.21.2" />
+	<PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
 	<PackageReference Include="Grpc.Net.ClientFactory" Version="2.46.0" />
 	<PackageReference Include="Grpc.Tools" Version="2.47.0">
 	  <PrivateAssets>all</PrivateAssets>
@@ -29,10 +31,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\tasks_command.proto">
+    <Protobuf Include="Protos\Client\tasks_command.proto">
       <GrpcServices>Client</GrpcServices>
     </Protobuf>
-    <Protobuf Include="Protos\tasks_query.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\Client\tasks_query.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\Server\tasks_channel.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Messages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Messages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "Todo.ApiGateway.TodoProto.Channel";
+
+package todo.channel;
+
+service TasksChannel {
+  rpc Notifications (google.protobuf.Empty) returns (stream NotificationOutput);
+}
+
+message NotificationOutput {
+	string todo_task_id = 1;
+	string message = 2;
+	NotificationStatus status = 3;
+}
+
+enum NotificationStatus {
+	SUCCEED = 0;
+	WARNING = 1;
+}

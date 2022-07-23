@@ -9,6 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\tasks_channel.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Grpc.Tools" Version="2.47.0">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.6" />
 	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
 	<PackageReference Include="xunit" Version="2.4.1" />
@@ -25,6 +33,12 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\..\src\Todo.ApiGateway\Todo.ApiGateway.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\tasks_channel.proto">
+      <GrpcServices>Client</GrpcServices>
+    </Protobuf>
   </ItemGroup>
 
 </Project>

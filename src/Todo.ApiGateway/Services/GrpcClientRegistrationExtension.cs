@@ -1,4 +1,5 @@
-﻿using CommandClient = Todo.ApiGateway.TodoProto.Command.Tasks.TasksClient;
+﻿using Todo.ApiGateway.GrpcServices;
+using CommandClient = Todo.ApiGateway.TodoProto.Command.Tasks.TasksClient;
 using QueryClient = Todo.ApiGateway.TodoProto.Query.Tasks.TasksClient;
 
 
@@ -19,6 +20,8 @@ namespace Todo.ApiGateway.Services
             {
                 o.Address = new Uri(configuration["TodoQueryUrl"]);
             });
+
+            services.AddSingleton<NotificationChannel>();
         }
     }
 }
