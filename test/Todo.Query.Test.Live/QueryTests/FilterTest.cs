@@ -26,7 +26,7 @@ namespace Todo.Query.Test.Live.QueryTests
         [Fact]
         public async Task Filter_QueryExistingEntities_ReturnAll()
         {
-            var todoTasks = await _dbContextHelper.InsertAsync(new TodoTaskFaker().Generate(3));
+            var todoTasks = await _dbContextHelper.InsertAsync(new TodoTaskFaker().GeneratWithRandomUniqueTitle(3));
 
             var client = new Tasks.TasksClient(_factory.CreateGrpcChannel());
 

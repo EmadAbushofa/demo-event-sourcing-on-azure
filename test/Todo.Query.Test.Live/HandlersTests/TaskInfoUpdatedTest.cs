@@ -43,7 +43,7 @@ namespace Todo.Query.Test.Live.HandlersTests
         {
             using var streamHelper = new NotificationsStreamHelper(_factory);
 
-            var todoTaskBefore = await _dbContextHelper.InsertAsync(new TodoTaskFaker().Generate());
+            var todoTaskBefore = await _dbContextHelper.InsertAsync(new TodoTaskFaker().GeneratWithRandomUniqueTitle());
 
             var @event = new TaskInfoUpdatedFaker()
                 .For(todoTaskBefore)

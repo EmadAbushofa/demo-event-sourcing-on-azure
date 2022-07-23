@@ -80,7 +80,7 @@ namespace Todo.Query.Test.QueryTests
 
             var context = scope.ServiceProvider.GetRequiredService<TodoTasksDbContext>();
 
-            var todoTask = new TodoTaskFaker().Generate();
+            var todoTask = new TodoTaskFaker().GeneratWithRandomUniqueTitle();
 
             await context.Tasks.AddAsync(todoTask);
 

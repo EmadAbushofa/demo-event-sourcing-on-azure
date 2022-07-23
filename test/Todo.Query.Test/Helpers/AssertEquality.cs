@@ -113,6 +113,7 @@ namespace Todo.Query.Test.Helpers
             Assert.Equal(todoTask.Title, response.Title);
             Assert.Equal(todoTask.DueDate, response.DueDate.ToDateTime());
             Assert.Equal(todoTask.Note, response.Note);
+            Assert.NotEqual(todoTask.IsUniqueTitle, response.DuplicateTitle);
         }
 
         public static void OfExpectationAndFilterResponse(
@@ -147,6 +148,7 @@ namespace Todo.Query.Test.Helpers
             Assert.Equal(todoTask.IsCompleted, output.IsCompleted);
             Assert.Equal(todoTask.Title, output.Title);
             Assert.Equal(todoTask.DueDate, output.DueDate.ToDateTime());
+            Assert.NotEqual(todoTask.IsUniqueTitle, output.DuplicateTitle);
         }
 
         public static void OfEventAndEntityAndNotification(
@@ -178,6 +180,7 @@ namespace Todo.Query.Test.Helpers
             Assert.Equal(todoTask.UserId, dto.UserId);
             Assert.Equal(todoTask.Note, dto.Note);
             Assert.Equal(todoTask.DueDate, dto.DueDate.ToDateTime().Date);
+            Assert.NotEqual(todoTask.IsUniqueTitle, dto.DuplicateTitle);
         }
     }
 }

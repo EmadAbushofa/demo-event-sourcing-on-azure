@@ -36,6 +36,5 @@ namespace Todo.Query.Test.Helpers
                     HttpClient = client
                 });
         }
-
     }
 }

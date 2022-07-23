@@ -1,9 +1,9 @@
-﻿using Todo.Query.Infrastructure.Abstractions.MessageObjects;
+﻿using Todo.Query.EventHandlers;
 
 namespace Todo.Query.Abstractions
 {
     public interface IMessagePublisher
     {
-        void Send(EventConsumedMessage message);
+        void Send(EventConsumed notification);
     }
 }

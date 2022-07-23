@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Todo.Query.Abstractions;
 using Todo.Query.EventHandlers;
-using Todo.Query.Infrastructure.Abstractions.MessageObjects;
 
 namespace Todo.Query.NotificationHandlers
 {
@@ -16,11 +15,7 @@ namespace Todo.Query.NotificationHandlers
 
         public Task Handle(EventConsumed notification, CancellationToken cancellationToken)
         {
-            var message = new EventConsumedMessage(
-                notification.Event,
-                new TodoTaskDto(notification.TodoTask)
-            );
-            _publisher.Send(message);
+            _publisher.Send(notification);
             return Task.CompletedTask;
         }
     }

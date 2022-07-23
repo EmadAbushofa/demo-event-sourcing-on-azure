@@ -18,6 +18,17 @@ namespace Todo.Query.Test.Fakers
             RuleFor(e => e.LastUpdate, f => f.Date.Recent().ToUniversalTime());
         }
 
+        public TodoTask GeneratWithRandomUniqueTitle(bool? isCompleted = null)
+        {
+            if (isCompleted != null)
+                RuleFor(e => e.IsCompleted, isCompleted.Value);
+
+            return RuleFor(e => e.IsUniqueTitle, f => f.Random.Bool()).Generate();
+        }
+
+        public List<TodoTask> GeneratWithRandomUniqueTitle(int count) =>
+            RuleFor(e => e.IsUniqueTitle, f => f.Random.Bool()).Generate(count);
+
         public static TodoTask GenerateCompletedTask(bool isCompleted = true)
         {
             return new TodoTaskFaker()

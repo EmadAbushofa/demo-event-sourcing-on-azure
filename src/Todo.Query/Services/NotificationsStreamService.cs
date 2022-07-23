@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using Todo.Query.Abstractions;
+using Todo.Query.EventHandlers;
 using Todo.Query.Extensions;
-using Todo.Query.Infrastructure.Abstractions.MessageObjects;
 using Todo.Query.Server.TodoProto;
 
 namespace Todo.Query.Services
@@ -13,29 +13,30 @@ namespace Todo.Query.Services
         public void AddStream(IAsyncStreamWriter<NotificationResponse> streamWriter) => _streams.Add(streamWriter);
         public void RemoveStream(IAsyncStreamWriter<NotificationResponse> streamWriter) => _streams.Remove(streamWriter);
 
-        public void Send(EventConsumedMessage message)
+        public void Send(EventConsumed notification)
         {
             var response = new NotificationResponse()
             {
                 Event = new ConsumedEvent()
                 {
-                    AggregateId = message.Event.AggregateId.ToString(),
-                    DateTime = message.Event.DateTime.ToUtcTimestamp(),
-                    Sequence = message.Event.Sequence,
-                    UserId = message.Event.UserId,
-                    Version = message.Event.Version,
-                    Data = message.Event.GetDataAsJson(),
+                    AggregateId = notification.Event.AggregateId.ToString(),
+                    DateTime = notification.Event.DateTime.ToUtcTimestamp(),
+                    Sequence = notification.Event.Sequence,
+                    UserId = notification.Event.UserId,
+                    Version = notification.Event.Version,
+                    Data = notification.Event.GetDataAsJson(),
                 },
                 Task = new TaskOutput()
                 {
-                    Id = message.Entity.Id.ToString(),
-                    DueDate = message.Entity.DueDate.ToUtcTimestamp(),
-                    IsCompleted = message.Entity.IsCompleted,
-                    Note = message.Entity.Note,
-                    Title = message.Entity.Title,
-                    UserId = message.Entity.UserId,
+                    Id = notification.TodoTask.Id.ToString(),
+                    DueDate = notification.TodoTask.DueDate.ToUtcTimestamp(),
+                    IsCompleted = notification.TodoTask.IsCompleted,
+                    Note = notification.TodoTask.Note,
+                    Title = notification.TodoTask.Title,
+                    UserId = notification.TodoTask.UserId,
+                    DuplicateTitle = !notification.TodoTask.IsUniqueTitle,
                 },
-                Type = message.Type,
+                Type = notification.Event.GetType().Name,
             };
 
             _streams.ForEach(stream => stream.WriteAsync(response));
