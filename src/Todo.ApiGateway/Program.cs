@@ -40,8 +40,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseGrpcWeb();
+
 app.MapControllers();
-app.MapGrpcService<TasksChannelService>();
+app.MapGrpcService<TasksChannelService>().EnableGrpcWeb();
 
 app.Run();
 

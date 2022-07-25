@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Todo.ApiGateway.Test.Live.TodoProto.Channel;
 
@@ -10,11 +9,14 @@ namespace Todo.ApiGateway.Test.Helpers
         private readonly WebApplicationFactory<Program> _factory;
         private readonly AsyncServerStreamingCall<NotificationOutput> _call;
 
-        public NotificationsStreamHelper(WebApplicationFactory<Program> factory, string userId)
+        public NotificationsStreamHelper(WebApplicationFactory<Program> factory, string userId, Guid? connectionId = null)
         {
             _factory = factory;
             var client = new TasksChannel.TasksChannelClient(_factory.CreateGrpcChannel(userId));
-            _call = client.Notifications(new Empty());
+            _call = client.Notifications(new SubscribeRequest()
+            {
+                ConnectionId = (connectionId ?? Guid.NewGuid()).ToString(),
+            });
             Subscribe();
         }
 

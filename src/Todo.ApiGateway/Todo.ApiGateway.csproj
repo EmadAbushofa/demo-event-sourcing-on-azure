@@ -14,20 +14,21 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Calzolari.Grpc.Net.Client.Validation" Version="6.1.1" />
-	<PackageReference Include="Google.Protobuf" Version="3.21.2" />
-	<PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
-	<PackageReference Include="Grpc.Net.ClientFactory" Version="2.46.0" />
+	<PackageReference Include="Calzolari.Grpc.Net.Client.Validation" Version="6.2.0" />
+	<PackageReference Include="Google.Protobuf" Version="3.21.3" />
+	<PackageReference Include="Grpc.AspNetCore" Version="2.47.0" />
+	<PackageReference Include="Grpc.AspNetCore.Web" Version="2.47.0" />
+	<PackageReference Include="Grpc.Net.ClientFactory" Version="2.47.0" />
 	<PackageReference Include="Grpc.Tools" Version="2.47.0">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.6" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.7" />
 	<PackageReference Include="Microsoft.Identity.Web" Version="1.25.1" />
 	<PackageReference Include="Microsoft.Identity.Web.UI" Version="1.25.1" />
-	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
-	<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+	<PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>

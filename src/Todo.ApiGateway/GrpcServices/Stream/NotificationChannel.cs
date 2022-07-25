@@ -7,10 +7,10 @@ namespace Todo.ApiGateway.GrpcServices.Stream
 {
     public class NotificationChannel : IHostedService
     {
-        private readonly Dictionary<string, IAsyncStreamWriter<NotificationOutput>> _usersStreams = new();
         private readonly NotificationHandler _notificationHandler = new();
         private readonly IServiceProvider _provider;
         private readonly ILogger<NotificationChannel> _logger;
+        private readonly UserStreamConnections _userStreamConnections = new();
 
         public NotificationChannel(IServiceProvider provider, ILogger<NotificationChannel> logger)
         {
@@ -18,7 +18,7 @@ namespace Todo.ApiGateway.GrpcServices.Stream
             _logger = logger;
         }
 
-        private async void StartReading(CancellationToken cancellationToken)
+        private async Task StartReadingAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -32,33 +32,47 @@ namespace Todo.ApiGateway.GrpcServices.Stream
                     if (notification == null)
                         continue;
 
-                    await WriteToAsync(response.Task.UserId, notification);
+                    await WriteToSpecifiedUserAsync(response.Task.UserId, notification);
                 }
             }
             catch (RpcException e)
             {
                 _logger.LogError(e, "Connection Lost, will try again after 10 seconds.");
                 await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
-                StartReading(cancellationToken);
+                StartReadingAsync(cancellationToken).GetAwaiter();
             }
-        }
-
-        private async Task WriteToAsync(string userId, NotificationOutput output)
-        {
-            if (_usersStreams.TryGetValue(userId, out var userStream))
+            catch (Exception e)
             {
-                await userStream.WriteAsync(output);
+                _logger.LogError(e, "Connection Error.");
             }
         }
 
-        public void AddUser(string userId, IAsyncStreamWriter<NotificationOutput> stream) =>
-            _usersStreams.TryAdd(userId, stream);
+        private Task WriteToSpecifiedUserAsync(string userId, NotificationOutput output)
+        {
+            _logger.LogInformation("Start writing to user {UserId}", userId);
+            return _userStreamConnections.WriteToUserAsync(userId, output)
+                .ContinueWith((t) =>
+                {
+                    _logger.LogInformation("End writing to user {UserId}", userId);
+                    return t;
+                });
+        }
 
-        public void RemoveUser(string userId) => _usersStreams.Remove(userId);
+        public void AddUser(string userId, string connectionId, IAsyncStreamWriter<NotificationOutput> stream)
+        {
+            _logger.LogInformation("User {UserId} connected.", userId);
+            _userStreamConnections.Add(userId, connectionId, stream);
+        }
+
+        public void RemoveUser(string userId, string connectionId)
+        {
+            _userStreamConnections.Remove(userId, connectionId);
+            _logger.LogInformation("User {UserId} removed a connection.", userId);
+        }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            StartReading(cancellationToken);
+            StartReadingAsync(cancellationToken).GetAwaiter();
             return Task.CompletedTask;
         }
 

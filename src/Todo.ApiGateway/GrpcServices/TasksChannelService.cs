@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Identity.Web.Resource;
 using Todo.ApiGateway.Extensions;
@@ -20,15 +19,15 @@ namespace Todo.ApiGateway.GrpcServices
         }
 
         public override async Task Notifications(
-            Empty request,
+            SubscribeRequest request,
             IServerStreamWriter<NotificationOutput> responseStream,
             ServerCallContext context
         )
         {
             var userId = context.GetHttpContext().User.GetId();
-            _channel.AddUser(userId, responseStream);
+            _channel.AddUser(userId, request.ConnectionId, responseStream);
             while (!context.CancellationToken.IsCancellationRequested) await Task.Delay(1000);
-            _channel.RemoveUser(userId);
+            _channel.RemoveUser(userId, request.ConnectionId);
         }
     }
 }
