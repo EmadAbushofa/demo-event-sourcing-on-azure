@@ -68,6 +68,8 @@ namespace Todo.Query.GrpcServices
             {
                 await Task.Delay(1000);
             }
+
+            _notificationsStreamService.RemoveStream(responseStream);
         }
     }
 }

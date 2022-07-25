@@ -2,7 +2,7 @@
 using Todo.ApiGateway.TodoProto.Channel;
 using Todo.ApiGateway.TodoProto.Query;
 
-namespace Todo.ApiGateway.GrpcServices
+namespace Todo.ApiGateway.GrpcServices.Stream
 {
     public class NotificationHandler
     {

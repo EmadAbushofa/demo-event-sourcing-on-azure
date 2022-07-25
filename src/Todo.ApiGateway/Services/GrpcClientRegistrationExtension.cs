@@ -1,4 +1,4 @@
-﻿using Todo.ApiGateway.GrpcServices;
+﻿using Todo.ApiGateway.GrpcServices.Stream;
 using CommandClient = Todo.ApiGateway.TodoProto.Command.Tasks.TasksClient;
 using QueryClient = Todo.ApiGateway.TodoProto.Query.Tasks.TasksClient;
 
@@ -22,6 +22,7 @@ namespace Todo.ApiGateway.Services
             });
 
             services.AddSingleton<NotificationChannel>();
+            services.AddHostedService(s => s.GetRequiredService<NotificationChannel>());
         }
     }
 }

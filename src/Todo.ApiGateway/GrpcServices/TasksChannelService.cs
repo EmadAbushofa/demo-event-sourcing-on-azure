@@ -3,6 +3,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Identity.Web.Resource;
 using Todo.ApiGateway.Extensions;
+using Todo.ApiGateway.GrpcServices.Stream;
 using Todo.ApiGateway.TodoProto.Channel;
 
 namespace Todo.ApiGateway.GrpcServices
