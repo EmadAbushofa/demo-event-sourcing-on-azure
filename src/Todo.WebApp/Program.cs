@@ -9,5 +9,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddServerApiClient(builder.Configuration);
 builder.Services.AddAuthenticationService(builder.Configuration);
+builder.Services.AddGrpcWebClient(builder.Configuration);
+builder.Services.AddMatBlazorAndToaster();
 
 await builder.Build().RunAsync();

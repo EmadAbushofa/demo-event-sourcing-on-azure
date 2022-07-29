@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "Todo.WebApp.TodoProto.Channel";
+
+package todo.channel;
+
+service TasksChannel {
+  rpc Notifications (SubscribeRequest) returns (stream NotificationOutput);
+}
+
+message SubscribeRequest {
+	string connection_id = 1;
+}
+
+message NotificationOutput {
+	string todo_task_id = 1;
+	string message = 2;
+	NotificationStatus status = 3;
+}
+
+enum NotificationStatus {
+	SUCCEED = 0;
+	WARNING = 1;
+}
