@@ -1,5 +1,7 @@
 ﻿@page "/todos"
+@attribute [Authorize]
 @inject IMatToaster Toaster
+@inject HttpClient Client
 
 <style>
     .task-text-field-class {
@@ -9,29 +11,7 @@
 
 <h1>Todo Web App</h1>
 
-<EditForm Model="@_viewModel" OnValidSubmit="@SubmitFormAsync">
-    <FluentValidationValidator />
-
-    <div class="row">
-        <div class="col-md-6">
-            <MatTextField @bind-Value="@_viewModel.Title" Outlined="true" Label="Title"></MatTextField>
-        </div>
-        <div class="col-md-6">
-            <MatDatePicker Outlined="true" Format="yyyy-MM-dd" Label="Due Date" @bind-Value="@_viewModel.DueDate"></MatDatePicker>
-        </div>
-    </div>
-    <br/>
-    <div class="row">
-        <div class="col-md-6">
-            <MatStringField InputClass="task-text-field-class" TextArea="true" Outlined="true" @bind-Value="@_viewModel.Note" Label="Note"></MatStringField>
-        </div>
-        <div class="col-md-6">
-            <MatButton Raised="true" Icon="playlist_add" type="submit">Create Task</MatButton>
-        </div>
-    </div>
-</EditForm>
-
-@if (todoList != null && todoList.Count > 0)
+@if (todoList.Count > 0)
 {
     <table class="table">
         <thead>
@@ -57,10 +37,23 @@
         </tbody>
     </table>
 }
+else{
+    <div class="alert alert-secondary" role="alert">
+      You have no opened tasks!
+    </div>
+}
 
 @code {
     private List<TableItemViewModel> todoList = new List<TableItemViewModel>();
-    private CreateViewModel _viewModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var results = await Client.GetJsonAsync<FilterResult>("api/todo-tasks");
+
+        todoList = results.Tasks
+            .Select(t => new TableItemViewModel(t))
+            .ToList();
+    }
 
     async Task SubmitFormAsync()
     {
