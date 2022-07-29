@@ -18,7 +18,6 @@ namespace Todo.ApiGateway.Extensions
                 {
                     Id = t.Id,
                     Title = t.Title,
-                    UserId = t.UserId,
                     IsCompleted = t.IsCompleted,
                     DueDate = t.DueDate.ToDateTime(),
                     DuplicateTitle = t.DuplicateTitle,
@@ -29,7 +28,6 @@ namespace Todo.ApiGateway.Extensions
             => new()
             {
                 Id = response.Id,
-                UserId = response.UserId,
                 DueDate = response.DueDate.ToDateTime(),
                 Note = response.Note,
                 Title = response.Title,
