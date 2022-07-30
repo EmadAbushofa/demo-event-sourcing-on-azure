@@ -1,0 +1,86 @@
+﻿@inject INotificationService NotificationService
+@inject HttpClient Client
+
+<MatDialog @bind-IsOpen="@isOpen">
+    <MatDialogTitle>Create new task</MatDialogTitle>
+    <EditForm Model="@viewModel" OnValidSubmit="@SubmitFormAsync">
+        <FluentValidationValidator />
+        <MatDialogContent>
+            <ErrorList @ref="errorList" />
+            <Loading IsLoading="isLoading" />
+            <br />
+            <div class="row">
+                <div class="col-md-6">
+                    <MatTextField @bind-Value="@viewModel.Title" Outlined="true" Label="Title"></MatTextField>
+                    <ValidationMessage For="@(() => viewModel.Title)"/>
+                </div>
+                <div class="col-md-6">
+                    <MatDatePicker Outlined="true" Format="yyyy-MM-dd" Label="Due Date" @bind-Value="@viewModel.DueDate"></MatDatePicker>
+                    <ValidationMessage For="@(() => viewModel.DueDate)"/>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-6">
+                    <MatStringField InputClass="task-text-field-class" TextArea="true" Outlined="true" @bind-Value="@viewModel.Note" Label="Note"></MatStringField>
+                    <ValidationMessage For="@(() => viewModel.Note)"/>
+                </div>
+            </div>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton Type="button" OnClick="@(e => Close())">No Thanks</MatButton>
+            <MatButton Type="submit">Submit</MatButton>
+        </MatDialogActions>
+    </EditForm>
+</MatDialog>
+ 
+@code
+{
+    bool isOpen;
+    bool isLoading;
+    CreateViewModel viewModel = new();
+    ErrorList? errorList;
+
+    async Task SubmitFormAsync()
+    {
+        try
+        {
+            isLoading = true;
+            var input = viewModel.ToInput();
+            var response = await Client.PostAsync<CreateTaskInput, InputResponse>("api/todo-tasks", input);
+            if (!response.IsSuccess)
+            {
+                errorList?.ShowErrors(response.GetProblem());
+                return;
+            }
+
+            NotificationService.AddToast(response.GetResult().Id, "Create");
+            ClearAndClose();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public void ClearAndClose()
+    {
+        viewModel = new();
+        Close();
+    }
+
+    public void Open()
+    {
+        isOpen = true;
+        errorList?.Clear();
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        isOpen = false;
+        errorList?.Clear();
+        StateHasChanged();
+    }
+}
+ 

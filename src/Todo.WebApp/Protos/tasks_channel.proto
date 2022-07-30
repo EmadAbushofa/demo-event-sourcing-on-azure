@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
 option csharp_namespace = "Todo.WebApp.TodoProto.Channel";
 
 package todo.channel;
@@ -13,9 +16,25 @@ message SubscribeRequest {
 }
 
 message NotificationOutput {
-	string todo_task_id = 1;
+	TaskOutput todo_task = 1;
 	string message = 2;
 	NotificationStatus status = 3;
+	ActionType type = 4;
+}
+
+message TaskOutput {
+  string id = 1;
+  string title = 2;
+  google.protobuf.Timestamp due_date = 3;
+  google.protobuf.StringValue note = 4;
+  bool is_completed = 5;
+  bool duplicate_title = 6;
+}
+
+enum ActionType {
+	CREATE = 0;
+	UPDATE = 1;
+	DELETE = 2;
 }
 
 enum NotificationStatus {

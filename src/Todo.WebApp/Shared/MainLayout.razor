@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject INotificationService NotificationService
 
 <div class="page">
     <div class="sidebar">
@@ -12,7 +13,15 @@
         </div>
 
         <article class="content px-4">
+            <MatToastContainer />
             @Body
         </article>
     </main>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        NotificationService.Start();
+    }
+}

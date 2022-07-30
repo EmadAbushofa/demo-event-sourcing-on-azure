@@ -1,0 +1,49 @@
+﻿@using System.Net;
+
+<MatDialog @bind-IsOpen="@isOpen">
+    <MatDialogTitle>Error!</MatDialogTitle>
+    <MatDialogContent>
+        <p>@Message</p>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => Close())">OK</MatButton>
+    </MatDialogActions>
+</MatDialog>
+ 
+@code
+{
+    bool isOpen;
+    public bool IsOpen
+    { 
+        get => isOpen;
+        private set => isOpen = value;
+    }
+
+    public string? Message { get; private set; }
+
+    public void Open(string? message = null)
+    {
+        Message ??= message;
+        IsOpen = true;
+        StateHasChanged();
+    }
+
+    public void ShowError<TResult>(ResponseResult<TResult> response)
+    {
+        var problem = response.GetProblem();
+        Open(problem.Detail ?? problem.Title);
+    }
+
+    public void ShowError(Exception exception)
+    {
+        Console.WriteLine(exception);
+        Open(exception.Message);
+    }
+
+    public void Close()
+    {
+        IsOpen = false;
+        Message = null;
+        StateHasChanged();
+    }
+}

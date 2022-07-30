@@ -1,0 +1,137 @@
+﻿@page "/todos"
+@attribute [Authorize]
+@inject HttpClient Client
+@inject INotificationService NotificationService
+
+<style>
+    .task-text-field-class {
+        width: 300px;
+    }
+</style>
+
+<h1>Todo Web App</h1>
+<AlertDialog @ref="dialog" />
+<CreateTaskForm @ref="createTaskForm" />
+
+<Loading IsLoading="isLoading" />
+
+<br/>
+<div class="row">
+    <div class="col-md-6">
+        <MatButton Raised="true" Icon="playlist_add" OnClick="@(e => NewTask())">New Task</MatButton>
+    </div>
+</div>
+<br/>
+
+
+@if(!isLoading)
+{
+    @if (todoList.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in todoList)
+                {
+                <tr>
+                    <td style="color:@(item.DuplicateTitle ? "red" : "")">@item.Title</td>
+                    <td>@item.DueDate</td>
+                    <td><MatButton Icon="done" Outlined="true" @onclick="@(e => CompleteItem(item.Id))">Complete</MatButton></td>
+                    <td><MatButton Icon="edit" Outlined="true" @onclick="@(e => EditItem(item.Id))">Edit</MatButton></td>
+                    <td><MatButton Icon="delete" Outlined="true" @onclick="@(e => DeleteItem(item.Id))">Delete</MatButton></td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-secondary" role="alert">
+          You have no opened tasks!
+        </div>
+    }
+}
+
+@code {
+    private List<TableItemViewModel> todoList = new List<TableItemViewModel>();
+    bool isLoading = false;
+    AlertDialog? dialog;
+    CreateTaskForm? createTaskForm;
+
+    protected override async Task OnInitializedAsync()
+    {
+        NotificationService.TaskCreated += TaskCreatedHandler;
+        NotificationService.TaskUpdated += TaskUpdatedHandler;
+        NotificationService.TaskDeleted += TaskDeletedHandler;
+        Console.WriteLine("Subscribe to notifications");
+
+        try
+        {
+            isLoading = true;
+            var response = await Client.GetAsync<FilterResult>("api/todo-tasks");
+
+            if (!response.IsSuccess)
+            {
+                dialog?.ShowError(response);
+                return;
+            }
+
+            todoList = response.GetResult().Tasks
+                .Select(t => new TableItemViewModel(t))
+                .ToList();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    void NewTask()
+    {
+        createTaskForm?.Open();
+    }
+
+    void TaskCreatedHandler(object? sender, TodoTaskOutput output)
+    {
+        todoList.Add(new TableItemViewModel(output));
+        StateHasChanged();
+    }
+
+    void TaskUpdatedHandler(object? sender, TodoTaskOutput output)
+    {
+        var item = todoList.Find(i => i.Id == output.Id);
+        item?.Update(output);
+        StateHasChanged();
+    }
+
+    void TaskDeletedHandler(object? sender, TodoTaskOutput output)
+    {
+        todoList.RemoveAll(i => i.Id == output.Id);
+        StateHasChanged();
+    }
+
+    void DeleteItem(string? id)
+    {
+        var myTodo = todoList.First(x => x.Id == id);
+        todoList.Remove(myTodo);
+    }
+
+    void CompleteItem(string? id)
+    {
+        var myTodo = todoList.First(x => x.Id == id);
+        myTodo.IsCompleted = !myTodo.IsCompleted;
+    }
+
+    void EditItem(string? id)
+    {
+        var myTodo = todoList.FirstOrDefault(x => x.Id == id);
+    }
+}

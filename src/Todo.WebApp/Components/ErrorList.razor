@@ -1,0 +1,49 @@
+﻿@if (!string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <ul class="validation-errors">
+        <li class="validation-message">@ErrorMessage.</li>
+    </ul>
+}
+
+@if (Errors.Count > 0)
+{
+    <ul class="validation-errors">
+        @foreach (var error in Errors)
+        {
+            @foreach (var errorMessage in error.Value)
+            {
+                <li class="validation-message">@errorMessage</li>
+            }
+        }
+    </ul>
+}
+
+@code {
+    [Parameter]
+    public string? ErrorMessage { get; set; }
+
+    [Parameter]
+    public IDictionary<string, string[]> Errors { get; set; } = new Dictionary<string, string[]>();
+
+    public void ShowErrors(ProblemDetails? problemDetails)
+    {
+        ArgumentNullException.ThrowIfNull(problemDetails);
+
+        if(problemDetails.Errors.Count > 0)
+        {
+            Errors = problemDetails.Errors;
+        }
+        else
+        {
+            ErrorMessage = problemDetails.Detail ?? problemDetails.Title;
+        }
+        StateHasChanged();
+    }
+
+    public void Clear()
+    {
+        ErrorMessage = null;
+        Errors.Clear();
+        StateHasChanged();
+    }
+}

@@ -9,12 +9,13 @@ namespace Todo.WebApp.Services
             services.AddMatBlazor();
             services.AddMatToaster(config =>
             {
-                config.Position = MatToastPosition.BottomRight;
+                config.Position = MatToastPosition.TopRight;
                 config.PreventDuplicates = true;
                 config.NewestOnTop = true;
                 config.ShowCloseButton = true;
-                config.MaximumOpacity = 95;
+                config.MaximumOpacity = 100;
                 config.VisibleStateDuration = 3000;
+                config.ShowProgressBar = false;
             });
         }
     }

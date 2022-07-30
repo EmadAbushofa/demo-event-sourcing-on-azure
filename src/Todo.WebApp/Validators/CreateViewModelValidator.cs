@@ -7,8 +7,17 @@ namespace Todo.WebApp.Validators
     {
         public CreateViewModelValidator()
         {
-            RuleFor(m => m.Title)
+            RuleFor(c => c.Title)
                 .NotEmpty();
+
+            RuleFor(c => c.DueDate)
+                .NotNull()
+                .Must(dueDate => dueDate.GetValueOrDefault().Year < 2200)
+                .Must(dueDate => dueDate.GetValueOrDefault().Year > 1800)
+                .WithMessage("Due Date should be within a valid range.");
+
+            RuleFor(c => c.Note)
+                .MaximumLength(1000);
         }
     }
 }
