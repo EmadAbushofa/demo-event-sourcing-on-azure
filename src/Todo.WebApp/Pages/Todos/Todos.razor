@@ -12,7 +12,7 @@
 
 <h1>Todo Web App</h1>
 <AlertDialog @ref="dialog" />
-<CreateTaskForm @ref="createTaskForm" />
+<CreateForm @ref="createForm" />
 
 <Loading IsLoading="isLoading" />
 
@@ -71,7 +71,7 @@
     bool isLoading;
 
     AlertDialog? dialog;
-    CreateTaskForm? createTaskForm;
+    CreateForm? createForm;
 
     protected override Task OnInitializedAsync()
     {
@@ -124,7 +124,7 @@
 
     void NewTask()
     {
-        createTaskForm?.Open();
+        createForm?.Open();
     }
 
     void TaskCreatedHandler(object? sender, TodoTaskOutput output)

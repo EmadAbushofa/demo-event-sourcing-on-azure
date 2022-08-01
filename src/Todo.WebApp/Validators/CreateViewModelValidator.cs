@@ -8,6 +8,10 @@ namespace Todo.WebApp.Validators
         public CreateViewModelValidator()
         {
             RuleFor(c => c.Title)
+                .Must((model, _) => !model.DuplicateTitle)
+                .WithMessage("There is another opened task with the same title!");
+
+            RuleFor(c => c.Title)
                 .NotEmpty();
 
             RuleFor(c => c.DueDate)

@@ -1,10 +1,11 @@
-﻿@inject INotificationService NotificationService
+﻿@using Blazored.FluentValidation;
+@inject INotificationService NotificationService
 @inject HttpClient Client
 
 <MatDialog @bind-IsOpen="@isOpen">
     <MatDialogTitle>Create new task</MatDialogTitle>
     <EditForm Model="@viewModel" OnValidSubmit="@SubmitFormAsync">
-        <FluentValidationValidator />
+        <FluentValidationValidator @ref="validator" />
         <MatDialogContent>
             <ErrorList @ref="errorList" />
             <Loading IsLoading="isLoading" />
@@ -29,7 +30,7 @@
         </MatDialogContent>
         <MatDialogActions>
             <MatButton Type="button" OnClick="@(e => Close())">No Thanks</MatButton>
-            <MatButton Type="submit">Submit</MatButton>
+            <MatButton Disabled="isLoading" Type="submit">Submit</MatButton>
         </MatDialogActions>
     </EditForm>
 </MatDialog>
@@ -40,12 +41,66 @@
     bool isLoading;
     CreateViewModel viewModel = new();
     ErrorList? errorList;
+    CancellationTokenSource cancellationTokenSource = new();
+    FluentValidationValidator? validator;
+
+    protected override void OnInitialized() => NewViewModel();
+
+    void NewViewModel()
+    {
+        viewModel = new();
+        viewModel.TitleChanged += (s, title) => TitleIsDuplicateAsync(title).GetAwaiter();
+    }
+
+    async Task<bool> TitleIsDuplicateAsync(string? title)
+    {
+        if (string.IsNullOrWhiteSpace(title)) return false;
+
+        try
+        {
+            CancelOngoingCalls();
+            var response = await Client.GetAsync<SimilarTitleOutput>(
+                $"api/todo-tasks/similar-title-exists?title={title}",
+                cancellationTokenSource.Token
+            );
+
+            if (!response.IsSuccess)
+            {
+                errorList?.ShowErrors(response.GetProblem());
+                return false;
+            }
+
+            var output = response.GetResult();
+            ShowErrorIfTitleIsDuplicate(output);
+            return output.Exists;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+    }
+
+    void CancelOngoingCalls()
+    {
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource = new();
+    }
+
+    void ShowErrorIfTitleIsDuplicate(SimilarTitleOutput output)
+    {
+        viewModel.DuplicateTitle = output.Exists;
+        validator?.Validate(o => o.IncludeRuleSets());
+        StateHasChanged();
+    }
 
     async Task SubmitFormAsync()
     {
         try
         {
             isLoading = true;
+            if (await TitleIsDuplicateAsync(viewModel.Title)) return;
+
             var input = viewModel.ToInput();
             var response = await Client.PostAsync<CreateTaskInput, InputResponse>("api/todo-tasks", input);
             if (!response.IsSuccess)
@@ -65,7 +120,7 @@
 
     public void ClearAndClose()
     {
-        viewModel = new();
+        NewViewModel();
         Close();
     }
 
