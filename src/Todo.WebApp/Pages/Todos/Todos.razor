@@ -2,6 +2,7 @@
 @attribute [Authorize]
 @inject HttpClient Client
 @inject INotificationService NotificationService
+@inject NavigationManager NavigationManager
 
 <style>
     .task-text-field-class {
@@ -22,61 +23,85 @@
     </div>
 </div>
 <br/>
-
+<Filter FilterAsync="GetTasksAsync" IsLoading="isLoading" ViewModel="filterViewModel" />
+<br />
 
 @if(!isLoading)
 {
-    @if (todoList.Count > 0)
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in todoList)
-                {
-                <tr>
-                    <td style="color:@(item.DuplicateTitle ? "red" : "")">@item.Title</td>
-                    <td>@item.DueDate</td>
-                    <td><MatButton Icon="done" Outlined="true" @onclick="@(e => CompleteItem(item.Id))">Complete</MatButton></td>
-                    <td><MatButton Icon="edit" Outlined="true" @onclick="@(e => EditItem(item.Id))">Edit</MatButton></td>
-                    <td><MatButton Icon="delete" Outlined="true" @onclick="@(e => DeleteItem(item.Id))">Delete</MatButton></td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Due Date</th>
+                <th>State</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in todoList)
+            {
+            <tr>
+                <td style="color:@(item.DuplicateTitle ? "red" : "")">@item.Title</td>
+                <td>@item.DueDate</td>
+                <td><MatButton Icon="done" Outlined="true" @onclick="@(e => CompleteItem(item.Id))">@item.State</MatButton></td>
+                <td><MatButton Icon="edit" Outlined="true" @onclick="@(e => EditItem(item.Id))">Edit</MatButton></td>
+                <td><MatButton Icon="delete" Outlined="true" @onclick="@(e => DeleteItem(item.Id))">Delete</MatButton></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    @if(totalResults == 0)
     {
         <div class="alert alert-secondary" role="alert">
-          You have no opened tasks!
+          No results exists!
         </div>
     }
 }
+<div>
+    <MatPaginator Length="@totalResults" PageSize="@filterViewModel.Size" Page="NavigateAsync" />
+</div>
 
 @code {
+    int totalResults;
+    FilterQueryViewModel filterViewModel = new();
     private List<TableItemViewModel> todoList = new List<TableItemViewModel>();
-    bool isLoading = false;
+
+    bool isLoading;
+
     AlertDialog? dialog;
     CreateTaskForm? createTaskForm;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
+    {
+        SubscribeToNotifications();
+        filterViewModel = new FilterQueryViewModel(NavigationManager);
+        return GetTasksAsync();
+    }
+
+    void SubscribeToNotifications()
     {
         NotificationService.TaskCreated += TaskCreatedHandler;
         NotificationService.TaskUpdated += TaskUpdatedHandler;
         NotificationService.TaskDeleted += TaskDeletedHandler;
-        Console.WriteLine("Subscribe to notifications");
+    }
 
+    Task NavigateAsync(MatPaginatorPageEvent e)
+    {
+        filterViewModel.Page = e.PageIndex + 1;
+        filterViewModel.Size = e.PageSize;
+        return GetTasksAsync();
+    }
+
+    async Task GetTasksAsync()
+    {
         try
         {
+            var query = filterViewModel.GetFilterModelAsQueryString();
             isLoading = true;
-            var response = await Client.GetAsync<FilterResult>("api/todo-tasks");
+            StateHasChanged();
+            var response = await Client.GetAsync<FilterResult>($"api/todo-tasks{query}");
 
             if (!response.IsSuccess)
             {
@@ -84,13 +109,16 @@
                 return;
             }
 
-            todoList = response.GetResult().Tasks
+            var result = response.GetResult();
+            totalResults = result.Total;
+            todoList = result.Tasks
                 .Select(t => new TableItemViewModel(t))
                 .ToList();
         }
         finally
         {
             isLoading = false;
+            StateHasChanged();
         }
     }
 
@@ -127,7 +155,6 @@
     void CompleteItem(string? id)
     {
         var myTodo = todoList.First(x => x.Id == id);
-        myTodo.IsCompleted = !myTodo.IsCompleted;
     }
 
     void EditItem(string? id)

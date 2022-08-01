@@ -7,6 +7,7 @@ namespace Todo.WebApp.Services
         public static void AddBlazorFluentValidation(this IServiceCollection services)
         {
             services.AddTransient<CreateViewModelValidator>();
+            services.AddTransient<FilterQueryViewModelValidator>();
         }
     }
 }

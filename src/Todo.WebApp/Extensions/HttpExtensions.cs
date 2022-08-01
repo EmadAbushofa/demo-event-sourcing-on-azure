@@ -5,12 +5,16 @@ namespace Todo.WebApp.Extensions
 {
     public static class HttpExtensions
     {
-        public static async Task<ResponseResult<TResult>> GetAsync<TResult>(this HttpClient client, string url)
+        public static async Task<ResponseResult<TResult>> GetAsync<TResult>(this HttpClient client, string url, CancellationToken cancellationToken = default)
         {
             try
             {
-                var response = await client.GetAsync(url);
+                var response = await client.GetAsync(url, cancellationToken);
                 return await FetchResultAsync<TResult>(response);
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -19,11 +23,11 @@ namespace Todo.WebApp.Extensions
             }
         }
 
-        public static async Task<ResponseResult<TResult>> PostAsync<TInput, TResult>(this HttpClient client, string url, TInput input)
+        public static async Task<ResponseResult<TResult>> PostAsync<TInput, TResult>(this HttpClient client, string url, TInput input, CancellationToken cancellationToken = default)
         {
             try
             {
-                var response = await client.PostAsJsonAsync(url, input);
+                var response = await client.PostAsJsonAsync(url, input, cancellationToken);
                 return await FetchResultAsync<TResult>(response);
             }
             catch (Exception e)

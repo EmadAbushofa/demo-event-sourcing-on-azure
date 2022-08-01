@@ -5,6 +5,6 @@
         public string? Title { get; set; }
         public int? Status { get; set; }
         public string? Detail { get; set; }
-        public IDictionary<string, string[]> Errors { get; } = new Dictionary<string, string[]>();
+        public Dictionary<string, string[]> Errors { get; set; } = new();
     }
 }

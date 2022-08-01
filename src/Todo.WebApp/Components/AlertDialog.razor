@@ -3,7 +3,19 @@
 <MatDialog @bind-IsOpen="@isOpen">
     <MatDialogTitle>Error!</MatDialogTitle>
     <MatDialogContent>
-        <p>@Message</p>
+        @if(Errors.Length > 0)
+        {
+            <ul>
+            @foreach (var error in Errors)
+            {
+                <li>@error</li>
+            }
+            </ul>
+        }
+        else
+        {
+            <p>@Message</p>
+        }
     </MatDialogContent>
     <MatDialogActions>
         <MatButton OnClick="@(e => Close())">OK</MatButton>
@@ -20,6 +32,7 @@
     }
 
     public string? Message { get; private set; }
+    public string[] Errors { get; private set; } = Array.Empty<string>();
 
     public void Open(string? message = null)
     {
@@ -31,6 +44,12 @@
     public void ShowError<TResult>(ResponseResult<TResult> response)
     {
         var problem = response.GetProblem();
+        if(problem.Errors.Count > 0)
+        {
+            Errors = problem.Errors.SelectMany(e => e.Value).ToArray();
+            Open();
+            return;
+        }
         Open(problem.Detail ?? problem.Title);
     }
 

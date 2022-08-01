@@ -1,0 +1,53 @@
+﻿<EditForm EditContext="editContext" OnValidSubmit="@SubmitFormAsync">
+    <FluentValidationValidator />
+    <ErrorList @ref="errorList" />
+    <br />
+    <div class="row">
+        <div class="col-lg-3 col-md-12 col-sm-12">
+            <MatSelect Label="State" @bind-Value="@ViewModel.State">
+                <MatOptionString Value="@CompletionState.PendingTasks">Pending Tasks</MatOptionString>
+                <MatOptionString Value="@CompletionState.CompletedTasks">Completed Tasks</MatOptionString>
+                <MatOptionString Value="@CompletionState.AllTasks">All Tasks</MatOptionString>
+            </MatSelect>
+            <ValidationMessage For="@(() => ViewModel.State)"/>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <MatDatePicker Outlined="true" Format="yyyy-MM-dd" Label="Due Date From" @bind-Value="@ViewModel.DueDateFrom"></MatDatePicker>
+            <ValidationMessage For="@(() => ViewModel.DueDateFrom)"/>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <MatDatePicker Outlined="true" Format="yyyy-MM-dd" Label="Due Date To" @bind-Value="@ViewModel.DueDateTo"></MatDatePicker>
+            <ValidationMessage For="@(() => ViewModel.DueDateTo)"/>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    ErrorList? errorList;
+    EditContext? editContext;
+
+    [Parameter]
+    public FilterQueryViewModel ViewModel { get; set; } = new();
+
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    [Parameter]
+    public Func<Task>? FilterAsync { get; set; }
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(ViewModel);
+        editContext.OnFieldChanged += OnFieldChanged;
+    }
+
+    void OnFieldChanged(object? sender, FieldChangedEventArgs args)
+    {
+        SubmitFormAsync();
+    }
+
+    Task SubmitFormAsync()
+    {
+        return FilterAsync != null ? FilterAsync() : Task.CompletedTask;
+    }
+}

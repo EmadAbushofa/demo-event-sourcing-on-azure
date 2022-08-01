@@ -46,7 +46,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var client = _factory.CreateClientWithUser(emad);
 
-            var result = await client.GetAsync<FilterResult>($"api/todo-tasks?isCompleted={isCompleted}");
+            var result = await client.GetAsync<FilterResult>($"api/todo-tasks?iscompleted={isCompleted}");
 
             Assert.Equal(expectedCount, result.Tasks.Count);
         }
