@@ -22,8 +22,12 @@ namespace Todo.WebApp.Services
             Console.WriteLine("ToastNotificationService initialized.");
         }
 
+        public bool IsStarted { get; private set; }
+
         public async void Start()
         {
+            if (IsStarted) return;
+            IsStarted = true;
             Console.WriteLine("ToastNotificationService Start execution.");
             try
             {
@@ -50,6 +54,10 @@ namespace Todo.WebApp.Services
                 Console.WriteLine(e);
                 await Task.Delay(TimeSpan.FromSeconds(10));
                 Start();
+            }
+            finally
+            {
+                IsStarted = false;
             }
         }
 

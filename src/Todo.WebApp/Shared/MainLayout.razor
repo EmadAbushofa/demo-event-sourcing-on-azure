@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject INotificationService NotificationService
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 <div class="page">
     <div class="sidebar">
@@ -23,6 +24,15 @@
 @code {
     protected override void OnInitialized()
     {
-        NotificationService.Start();
+        AuthenticationStateProvider.AuthenticationStateChanged += AuthenticationStateChanged;
+    }
+
+    async void AuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var state = await task;
+        if(state.User.Identity?.IsAuthenticated == true)
+        {
+            NotificationService.Start();
+        }
     }
 }
