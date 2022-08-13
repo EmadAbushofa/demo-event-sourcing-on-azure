@@ -27,7 +27,7 @@ namespace Todo.ApiGateway.Test.Live.ChannelTests
 
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new ChangeDueDateTaskInput()
+            var input = new ChangeTaskDueDateInput()
             {
                 DueDate = DateTime.UtcNow.AddDays(2)
             };
@@ -50,7 +50,7 @@ namespace Todo.ApiGateway.Test.Live.ChannelTests
 
             var client = _factory.CreateClientWithUser("Yhwach");
 
-            var input = new ChangeDueDateTaskInput()
+            var input = new ChangeTaskDueDateInput()
             {
                 DueDate = DateTime.UtcNow
             };

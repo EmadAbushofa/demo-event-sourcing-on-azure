@@ -26,7 +26,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new ChangeDueDateTaskInput()
+            var input = new ChangeTaskDueDateInput()
             {
                 DueDate = DateTime.UtcNow
             };
@@ -45,7 +45,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         {
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new ChangeDueDateTaskInput().ToHttpContent();
+            var input = new ChangeTaskDueDateInput().ToHttpContent();
 
             var response = await client.PatchAsync($"api/todo-tasks/{Guid.NewGuid()}/change-due-date", input);
 
@@ -61,7 +61,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         {
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new ChangeDueDateTaskInput()
+            var input = new ChangeTaskDueDateInput()
             {
                 DueDate = DateTime.UtcNow,
             }.ToHttpContent();
@@ -81,7 +81,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new ChangeDueDateTaskInput()
+            var input = new ChangeTaskDueDateInput()
             {
                 DueDate = DateTime.UtcNow,
             }.ToHttpContent();
@@ -98,7 +98,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var client = _factory.CreateClient();
 
-            var input = new ChangeDueDateTaskInput()
+            var input = new ChangeTaskDueDateInput()
             {
                 DueDate = DateTime.UtcNow,
             }.ToHttpContent();

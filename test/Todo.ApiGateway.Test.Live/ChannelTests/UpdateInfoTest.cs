@@ -27,7 +27,7 @@ namespace Todo.ApiGateway.Test.Live.ChannelTests
 
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new UpdateInfoTaskInput()
+            var input = new UpdateTaskInfoInput()
             {
                 Note = "New note",
                 Title = $"My new title {DateTime.UtcNow.Ticks}"
@@ -54,7 +54,7 @@ namespace Todo.ApiGateway.Test.Live.ChannelTests
 
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new UpdateInfoTaskInput()
+            var input = new UpdateTaskInfoInput()
             {
                 Note = "New note",
                 Title = title
@@ -74,7 +74,7 @@ namespace Todo.ApiGateway.Test.Live.ChannelTests
 
             var client = _factory.CreateClientWithUser("Yhwach");
 
-            var input = new UpdateInfoTaskInput()
+            var input = new UpdateTaskInfoInput()
             {
                 Note = "New note",
                 Title = $"My new title {DateTime.UtcNow.Ticks}"

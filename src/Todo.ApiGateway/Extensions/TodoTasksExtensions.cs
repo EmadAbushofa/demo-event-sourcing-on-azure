@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Todo.ApiGateway.Models.TodoTasks;
 using Todo.ApiGateway.TodoProto.Command;
 using Todo.ApiGateway.TodoProto.Query;
@@ -49,8 +48,8 @@ namespace Todo.ApiGateway.Extensions
                 Page = filter.Page,
                 Size = filter.Size,
                 IsCompleted = filter.IsCompleted,
-                DueDateTo = filter.DueDateTo?.ToUniversalTime().ToTimestamp(),
-                DueDateFrom = filter.DueDateFrom?.ToUniversalTime().ToTimestamp(),
+                DueDateTo = filter.DueDateTo?.DateToTimestamp(),
+                DueDateFrom = filter.DueDateFrom?.DateToTimestamp(),
             };
 
         public static SimilarTitleExistsRequest ToRequest(this SimilarTitleQuery query, ClaimsPrincipal claims)
@@ -65,12 +64,12 @@ namespace Todo.ApiGateway.Extensions
             => new()
             {
                 UserId = claims.GetId(),
-                DueDate = input.DueDate.ToUniversalTime().ToTimestamp(),
+                DueDate = input.DueDate.DateToTimestamp(),
                 Note = input.Note,
                 Title = input.Title ?? "",
             };
 
-        public static UpdateInfoRequest ToRequest(this UpdateInfoTaskInput input, Guid id, ClaimsPrincipal claims)
+        public static UpdateInfoRequest ToRequest(this UpdateTaskInfoInput input, Guid id, ClaimsPrincipal claims)
             => new()
             {
                 Id = id.ToString(),
@@ -79,12 +78,12 @@ namespace Todo.ApiGateway.Extensions
                 Title = input.Title ?? "",
             };
 
-        public static ChangeDueDateRequest ToRequest(this ChangeDueDateTaskInput input, Guid id, ClaimsPrincipal claims)
+        public static ChangeDueDateRequest ToRequest(this ChangeTaskDueDateInput input, Guid id, ClaimsPrincipal claims)
             => new()
             {
                 Id = id.ToString(),
                 UserId = claims.GetId(),
-                DueDate = input.DueDate.ToUniversalTime().ToTimestamp(),
+                DueDate = input.DueDate.DateToTimestamp(),
             };
     }
 }

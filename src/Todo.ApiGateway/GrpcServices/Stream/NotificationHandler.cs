@@ -49,7 +49,7 @@ namespace Todo.ApiGateway.GrpcServices.Stream
                 : (Messages.TaskInfoUpdated, NotificationStatus.Succeed, ActionType.Update);
 
         private static (string, NotificationStatus, ActionType) HandleDueDateChanged(NotificationResponse response) =>
-            (string.Format(Messages.TaskDueDateChanged, response.Task.DueDate.ToDateTime().Date), NotificationStatus.Succeed, ActionType.Update);
+            (string.Format(Messages.TaskDueDateChanged, response.Task.DueDate.ToDateTime().ToString("yyyy-MM-dd")), NotificationStatus.Succeed, ActionType.Update);
 
         private static (string, NotificationStatus, ActionType) HandleCompleted() =>
             (Messages.TaskCompleted, NotificationStatus.Succeed, ActionType.Update);

@@ -1,6 +1,6 @@
 ﻿namespace Todo.WebApp.Models
 {
-    public class ChangeDueDateTaskInput
+    public class ChangeTaskDueDateInput
     {
         public DateTime DueDate { get; set; }
     }

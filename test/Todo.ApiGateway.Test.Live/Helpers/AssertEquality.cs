@@ -20,7 +20,7 @@ namespace Todo.ApiGateway.Test.Live.Helpers
             Assert.Equal(input.Note, output.Note);
         }
 
-        public static void Of(UpdateInfoTaskInput input, TodoTaskOutput output)
+        public static void Of(UpdateTaskInfoInput input, TodoTaskOutput output)
         {
             Assert.NotNull(input);
             Assert.NotNull(output);
@@ -29,7 +29,7 @@ namespace Todo.ApiGateway.Test.Live.Helpers
             Assert.Equal(input.Note, output.Note);
         }
 
-        public static void Of(ChangeDueDateTaskInput input, TodoTaskOutput output)
+        public static void Of(ChangeTaskDueDateInput input, TodoTaskOutput output)
         {
             Assert.NotNull(input);
             Assert.NotNull(output);

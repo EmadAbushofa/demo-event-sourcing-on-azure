@@ -1,6 +1,6 @@
 ﻿namespace Todo.ApiGateway.Models.TodoTasks
 {
-    public class ChangeDueDateTaskInput
+    public class ChangeTaskDueDateInput
     {
         public DateTime DueDate { get; set; }
     }

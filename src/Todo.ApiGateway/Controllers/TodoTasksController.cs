@@ -69,7 +69,7 @@ namespace Todo.ApiGateway.Controllers
         }
 
         [HttpPut("{id}/update-info")]
-        public async Task<InputResponse> UpdateInfoAsync(Guid id, [FromBody] UpdateInfoTaskInput input)
+        public async Task<InputResponse> UpdateInfoAsync(Guid id, [FromBody] UpdateTaskInfoInput input)
         {
             var request = input.ToRequest(id, User);
 
@@ -79,7 +79,7 @@ namespace Todo.ApiGateway.Controllers
         }
 
         [HttpPatch("{id}/change-due-date")]
-        public async Task<InputResponse> ChangeDueDateAsync(Guid id, [FromBody] ChangeDueDateTaskInput input)
+        public async Task<InputResponse> ChangeDueDateAsync(Guid id, [FromBody] ChangeTaskDueDateInput input)
         {
             var request = input.ToRequest(id, User);
 

@@ -26,7 +26,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new UpdateInfoTaskInput()
+            var input = new UpdateTaskInfoInput()
             {
                 Note = "New note",
                 Title = $"My new title {DateTime.UtcNow.Ticks}"
@@ -46,7 +46,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         {
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new UpdateInfoTaskInput().ToHttpContent();
+            var input = new UpdateTaskInfoInput().ToHttpContent();
 
             var response = await client.PutAsync($"api/todo-tasks/{Guid.NewGuid()}/update-info", input);
 
@@ -62,7 +62,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
         {
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new UpdateInfoTaskInput()
+            var input = new UpdateTaskInfoInput()
             {
                 Note = "New note",
                 Title = $"My new title {DateTime.UtcNow.Ticks}"
@@ -83,7 +83,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var client = _factory.CreateClientWithUser("Emad");
 
-            var input = new UpdateInfoTaskInput()
+            var input = new UpdateTaskInfoInput()
             {
                 Note = "New note",
                 Title = $"My new title {DateTime.UtcNow.Ticks}"
@@ -101,7 +101,7 @@ namespace Todo.ApiGateway.Test.Live.TasksServiceTests
 
             var client = _factory.CreateClient();
 
-            var input = new UpdateInfoTaskInput()
+            var input = new UpdateTaskInfoInput()
             {
                 Note = "New note",
                 Title = $"My new title {DateTime.UtcNow.Ticks}"
