@@ -13,6 +13,7 @@
 <h1>Todo Web App</h1>
 <AlertDialog @ref="dialog" />
 <CreateForm @ref="createForm" />
+<ViewForm @ref="viewForm" />
 
 <Loading IsLoading="isLoading" />
 
@@ -33,7 +34,7 @@
             <tr>
                 <th>Title</th>
                 <th>Due Date</th>
-                <th>State</th>
+                <th>Action</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -41,13 +42,21 @@
         <tbody>
             @foreach (var item in todoList)
             {
-            <tr>
-                <td style="color:@(item.DuplicateTitle ? "red" : "")">@item.Title</td>
-                <td>@item.DueDate</td>
-                <td><MatButton Icon="done" Outlined="true" @onclick="@(e => CompleteItem(item.Id))">@item.State</MatButton></td>
-                <td><MatButton Icon="edit" Outlined="true" @onclick="@(e => EditItem(item.Id))">Edit</MatButton></td>
-                <td><MatButton Icon="delete" Outlined="true" @onclick="@(e => DeleteItem(item.Id))">Delete</MatButton></td>
-            </tr>
+                var titleColor = item.DuplicateTitle ? "red" : "";
+                var dueDateColor = item.DueDateState switch
+                {
+                    DueDateState.Soon => "green",
+                    DueDateState.Today => "orange",
+                    DueDateState.Late => "red",
+                    _ => "",
+                };
+                <tr>
+                    <td style="color:@titleColor">@item.Title</td>
+                    <td style="color:@dueDateColor">@item.DueDateString</td>
+                    <td><MatButton Icon="done" Outlined="true" @onclick="@(e => CompleteItem(item.Id))">@item.State</MatButton></td>
+                    <td><MatButton Icon="edit" Outlined="true" @onclick="@(e => EditItem(item.Id))">Edit</MatButton></td>
+                    <td><MatButton Icon="delete" Outlined="true" @onclick="@(e => DeleteItem(item.Id))">Delete</MatButton></td>
+                </tr>
             }
         </tbody>
     </table>
@@ -72,6 +81,7 @@
 
     AlertDialog? dialog;
     CreateForm? createForm;
+    ViewForm? viewForm;
 
     protected override Task OnInitializedAsync()
     {
@@ -159,6 +169,6 @@
 
     void EditItem(string? id)
     {
-        var myTodo = todoList.FirstOrDefault(x => x.Id == id);
+        viewForm?.Open(id);
     }
 }

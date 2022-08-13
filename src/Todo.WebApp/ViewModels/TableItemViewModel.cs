@@ -8,8 +8,8 @@ namespace Todo.WebApp.ViewModels
         {
             Id = output.Id;
             Title = output.Title;
-            DueDate = output.DueDate.ToString("yyyy-MM-dd");
-            State = output.IsCompleted ? "Uncomplete" : "Complete";
+            DueDate = output.DueDate;
+            IsCompleted = output.IsCompleted;
             DuplicateTitle = output.DuplicateTitle;
         }
 
@@ -17,22 +17,31 @@ namespace Todo.WebApp.ViewModels
         {
             Id = output.Id;
             Title = output.Title;
-            DueDate = output.DueDate.ToString("yyyy-MM-dd");
-            State = output.IsCompleted ? "Uncomplete" : "Complete";
+            DueDate = output.DueDate;
+            IsCompleted = output.IsCompleted;
             DuplicateTitle = output.DuplicateTitle;
         }
 
         public string? Id { get; set; }
         public string? Title { get; set; }
-        public string? DueDate { get; set; }
-        public string State { get; set; }
+        public DateTime DueDate { get; set; }
+        public string? DueDateString => DueDate.ToString("yyyy-MM-dd");
+        public DueDateState DueDateState => (DueDate - DateTime.Today).TotalDays switch
+        {
+            < 7 and > 0 => DueDateState.Soon,
+            0 => DueDateState.Today,
+            < 0 => DueDateState.Late,
+            _ => DueDateState.Future,
+        };
+        public bool IsCompleted { get; set; }
+        public string State => IsCompleted ? "Uncomplete" : "Complete";
         public bool DuplicateTitle { get; set; }
 
         public void Update(TodoTaskOutput output)
         {
             Title = output.Title;
-            DueDate = output.DueDate.ToString("yyyy-MM-dd");
-            State = output.IsCompleted ? "Uncomplete" : "Complete";
+            DueDate = output.DueDate;
+            IsCompleted = output.IsCompleted;
             DuplicateTitle = output.DuplicateTitle;
         }
     }

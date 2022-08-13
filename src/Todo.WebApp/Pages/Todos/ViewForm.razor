@@ -1,0 +1,278 @@
+﻿@using Blazored.FluentValidation;
+@inject INotificationService NotificationService
+@inject HttpClient Client
+
+<MatDialog @bind-IsOpen="@isOpen">
+    <MatDialogTitle>
+        @(mode switch
+        {
+            FormMode.UpdateInfo => "Update Info",
+            FormMode.ChangeDueDate => "Change Due Date",
+            _ => "Task Details"
+        })
+    </MatDialogTitle>
+    <ErrorList @ref="errorList" />
+    <Loading IsLoading="isLoading" />
+    @if (mode == FormMode.View)
+    {
+        <MatDialogContent>
+            <div class="row">
+                <div class="col-md-12">
+                    <MatTextField @bind-Value="@viewModel.Title" IconOnClick="@(e => ChangeMode(FormMode.UpdateInfo))" Icon="edit" IconTrailing="true" ReadOnly="true" Label="Title"></MatTextField>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <MatStringField InputClass="task-text-field-class" ReadOnly="true" TextArea="true" @bind-Value="@viewModel.Note" Label="Note"></MatStringField>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <MatStringField Format="yyyy-MM-dd" IconOnClick="@(e => ChangeMode(FormMode.ChangeDueDate))" Icon="edit" IconTrailing="true" ReadOnly="true" Label="Due Date" @bind-Value="@viewModel.DueDateString"></MatStringField>
+                </div>
+            </div>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton Type="button" OnClick="@(e => Close())">Close</MatButton>
+        </MatDialogActions>
+    }
+    @if (mode == FormMode.UpdateInfo)
+    {
+        <EditForm Model="@viewModel" OnSubmit="@SubmitFormAsync">
+            <FluentValidationValidator @ref="validator" />
+            <MatDialogContent>
+                <div class="row">
+                    <div class="col-md-12">
+                        <MatTextField @bind-Value="@viewModel.Title" Outlined="true" Label="Title"></MatTextField>
+                        <ValidationMessage For="@(() => viewModel.Title)" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-12">
+                        <MatStringField InputClass="task-text-field-class" TextArea="true" Outlined="true" @bind-Value="@viewModel.Note" Label="Note"></MatStringField>
+                        <ValidationMessage For="@(() => viewModel.Note)" />
+                    </div>
+                </div>
+            </MatDialogContent>
+            <MatDialogActions>
+                <MatButton Outlined="true" Icon="replay" Type="button" OnClick="@(e => ChangeMode(FormMode.View))">Back</MatButton>
+                <MatButton Outlined="true" Icon="edit" Type="submit">Submit</MatButton>
+            </MatDialogActions>
+        </EditForm>
+    }
+    @if (mode == FormMode.ChangeDueDate)
+    {
+        <EditForm Model="@viewModel" OnSubmit="@SubmitFormAsync">
+            <FluentValidationValidator @ref="validator" />
+            <MatDialogContent>
+                <div class="row">
+                    <div class="col-md-12">
+                        <MatDatePicker Outlined="true" Format="yyyy-MM-dd" Label="Due Date" @bind-Value="@viewModel.DueDate"></MatDatePicker>
+                        <ValidationMessage For="@(() => viewModel.DueDate)" />
+                    </div>
+                </div>
+            </MatDialogContent>
+            <MatDialogActions>
+                <MatButton Outlined="true" Icon="replay" Type="button" OnClick="@(e => ChangeMode(FormMode.View))">Back</MatButton>
+                <MatButton Outlined="true" Icon="edit" Type="submit">Submit</MatButton>
+            </MatDialogActions>
+        </EditForm>
+    }
+</MatDialog>
+
+@code
+{
+    bool isOpen;
+    bool isLoading;
+    string? id;
+    UpdateViewModel viewModel = new();
+    ErrorList? errorList;
+    CancellationTokenSource cancellationTokenSource = new();
+    FluentValidationValidator? validator;
+    FormMode mode;
+
+    enum FormMode
+    {
+        View,
+        UpdateInfo,
+        ChangeDueDate
+    }
+
+    protected override void OnInitialized() => NewViewModel();
+
+    void NewViewModel()
+    {
+        mode = FormMode.View;
+        viewModel = new();
+        errorList?.Clear();
+        viewModel.TitleChanged += (s, title) => TitleIsDuplicateAsync(title).GetAwaiter();
+    }
+
+    void ChangeMode(FormMode mode)
+    {
+        this.mode = mode;
+    }
+
+    async Task<bool> TitleIsDuplicateAsync(string? title)
+    {
+        if (string.IsNullOrWhiteSpace(title)) return false;
+
+        try
+        {
+            CancelOngoingCalls();
+            var response = await Client.GetAsync<SimilarTitleOutput>(
+                $"api/todo-tasks/similar-title-exists?title={title}&excludedId={id}",
+                cancellationTokenSource.Token
+            );
+
+            if (!response.IsSuccess)
+            {
+                errorList?.ShowErrors(response.GetProblem());
+                return false;
+            }
+
+            var output = response.GetResult();
+            ShowErrorIfTitleIsDuplicate(output);
+            return output.Exists;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+    }
+
+    void CancelOngoingCalls()
+    {
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource = new();
+    }
+
+    void ShowErrorIfTitleIsDuplicate(SimilarTitleOutput output)
+    {
+        viewModel.DuplicateTitle = output.Exists;
+        validator?.Validate(o => o.IncludeRuleSets("UpdateInfo"));
+        StateHasChanged();
+    }
+
+    Task SubmitFormAsync()
+    {
+        return mode switch
+        {
+            FormMode.UpdateInfo => UpdateInfoAsync(),
+            FormMode.ChangeDueDate => ChangeDueDateAsync(),
+            _ => Task.CompletedTask,
+        };
+    }
+
+    async Task UpdateInfoAsync()
+    {
+        try
+        {
+            isLoading = true;
+            if (await TitleIsDuplicateAsync(viewModel.Title)) return;
+
+            var input = viewModel.ToUpdateInfoInput();
+            var response = await Client.PutAsync<UpdateTaskInfoInput, InputResponse>($"api/todo-tasks/{id}/update-info", input);
+            if (!response.IsSuccess)
+            {
+                errorList?.ShowErrors(response.GetProblem());
+                return;
+            }
+
+            NotificationService.AddToast(response.GetResult().Id, "Update info");
+            ClearAndClose();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    async Task ChangeDueDateAsync()
+    {
+        try
+        {
+            isLoading = true;
+            if (!DueDateIsValid()) return;
+
+            var input = viewModel.ToChangeDueDateInput();
+            var response = await Client.PatchAsync<ChangeTaskDueDateInput, InputResponse>($"api/todo-tasks/{id}/change-due-date", input);
+            if (!response.IsSuccess)
+            {
+                errorList?.ShowErrors(response.GetProblem());
+                return;
+            }
+
+            NotificationService.AddToast(response.GetResult().Id, "Change due date");
+            ClearAndClose();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    bool DueDateIsValid()
+    {
+        var isValid = validator?.Validate(o => o.IncludeRuleSets("ChangeDueDate"));
+        if (isValid == false)
+        {
+            StateHasChanged();
+            return false;
+        }
+        return true;
+    }
+
+    public void ClearAndClose()
+    {
+        NewViewModel();
+        Close();
+    }
+
+    public async void Open(string? id)
+    {
+        isOpen = true;
+        this.id = id;
+        NewViewModel();
+        isLoading = true;
+
+        try
+        {
+            CancelOngoingCalls();
+            var response = await Client.GetAsync<TodoTaskOutput>(
+                $"api/todo-tasks/{id}",
+                cancellationTokenSource.Token
+            );
+
+            if (!response.IsSuccess)
+            {
+                errorList?.ShowErrors(response.GetProblem());
+                return;
+            }
+
+            var output = response.GetResult();
+            viewModel.SetValues(output);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    public void Close()
+    {
+        isOpen = false;
+        errorList?.Clear();
+        StateHasChanged();
+    }
+}

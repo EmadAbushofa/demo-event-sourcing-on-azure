@@ -27,7 +27,7 @@ namespace Todo.WebApp.ViewModels
             new()
             {
                 Title = Title,
-                DueDate = DueDate ?? throw new InvalidOperationException("Due date is null."),
+                DueDate = DueDate?.ToLocalTime() ?? throw new InvalidOperationException("Due date is null."),
                 Note = Note,
             };
     }

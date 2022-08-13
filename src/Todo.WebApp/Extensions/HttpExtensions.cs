@@ -1,4 +1,6 @@
 ﻿using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using Todo.WebApp.Models;
 
 namespace Todo.WebApp.Extensions
@@ -28,6 +30,36 @@ namespace Todo.WebApp.Extensions
             try
             {
                 var response = await client.PostAsJsonAsync(url, input, cancellationToken);
+                return await FetchResultAsync<TResult>(response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return NotAvailable<TResult>();
+            }
+        }
+
+        public static async Task<ResponseResult<TResult>> PutAsync<TInput, TResult>(this HttpClient client, string url, TInput input, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var response = await client.PutAsJsonAsync(url, input, cancellationToken);
+                return await FetchResultAsync<TResult>(response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return NotAvailable<TResult>();
+            }
+        }
+
+        public static async Task<ResponseResult<TResult>> PatchAsync<TInput, TResult>(this HttpClient client, string url, TInput input, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(input);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.PatchAsync(url, content, cancellationToken);
                 return await FetchResultAsync<TResult>(response);
             }
             catch (Exception e)
