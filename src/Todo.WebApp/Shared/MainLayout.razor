@@ -22,17 +22,20 @@
 </div>
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         AuthenticationStateProvider.AuthenticationStateChanged += AuthenticationStateChanged;
+        await TryConnectAsync(AuthenticationStateProvider.GetAuthenticationStateAsync());
     }
 
-    async void AuthenticationStateChanged(Task<AuthenticationState> task)
+    async Task TryConnectAsync(Task<AuthenticationState> task)
     {
         var state = await task;
-        if(state.User.Identity?.IsAuthenticated == true)
+        if (state.User.Identity?.IsAuthenticated == true)
         {
             NotificationService.Start();
         }
     }
+
+    void AuthenticationStateChanged(Task<AuthenticationState> task) => TryConnectAsync(task).GetAwaiter();
 }

@@ -51,6 +51,7 @@ namespace Todo.WebApp.Services
             }
             catch (RpcException e)
             {
+                IsStarted = false;
                 Console.WriteLine(e);
                 await Task.Delay(TimeSpan.FromSeconds(10));
                 Start();
