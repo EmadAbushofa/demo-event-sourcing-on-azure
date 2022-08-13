@@ -69,6 +69,35 @@ namespace Todo.WebApp.Extensions
             }
         }
 
+        public static async Task<ResponseResult<TResult>> PatchAsync<TResult>(this HttpClient client, string url, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var content = new StringContent("{}", Encoding.UTF8, "application/json");
+                var response = await client.PatchAsync(url, content, cancellationToken);
+                return await FetchResultAsync<TResult>(response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return NotAvailable<TResult>();
+            }
+        }
+
+        public static async Task<ResponseResult<TResult>> DeleteAsync<TResult>(this HttpClient client, string url, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var response = await client.DeleteAsync(url, cancellationToken);
+                return await FetchResultAsync<TResult>(response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return NotAvailable<TResult>();
+            }
+        }
+
         private static async Task<ResponseResult<TResult>> FetchResultAsync<TResult>(HttpResponseMessage response)
         {
             if (response.IsSuccessStatusCode)

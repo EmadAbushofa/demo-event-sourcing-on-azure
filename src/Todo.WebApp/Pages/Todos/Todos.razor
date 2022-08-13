@@ -16,6 +16,7 @@
 <ViewForm @ref="viewForm" />
 
 <Loading IsLoading="isLoading" />
+<ErrorList @ref="errorList" />
 
 <br/>
 <div class="row">
@@ -42,20 +43,50 @@
         <tbody>
             @foreach (var item in todoList)
             {
-                var titleColor = item.DuplicateTitle ? "red" : "";
+                var titleColor = item.DuplicateTitle ? "color:red" : "";
                 var dueDateColor = item.DueDateState switch
                 {
-                    DueDateState.Soon => "green",
-                    DueDateState.Today => "orange",
-                    DueDateState.Late => "red",
+                    DueDateState.Soon => "color:green",
+                    DueDateState.Today => "color:orange",
+                    DueDateState.Late => "color:red",
                     _ => "",
                 };
+                var changeStateColor = item.IsCompleted ? "color:red" : "color:green";
                 <tr>
-                    <td style="color:@titleColor">@item.Title</td>
-                    <td style="color:@dueDateColor">@item.DueDateString</td>
-                    <td><MatButton Icon="done" Outlined="true" @onclick="@(e => CompleteItem(item.Id))">@item.State</MatButton></td>
-                    <td><MatButton Icon="edit" Outlined="true" @onclick="@(e => EditItem(item.Id))">Edit</MatButton></td>
-                    <td><MatButton Icon="delete" Outlined="true" @onclick="@(e => DeleteItem(item.Id))">Delete</MatButton></td>
+                    <td style="@titleColor">@item.Title</td>
+                    <td style="@dueDateColor">@item.DueDateString</td>
+                    @if (item.StateIsChanging)
+                    {
+                        <td>
+                            <MatButton Disabled="true" Style="@changeStateColor" Outlined="true">
+                                <span class="spinner-grow spinner-grow-sm"></span>&nbsp;&nbsp;Waiting...
+                            </MatButton>
+                        </td>
+                    }
+                    else
+                    {
+                        @if (item.IsCompleted)
+                        {
+                            <td><MatButton Disabled="item.Disabled" Icon="close" Style="@changeStateColor" Outlined="true" @onclick="@(e => UncompleteTask(item))">@item.State</MatButton></td>
+                        }
+                        else
+                        {
+                            <td><MatButton Disabled="item.Disabled" Icon="done" Style="@changeStateColor" Outlined="true" @onclick="@(e => CompleteTask(item))">@item.State</MatButton></td>
+                        }
+                    }
+                    <td><MatButton Icon="edit" Outlined="true" @onclick="@(e => EditTask(item.Id))">Edit</MatButton></td>
+                    @if (item.Deleting)
+                    {
+                        <td>
+                            <MatButton Disabled="true" Outlined="true">
+                                <span class="spinner-grow spinner-grow-sm"></span>&nbsp;&nbsp;Deleting...
+                            </MatButton>
+                        </td>
+                    }
+                    else
+                    {
+                        <td><MatButton Disabled="item.Disabled" Icon="delete" Outlined="true" @onclick="@(e => DeleteTask(item))">Delete</MatButton></td>
+                    }
                 </tr>
             }
         </tbody>
@@ -82,6 +113,7 @@
     AlertDialog? dialog;
     CreateForm? createForm;
     ViewForm? viewForm;
+    ErrorList? errorList;
 
     protected override Task OnInitializedAsync()
     {
@@ -147,6 +179,8 @@
     {
         var item = todoList.Find(i => i.Id == output.Id);
         item?.Update(output);
+        if (item?.IsCompleted == true && filterViewModel.State == CompletionState.PendingTasks)
+            todoList.Remove(item);
         StateHasChanged();
     }
 
@@ -162,12 +196,57 @@
         todoList.Remove(myTodo);
     }
 
-    void CompleteItem(string? id)
+    void CompleteTask(TableItemViewModel item)
     {
-        var myTodo = todoList.First(x => x.Id == id);
+        ChangeStateAsync(item, "complete", "Complete").GetAwaiter();
     }
 
-    void EditItem(string? id)
+    void UncompleteTask(TableItemViewModel item)
+    {
+        ChangeStateAsync(item, "uncomplete", "Uncomplete").GetAwaiter();
+    }
+
+    async Task ChangeStateAsync(TableItemViewModel item, string endpoint, string type)
+    {
+        try
+        {
+            item.IsChanging();
+            var response = await Client.PatchAsync<InputResponse>($"api/todo-tasks/{item.Id}/{endpoint}");
+            if (!response.IsSuccess)
+            {
+                NotificationService.AddErrorToast(response.GetProblem());
+                return;
+            }
+
+            NotificationService.AddToast(response.GetResult().Id, type);
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    async void DeleteTask(TableItemViewModel item)
+    {
+        try
+        {
+            item.IsDeleting();
+            var response = await Client.DeleteAsync<InputResponse>($"api/todo-tasks/{item.Id}");
+            if (!response.IsSuccess)
+            {
+                errorList?.ShowErrors(response.GetProblem());
+                return;
+            }
+
+            NotificationService.AddToast(response.GetResult().Id, "Delete");
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    void EditTask(string? id)
     {
         viewForm?.Open(id);
     }

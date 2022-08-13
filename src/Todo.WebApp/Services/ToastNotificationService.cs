@@ -36,7 +36,9 @@ namespace Todo.WebApp.Services
                 {
                     if (_inProgressToasts.TryGetValue(output.TodoTask.Id, out var toast))
                     {
-                        _toaster.Remove(toast);
+                        if (toast != null)
+                            _toaster.Remove(toast);
+
                         _inProgressToasts.Remove(output.TodoTask.Id);
                     }
 
@@ -87,6 +89,21 @@ namespace Todo.WebApp.Services
             );
 
             _inProgressToasts.TryAdd(id, toast);
+        }
+
+        public void AddErrorToast(ProblemDetails problemDetails)
+        {
+            var toast = _toaster.Add(
+                message: problemDetails.Detail ?? problemDetails.Title,
+                type: MatToastType.Danger,
+                title: "Error",
+                icon: "hourglass_empty",
+                configure: options =>
+                {
+                    options.ShowProgressBar = true;
+                    options.VisibleStateDuration = 3000;
+                }
+            );
         }
 
         public event EventHandler<TodoTaskOutput> TaskCreated = delegate { };

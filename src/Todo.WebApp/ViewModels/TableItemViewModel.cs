@@ -34,6 +34,9 @@ namespace Todo.WebApp.ViewModels
             _ => DueDateState.Future,
         };
         public bool IsCompleted { get; set; }
+        public bool StateIsChanging { get; set; }
+        public bool Deleting { get; set; }
+        public bool Disabled => Deleting || StateIsChanging;
         public string State => IsCompleted ? "Uncomplete" : "Complete";
         public bool DuplicateTitle { get; set; }
 
@@ -43,6 +46,11 @@ namespace Todo.WebApp.ViewModels
             DueDate = output.DueDate;
             IsCompleted = output.IsCompleted;
             DuplicateTitle = output.DuplicateTitle;
+            StateIsChanging = false;
+            Deleting = false;
         }
+
+        public void IsChanging() => StateIsChanging = true;
+        public void IsDeleting() => Deleting = true;
     }
 }
