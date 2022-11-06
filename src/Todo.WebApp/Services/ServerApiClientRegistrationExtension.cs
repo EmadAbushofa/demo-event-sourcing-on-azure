@@ -6,7 +6,7 @@ namespace Todo.WebApp.Services
     {
         public static void AddServerApiClient(this IServiceCollection services, IConfiguration configuration)
         {
-            var baseUrl = configuration.GetSection("Server")["BaseUrl"];
+            var baseUrl = configuration["ServerUrl"];
 
             services.AddHttpClient("ServerApi", client =>
                 client.BaseAddress = new Uri(baseUrl))

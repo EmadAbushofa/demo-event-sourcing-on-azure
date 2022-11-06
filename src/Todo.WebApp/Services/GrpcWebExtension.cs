@@ -31,7 +31,7 @@ namespace Todo.WebApp.Services
                     }
                 });
 
-                var baseUri = configuration["Server:BaseUrl"];
+                var baseUri = configuration["ServerUrl"];
 
                 var httpClient = new HttpClient(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
                 var channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions
