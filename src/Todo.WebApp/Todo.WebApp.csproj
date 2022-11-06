@@ -1,36 +1,39 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+	<TargetFramework>net6.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Protos\tasks_channel.proto" />
+	<None Remove="Protos\tasks_channel.proto" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
+	</ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
+	<PackageReference Include="Google.Protobuf" Version="3.21.4" />
+	<PackageReference Include="Grpc.Net.Client" Version="2.47.0" />
+	<PackageReference Include="Grpc.Net.Client.Web" Version="2.47.0" />
+	<PackageReference Include="Grpc.Tools" Version="2.47.0">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="MatBlazor" Version="2.8.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.7" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.7" PrivateAssets="all" />
+	<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+	<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.7" />
+	<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
-    <PackageReference Include="Google.Protobuf" Version="3.21.4" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.47.0" />
-    <PackageReference Include="Grpc.Net.Client.Web" Version="2.47.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.47.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="MatBlazor" Version="2.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.7" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protos\tasks_channel.proto">
-      <GrpcServices>Client</GrpcServices>
-    </Protobuf>
+	<Protobuf Include="Protos\tasks_channel.proto">
+	  <GrpcServices>Client</GrpcServices>
+	</Protobuf>
   </ItemGroup>
 
 </Project>
