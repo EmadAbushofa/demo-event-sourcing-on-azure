@@ -23,12 +23,15 @@ namespace Todo.WebApp.ViewModels
 
         public event EventHandler<string?> TitleChanged = delegate { };
 
-        public CreateTaskInput ToInput() =>
-            new()
+        public CreateTaskInput ToInput()
+        {
+            var dueDate = DueDate?.ToLocalTime() ?? throw new InvalidOperationException("Due date is null.");
+            return new()
             {
                 Title = Title,
-                DueDate = DueDate?.ToLocalTime() ?? throw new InvalidOperationException("Due date is null."),
+                DueDate = DateTime.SpecifyKind(dueDate, DateTimeKind.Utc),
                 Note = Note,
             };
+        }
     }
 }

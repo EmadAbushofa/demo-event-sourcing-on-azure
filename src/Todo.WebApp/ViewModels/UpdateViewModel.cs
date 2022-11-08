@@ -43,10 +43,13 @@ namespace Todo.WebApp.ViewModels
                 Note = Note,
             };
 
-        public ChangeTaskDueDateInput ToChangeDueDateInput() =>
-            new()
+        public ChangeTaskDueDateInput ToChangeDueDateInput()
+        {
+            var dueDate = DueDate?.ToLocalTime() ?? throw new InvalidOperationException("Due date is null.");
+            return new()
             {
-                DueDate = DueDate?.ToLocalTime() ?? throw new InvalidOperationException("Due date is null."),
+                DueDate = DateTime.SpecifyKind(dueDate, DateTimeKind.Utc),
             };
+        }
     }
 }
